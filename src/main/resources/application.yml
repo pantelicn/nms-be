@@ -1,0 +1,62 @@
+logging:
+    level:
+        com:
+            opdev: INFO
+        org:
+            hibernate: INFO
+            springframework:
+                security: DEBUG
+
+server:
+    port: 8080
+    servlet:
+        context-path: /api
+
+security:
+    aes:
+        secret: "3WTR3Ep7MItSFduTZvgyQQ=="
+
+spring:
+    data:
+        web:
+            pageable:
+                default-page-size: 10
+
+    datasource:
+        driverClassName: org.h2.Driver
+        password: ""
+        url: jdbc:h2:mem:testdb
+        username: sa
+    h2:
+        console:
+            enabled: true
+            path: /h2-console
+            settings:
+                trace: false
+                web-allow-others: false
+
+    jpa:
+        database-platform: org.hibernate.dialect.H2Dialect
+        hibernate:
+            ddl-auto: update
+
+    mail:
+        host: smtp.gmail.com
+        password: island-ostrvo
+        port: 587
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
+        username: anonymous.ln.app@gmail.com
+
+    messages:
+        basename: i18n/messages
+        encoding: UTF-8
+
+    profiles:
+        active: dev
+        # active: prod
+        # active: test

@@ -1,29 +1,25 @@
-# README #
+# Anonymous BE
 
-This README would normally document whatever steps are necessary to get your application up and running.
+## H2 in-memory DB
 
-### What is this repository for? ###
+To access the H2 in-memory DB go to [http://localhost:8080/api/h2-console](http://localhost:8080/api/h2-console)
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+## Swagger
 
-### How do I get set up? ###
+To see the human-readable Swagger API docs page, check [http://localhost:8080/api/swagger-ui/index.html](http://localhost:8080/api/swagger-ui/index.html) or see the JSON variant [here](http://localhost:8080/api/v2/api-docs).
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+## Email
 
-### Contribution guidelines ###
+### Main account login
 
-* Writing tests
-* Code review
-* Other guidelines
+[Google](https://mail.google.com)
 
-### Who do I talk to? ###
+Username: `anonymous.ln.app@gmail.com`
+Password: `island-ostrvo`
 
-* Repo owner or admin
-* Other community or team contact
+### Testing account
+
+[Yahoo](https://login.yahoo.com)
+
+Username: `anonymous.apptest@yahoo.com`
+Password: `island-ostrvo`
