@@ -1,6 +1,6 @@
 package com.opdev.post.controller;
 
-import com.opdev.company.CompanyService;
+import com.opdev.company.service.CompanyService;
 import com.opdev.config.security.SpELAuthorizationExpressions;
 import com.opdev.model.company.Company;
 import com.opdev.model.company.Post;
