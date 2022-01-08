@@ -58,7 +58,7 @@ class TalentSkillControllerTest extends AbstractIntegrationTest {
         final String token = loginResponse.getBody().getToken();
         final HttpHeaders headers = createAuthHeaders(token);
 
-        SkillViewDto javaSkill = addSkill(headers, "Java", "JAVA");
+        SkillViewDto javaSkill = addSkill(headers, ".NET", ".NET");
 
         javaSkill = approveSkill(headers, javaSkill.getCode());
 

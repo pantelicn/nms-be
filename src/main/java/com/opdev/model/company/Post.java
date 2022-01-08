@@ -25,7 +25,7 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Getter
-@ToString(callSuper = true)
+@ToString(callSuper = true, exclude = {"company"})
 @Entity
 @Table(name = "post")
 public class Post extends Audit {
@@ -45,6 +45,9 @@ public class Post extends Audit {
     private Integer likes = 0;
 
     private String url;
+
+    @Column(nullable = false)
+    private String country;
 
     @NonNull
     @ManyToOne
