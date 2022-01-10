@@ -10,12 +10,9 @@ import com.opdev.common.services.Profiles;
 import com.opdev.config.security.Roles;
 import com.opdev.model.company.Benefit;
 import com.opdev.model.company.Company;
+import com.opdev.model.company.Post;
 import com.opdev.model.location.CompanyLocation;
 import com.opdev.model.location.Location;
-import com.opdev.model.search.Facet;
-import com.opdev.model.search.OperatorType;
-import com.opdev.model.search.SearchTemplate;
-import com.opdev.model.search.TableName;
 import com.opdev.model.talent.*;
 import com.opdev.model.term.TalentTerm;
 import com.opdev.model.term.Term;
@@ -28,7 +25,6 @@ import com.opdev.model.user.UserRole;
 import com.opdev.model.user.UserType;
 import com.opdev.repository.*;
 
-import com.opdev.search.TalentSpecification;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -56,6 +52,7 @@ class TestDataServiceImpl implements TestDataService {
         private final BenefitRepository benefitRepository;
         private final TermRepository termRepository;
         private final TalentTermRepository talentTermRepository;
+        private final PostRepository postRepository;
 
         @Transactional
         @Override
@@ -203,6 +200,10 @@ class TestDataServiceImpl implements TestDataService {
                 talentTermRepository.save(goranRemote);
                 talentTermRepository.save(goranSalary);
                 talentTermRepository.save(nikolaSalary);
+
+                final Post pantelaPost = Post.builder().company(companyPantela).country("Serbia").description("Live Laugh Learn.").build();
+
+                List.of(pantelaPost).forEach(postRepository::save);
 
         }
 
