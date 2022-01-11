@@ -36,8 +36,9 @@ class WebSecurity extends WebSecurityConfigurerAdapter {
                     .antMatchers("/swagger-resources/**").permitAll() //
                     .and();
         }
-        builder.csrf().disable().addFilter(new JWTAuthenticationFilter(authenticationManager())) //
-                .addFilter(new JWTAuthorizationFilter(authenticationManager())) //
+        builder.csrf().disable()
+//                .addFilter(new JWTAuthenticationFilter(authenticationManager())) //
+//                .addFilter(new JWTAuthorizationFilter(authenticationManager())) //
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         if (!profileService.isProduction()) {

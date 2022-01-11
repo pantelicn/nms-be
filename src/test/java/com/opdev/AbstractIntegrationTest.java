@@ -6,6 +6,7 @@ import java.util.Map;
 import com.opdev.company.dto.CompanyRegistrationDto;
 import com.opdev.dto.LoginSuccessDto;
 import com.opdev.dto.TalentRegistrationDto;
+import com.opdev.model.location.CompanyLocation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -70,10 +71,15 @@ public abstract class AbstractIntegrationTest {
 
     protected CompanyRegistrationDto createNewCompany(final String username) {
         final String companyUsername = StringUtils.hasText(username) ? username : generateNewEmail();
+        CompanyLocation location = CompanyLocation.builder()
+                .city("Novi Sad")
+                .country("Serbia")
+                .countryCode("RS")
+                .build();
 
         return CompanyRegistrationDto.builder().name(DEFAULT_COMPANY_NAME).description(DEFAULT_COMPANY_DESCRIPTION)
                 .address1(DEFAULT_COMPANY_ADDRESS_1).username(companyUsername).password(DEFAULT_COMPANY_PASSWORD)
-                .passwordConfirmed(DEFAULT_COMPANY_PASSWORD).build();
+                .passwordConfirmed(DEFAULT_COMPANY_PASSWORD).location(location).build();
     }
 
     protected HttpHeaders createAuthHeaders(final String token) {
