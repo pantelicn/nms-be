@@ -1,12 +1,12 @@
 package com.opdev.post.service;
 
 import com.opdev.authentication.UserService;
+import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.company.Post;
 import com.opdev.model.user.User;
 import com.opdev.post.service.noimpl.PostViewService;
 import com.opdev.repository.PostRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +22,8 @@ public class PostViewServiceImpl implements PostViewService {
     @Override
     @Transactional(readOnly = true)
     public Post getById(final Long postId) {
-        return repository.getById(postId);
+        return repository.findById(postId)
+                .orElseThrow(() -> ApiEntityNotFoundException.builder().entity("post").build());
     }
 
     @Override
@@ -46,7 +47,7 @@ public class PostViewServiceImpl implements PostViewService {
     @Override
     @Transactional(readOnly = true)
     public List<Post> findByLocation(String country, String city) {
-        return repository.findByLocation(country, city);
+        return repository.findByCountryAndCity(country, city);
     }
 
     @Override

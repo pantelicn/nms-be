@@ -1,6 +1,7 @@
 package com.opdev.post.controller;
 
 import com.opdev.config.security.SpELAuthorizationExpressions;
+import com.opdev.exception.ApiBadRequestException;
 import com.opdev.model.company.Post;
 import com.opdev.post.dto.PostViewDto;
 import com.opdev.post.service.noimpl.PostViewService;
@@ -27,16 +28,23 @@ public class PostViewController {
     // TODO @nikolagudelj Find user feed
 
     @GetMapping
-    @PreAuthorize(SpELAuthorizationExpressions.isAuthenticated)
+//    @PreAuthorize(SpELAuthorizationExpressions.isAuthenticated)
     public List<PostViewDto> find(
-            @RequestParam("company") final Long companyId,
-            @RequestParam("country") final String country,
-            @RequestParam("city") final String city
+            @RequestParam(value = "company", required = false) final Long companyId,
+            @RequestParam(value = "country", required = false) final String country,
+            @RequestParam(value = "city", required = false) final String city
     ) {
-        // Searches by company and location are disjunctive
-        List<Post> foundPosts = companyId == null ?
-                postViewService.findByLocation(country, city)
-                : postViewService.findByCompanyId(companyId);
+        List<Post> foundPosts;
+
+        if (companyId != null) {
+            foundPosts = postViewService.findByCompanyId(companyId);
+        }
+        else if (city != null && country != null) {
+            System.out.println(country + " " + city);
+            foundPosts = postViewService.findByLocation(country, city);
+        }
+        else throw new ApiBadRequestException("Incorrect query params");
+
         return foundPosts
                 .stream()
                 .map(PostViewDto::new)

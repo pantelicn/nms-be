@@ -21,8 +21,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByCompanyIds(@Param("companyIds") List<Long> companyIds);
 
     // TODO @nikolagudelj Does this work if City or Country are null?
-    @Query("select p from Post p where :country in (p.company.location.country) or :city in (p.company.location.city)")
-    List<Post> findByLocation(@Param("country") String country, @Param("city") String city);
+    @Query("select p from Post p " +
+            "where upper(p.company.location.country) like concat('%', upper(:country), '%') and " +
+            "upper(p.company.location.city) like concat('%', upper(:city) , '%') order by p.createdOn DESC")
+    List<Post> findByCountryAndCity(@Param("country") String country, @Param("city") String city);
 
     @Query(value = "select * from post where country = :country order by created_on DESC limit 10", nativeQuery = true)
     List<Post> findLatest10ByCountry(@Param("country") String country);
