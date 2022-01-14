@@ -1,13 +1,10 @@
 package com.opdev;
 
 import com.opdev.common.services.Profiles;
-import com.opdev.company.dto.CompanyRegistrationDto;
 import com.opdev.company.dto.RequestCreateDto;
 import com.opdev.company.dto.RequestViewDto;
 import com.opdev.company.dto.TalentTermRequestEditDto;
 import com.opdev.company.dto.TermCreateDto;
-import com.opdev.dto.LoginSuccessDto;
-import com.opdev.dto.TalentRegistrationDto;
 import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.company.Company;
 import com.opdev.model.request.RequestStatus;
@@ -33,7 +30,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -45,11 +41,7 @@ import static org.hamcrest.Matchers.notNullValue;
 
 @ActiveProfiles(Profiles.TEST_PROFILE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Rollback
 class TalentTermRequestIntegrationTest extends AbstractIntegrationTest {
-
-    private static final String TALENT_NIKOLICA = "nikolica@gmail.com";
-    private static final String COMPANY_PRIKOLICA = "prikolica@gmail.com";
 
     @Autowired
     private TalentRepository talentRepository;
@@ -62,20 +54,14 @@ class TalentTermRequestIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     @DirtiesContext
-    void editByTalentTest() {
-        final HttpHeaders adminHeaders = getAdminHeaders();
+    public void editByTalentTest() {
+        createAdmin();
+        createTalent(TALENT_GORAN);
+        createCompany(COMPANY_GOOGLE);
+        final HttpHeaders adminHeaders = createAuthHeaders(getTokenForAdmin());
 
-        final TalentRegistrationDto nikolica = createNewTalent(TALENT_NIKOLICA);
-        registerTalent(nikolica);
-        final ResponseEntity<LoginSuccessDto> nikolicaLoginResponse = login(nikolica.getUsername(), nikolica.getPassword());
-        final CompanyRegistrationDto prikolica = createNewCompany(COMPANY_PRIKOLICA);
-        registerCompany(prikolica);
-        final ResponseEntity<LoginSuccessDto> prikolicaLoginResponse = login(prikolica.getUsername(), prikolica.getPassword());
-        assertThat(nikolicaLoginResponse.getBody(), is(notNullValue()));
-        assertThat(prikolicaLoginResponse.getBody(), is(notNullValue()));
-
-        final String nikolicaToken = nikolicaLoginResponse.getBody().getToken();
-        final String prikolicaToken = prikolicaLoginResponse.getBody().getToken();
+        final String nikolicaToken = getTokenForTalentGoran();
+        final String prikolicaToken = getTokenForCompanyGoogle();
 
         final HttpHeaders nikolicaHeaders = createAuthHeaders(nikolicaToken);
         final HttpHeaders prikolicaHeaders = createAuthHeaders(prikolicaToken);
@@ -93,7 +79,7 @@ class TalentTermRequestIntegrationTest extends AbstractIntegrationTest {
                 .status(TalentTermRequestStatus.COUNTER_OFFER_COMPANY)
                 .counterOffer("false").build();
         RequestCreateDto newRequest = RequestCreateDto.builder()
-                .talentId(getEncodedId(TALENT_NIKOLICA, COMPANY_PRIKOLICA))
+                .talentId(getEncodedId(TALENT_GORAN, COMPANY_GOOGLE))
                 .note("Note")
                 .terms(List.of(newTerm)).build();
         final RequestViewDto request = addRequest(newRequest, prikolicaHeaders);
@@ -124,7 +110,7 @@ class TalentTermRequestIntegrationTest extends AbstractIntegrationTest {
     RequestViewDto editByTalent(RequestResponseDto requestResponse, HttpHeaders headers) {
         final HttpEntity<RequestResponseDto> httpEntityPUT = new HttpEntity<>(requestResponse, headers);
         final ResponseEntity<RequestViewDto> editByTalentResponse = restTemplate
-                .exchange("/v1/talents/" + TALENT_NIKOLICA + "/talent-term-requests",
+                .exchange("/v1/talents/" + TALENT_GORAN + "/talent-term-requests",
                         HttpMethod.PUT,
                         httpEntityPUT,
                         RequestViewDto.class);
@@ -145,7 +131,7 @@ class TalentTermRequestIntegrationTest extends AbstractIntegrationTest {
     RequestViewDto editByCompany(RequestResponseDto requestResponse, HttpHeaders headers) {
         final HttpEntity<RequestResponseDto> httpEntityPUT = new HttpEntity<>(requestResponse, headers);
         final ResponseEntity<RequestViewDto> editByTalentResponse = restTemplate
-                .exchange("/v1/companies/" + COMPANY_PRIKOLICA + "/talent-term-requests",
+                .exchange("/v1/companies/" + COMPANY_GOOGLE + "/talent-term-requests",
                         HttpMethod.PUT,
                         httpEntityPUT,
                         RequestViewDto.class);
@@ -174,7 +160,7 @@ class TalentTermRequestIntegrationTest extends AbstractIntegrationTest {
     private List<TalentTermViewDto> addTalentTerms(List<TalentTermAddDto> newTalentTerms, HttpHeaders headers) {
         final HttpEntity<List<TalentTermAddDto>> httpEntityPOST = new HttpEntity<>(newTalentTerms, headers);
         final ResponseEntity<List<TalentTermViewDto>> addTalentTermResponse = restTemplate
-                .exchange("/v1/talents/" + TALENT_NIKOLICA + "/terms",
+                .exchange("/v1/talents/" + TALENT_GORAN + "/terms",
                         HttpMethod.POST,
                         httpEntityPOST,
                         new ParameterizedTypeReference<>() {});
@@ -194,7 +180,7 @@ class TalentTermRequestIntegrationTest extends AbstractIntegrationTest {
     private RequestViewDto addRequest(RequestCreateDto newRequest, HttpHeaders companyHeaders) {
         final HttpEntity<RequestCreateDto> httpEntityPOST = new HttpEntity<>(newRequest, companyHeaders);
         final ResponseEntity<RequestViewDto> addRequestResponse = restTemplate
-                .exchange("/v1/companies/" + COMPANY_PRIKOLICA + "/requests",
+                .exchange("/v1/companies/" + COMPANY_GOOGLE + "/requests",
                         HttpMethod.POST,
                         httpEntityPOST,
                         RequestViewDto.class);

@@ -14,6 +14,10 @@
         <auth0-spring-security-api.version>1.4.0</auth0-spring-security-api.version>
         <swagger.version>3.0.0</swagger.version>
         <specification-arg-resolver.version>2.6.2</specification-arg-resolver.version>
+        <aws-java-sdk.version>1.12.136</aws-java-sdk.version>
+        <spring-security-oauth2.version>2.5.1.RELEASE</spring-security-oauth2.version>
+        <spring-security-oauth2-resource-server.version>5.6.1</spring-security-oauth2-resource-server.version>
+        <spring-security-oauth2-jose.version>5.6.1</spring-security-oauth2-jose.version>
     </properties>
 
     <groupId>com.opdev</groupId>
@@ -91,7 +95,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- Required for testing the 401 responses (see https://stackoverflow.com/a/53695761/5252849) -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
@@ -106,6 +109,26 @@
             <groupId>net.kaczmarzyk</groupId>
             <artifactId>specification-arg-resolver</artifactId>
             <version>${specification-arg-resolver.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>${aws-java-sdk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security.oauth</groupId>
+            <artifactId>spring-security-oauth2</artifactId>
+            <version>${spring-security-oauth2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-resource-server</artifactId>
+            <version>${spring-security-oauth2-resource-server.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-jose</artifactId>
+            <version>${spring-security-oauth2-jose.version}</version>
         </dependency>
     </dependencies>
 

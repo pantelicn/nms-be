@@ -17,16 +17,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.Rollback;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.opdev.common.services.Profiles;
-import com.opdev.company.dto.CompanyRegistrationDto;
 import com.opdev.company.dto.RequestCreateDto;
 import com.opdev.company.dto.RequestViewDto;
 import com.opdev.company.dto.TermCreateDto;
-import com.opdev.dto.LoginSuccessDto;
-import com.opdev.dto.TalentRegistrationDto;
 import com.opdev.model.request.Request;
 import com.opdev.model.request.RequestStatus;
 import com.opdev.model.request.TalentTermRequestStatus;
@@ -43,7 +40,6 @@ import com.opdev.util.encoding.aes.AESTalentIdEncoder;
 
 @ActiveProfiles(Profiles.TEST_PROFILE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Rollback
 public class CompanyRequestControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
@@ -65,14 +61,12 @@ public class CompanyRequestControllerIntegrationTest extends AbstractIntegration
     private RequestRepository requestRepository;
 
     @Test
+    @DirtiesContext
     public void createFindPendingAndRemoveRequest() {
-        TalentRegistrationDto talentGoranDto = createNewTalent("goran@gmail.com");
-        registerTalent(talentGoranDto);
+        createTalent(TALENT_GORAN);
+        createCompany(COMPANY_GOOGLE);
 
-        CompanyRegistrationDto companyGoogle = createNewCompany("google@gmail.com");
-        registerCompany(companyGoogle);
-        ResponseEntity<LoginSuccessDto> googleLogin = login(companyGoogle.getUsername(), companyGoogle.getPassword());
-        String token = googleLogin.getBody().getToken();
+        String googleToken = getTokenForCompanyGoogle();
 
         Term sallaryTerm = Term.builder()
                 .type(TermType.INT)
@@ -83,7 +77,7 @@ public class CompanyRequestControllerIntegrationTest extends AbstractIntegration
 
         termRepository.save(sallaryTerm);
 
-        Talent talentGoran = talentRepository.findByUserUsername(talentGoranDto.getUsername()).get();
+        Talent talentGoran = talentRepository.findByUserUsername(TALENT_GORAN).get();
         TalentTerm talentTermSallary = TalentTerm.builder()
                 .talent(talentGoran)
                 .term(sallaryTerm)
@@ -95,24 +89,24 @@ public class CompanyRequestControllerIntegrationTest extends AbstractIntegration
 
         talentGoran = talentRepository.save(talentGoran);
 
-        RequestViewDto createdRequest = createRequest(talentGoran.getId(), companyGoogle.getUsername(), talentTermSallary.getId(), token);
+        RequestViewDto createdRequest = createRequest(talentGoran.getId(), COMPANY_GOOGLE, talentTermSallary.getId(), googleToken);
 
-        getPendingRequests(companyGoogle.getUsername(), token, 1);
+        getPendingRequests(COMPANY_GOOGLE, googleToken, 1);
 
         Request request = requestRepository.findById(createdRequest.getId()).get();
         request.setStatus(RequestStatus.COUNTER_OFFER_TALENT);
         request = requestRepository.save(request);
 
-        getCounterOffer(companyGoogle.getUsername(), token, 1);
+        getCounterOffer(COMPANY_GOOGLE, googleToken, 1);
 
         request.setStatus(RequestStatus.ACCEPTED);
         requestRepository.save(request);
 
-        getAccepted(companyGoogle.getUsername(), token, 1);
+        getAccepted(COMPANY_GOOGLE, googleToken, 1);
 
-        removeRequest(companyGoogle.getUsername(), token, createdRequest.getId());
+        removeRequest(COMPANY_GOOGLE, googleToken, createdRequest.getId());
 
-        getPendingRequests(companyGoogle.getUsername(), token, 0);
+        getPendingRequests(COMPANY_GOOGLE, googleToken, 0);
     }
 
     private void removeRequest(String companyUsername, String token, Long requestId) {

@@ -1,8 +1,6 @@
 package com.opdev;
 
 import com.opdev.common.services.Profiles;
-import com.opdev.dto.LoginSuccessDto;
-import com.opdev.dto.TalentRegistrationDto;
 import com.opdev.model.talent.SkillStatus;
 import com.opdev.skill.dto.SkillAddDto;
 import com.opdev.skill.dto.SkillStatusDto;
@@ -10,7 +8,11 @@ import com.opdev.skill.dto.SkillViewDto;
 import com.opdev.talent.dto.TalentSkillsViewDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -19,8 +21,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
 
 @ActiveProfiles(Profiles.TEST_PROFILE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -28,34 +33,30 @@ class TalentSkillControllerTest extends AbstractIntegrationTest {
 
     @Test
     @DirtiesContext
-    void testCrud() {
-        final TalentRegistrationDto gogara = createNewTalent("gogara@gmail.com");
-        registerTalent(gogara);
-        ResponseEntity<LoginSuccessDto> loginResponse = login(gogara.getUsername(), gogara.getPassword());
-        assertThat(loginResponse.getBody(), is(notNullValue()));
-        final String token = loginResponse.getBody().getToken();
+    public void testCrud() {
+        createTalent(TALENT_GORAN);
+        createAdmin();
+        final String token = getTokenForTalentGoran();
         final HttpHeaders headers = createAuthHeaders(token);
 
         List<SkillViewDto> created = createSkills();
 
-        addSkillToTalent(created.stream().map(SkillViewDto::getCode).collect(Collectors.toList()), gogara.getUsername(), headers);
+        addSkillToTalent(created.stream().map(SkillViewDto::getCode).collect(Collectors.toList()), TALENT_GORAN, headers);
 
-        TalentSkillsViewDto found = getSkills(gogara.getUsername(), headers);
+        TalentSkillsViewDto found = getSkills(TALENT_GORAN, headers);
         assertThat(found.getSkills().containsAll(created), is(equalTo(true)));
 
         SkillViewDto skillToBeRemoved = found.getSkills().stream().findFirst().get();
 
-        removeSkill(skillToBeRemoved.getCode(), gogara.getUsername(), headers);
+        removeSkill(skillToBeRemoved.getCode(), TALENT_GORAN, headers);
 
-        found = getSkills(gogara.getUsername(), headers);
+        found = getSkills(TALENT_GORAN, headers);
         assertThat(found.getSkills(), not(contains(created.toArray())));
 
     }
 
     private List<SkillViewDto> createSkills() {
-        ResponseEntity<LoginSuccessDto> loginResponse = login(ADMIN_GORAN, ADMIN_GORAN_PASSWORD);
-        assertThat(loginResponse.getBody(), is(notNullValue()));
-        final String token = loginResponse.getBody().getToken();
+        final String token = getTokenForAdmin();
         final HttpHeaders headers = createAuthHeaders(token);
 
         SkillViewDto javaSkill = addSkill(headers, ".NET", ".NET");

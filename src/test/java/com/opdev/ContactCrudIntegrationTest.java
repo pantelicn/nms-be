@@ -15,29 +15,26 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.Rollback;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.opdev.common.services.Profiles;
-import com.opdev.company.dto.CompanyRegistrationDto;
 import com.opdev.contact.dto.ContactAddDto;
 import com.opdev.contact.dto.ContactEditDto;
 import com.opdev.contact.dto.ContactViewDto;
-import com.opdev.dto.LoginSuccessDto;
-import com.opdev.dto.TalentRegistrationDto;
 import com.opdev.model.contact.ContactType;
 
 @ActiveProfiles(Profiles.TEST_PROFILE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Rollback
 class ContactCrudIntegrationTest extends AbstractIntegrationTest {
 
     @Test
+    @DirtiesContext
     void addUpdateGetDeleteTalentContactTest() {
-        TalentRegistrationDto talentMarko = createNewTalent("marko.markovic@gmail.com");
-        String token = talentRegisterAndLogin(talentMarko);
+        createTalent(TALENT_GORAN);
+        String goranToken = getTokenForTalentGoran();
 
-        HttpHeaders headers = createAuthHeaders(token);
+        HttpHeaders headers = createAuthHeaders(goranToken);
 
         ContactAddDto contactMobileMarko = ContactAddDto.builder()
                 .type(ContactType.MOBILE_PHONE)
@@ -67,17 +64,17 @@ class ContactCrudIntegrationTest extends AbstractIntegrationTest {
         assertThat(editResponse.getBody().getType(), is(equalTo(contactMarkoEditDto.getType())));
         assertThat(editResponse.getBody().getValue(), is(equalTo(contactMarkoEditDto.getValue())));
 
-        TalentRegistrationDto talentDragan = createNewTalent("dragan@gmail.com");
-        String draganToken = talentRegisterAndLogin(talentDragan);
+        createTalent(TALENT_NIKOLA);
+        String nikolaToken = getTokenForTalentNikola();
 
-        headers = createAuthHeaders(draganToken);
+        headers = createAuthHeaders(nikolaToken);
 
         httpEntityPUT = new HttpEntity<>(contactMarkoEditDto, headers);
         editResponse = restTemplate.exchange("/v1/contacts", HttpMethod.PUT, httpEntityPUT, ContactViewDto.class);
 
         assertThat(editResponse.getStatusCode(), is(equalTo(HttpStatus.BAD_REQUEST)));
 
-        headers = createAuthHeaders(token);
+        headers = createAuthHeaders(goranToken);
         HttpEntity<List<ContactViewDto>> httpEntityGet = new HttpEntity<>(headers);
         ResponseEntity<List<ContactViewDto>> markoContacts = restTemplate.exchange("/v1/contacts", HttpMethod.GET, httpEntityGet,
                                             new ParameterizedTypeReference<List<ContactViewDto>>() {});
@@ -102,11 +99,10 @@ class ContactCrudIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void addUpdateGetDeleteCompanyContactTest() {
-        CompanyRegistrationDto hybrid = createNewCompany("hybrid@gmail.com");
-        registerCompany(hybrid);
-        ResponseEntity<LoginSuccessDto> hybridLogin = login(hybrid.getUsername(), hybrid.getPassword());
-        String token = hybridLogin.getBody().getToken();
+        createCompany(COMPANY_GOOGLE);
+        String token = getTokenForCompanyGoogle();
 
         HttpHeaders headers = createAuthHeaders(token);
 
@@ -138,10 +134,9 @@ class ContactCrudIntegrationTest extends AbstractIntegrationTest {
         assertThat(editResponse.getBody().getType(), is(equalTo(hybridEditcontactDto.getType())));
         assertThat(editResponse.getBody().getValue(), is(equalTo(hybridEditcontactDto.getValue())));
 
-        TalentRegistrationDto bm = createNewTalent("bm@gmail.com");
-        String bmToken = talentRegisterAndLogin(bm);
+        createTalent(TALENT_GORAN);
 
-        headers = createAuthHeaders(bmToken);
+        headers = createAuthHeaders(getTokenForTalentGoran());
 
         httpEntityPUT = new HttpEntity<>(hybridEditcontactDto, headers);
         editResponse = restTemplate.exchange("/v1/contacts", HttpMethod.PUT, httpEntityPUT, ContactViewDto.class);

@@ -8,7 +8,6 @@ import static org.hamcrest.Matchers.notNullValue;
 import java.util.List;
 
 import com.opdev.common.services.Profiles;
-import com.opdev.dto.LoginSuccessDto;
 import com.opdev.position.dto.PositionCreateDto;
 import com.opdev.position.dto.PositionUpdateDto;
 import com.opdev.position.dto.PositionViewDto;
@@ -21,19 +20,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.Rollback;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles(Profiles.TEST_PROFILE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Rollback
 public class PositionCrudIntegrationTest extends AbstractIntegrationTest {
 
     @Test
+    @DirtiesContext
     public void addUpdateGetDeleteTest() {
-        ResponseEntity<LoginSuccessDto> loginResponse = login("gox69@opdev.rs", "rav4");
-        assertThat(loginResponse.getBody(), is(notNullValue()));
-        final String token = loginResponse.getBody().getToken();
+        createAdmin();
+        final String token = getTokenForAdmin();
         final PositionCreateDto newPositionDto = new PositionCreateDto("Backend", "Backend developer", "BACKEND_DEV");
         final HttpHeaders headers = createAuthHeaders(token);
         final HttpEntity<PositionCreateDto> httpEntityPOST = new HttpEntity<>(newPositionDto, headers);

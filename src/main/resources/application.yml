@@ -60,3 +60,7 @@ spring:
         active: dev
         # active: prod
         # active: test
+
+cognito:
+    userpool:
+        nms: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_46Qqd7W2Z

@@ -17,12 +17,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.Rollback;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.opdev.common.services.Profiles;
-import com.opdev.company.dto.CompanyRegistrationDto;
-import com.opdev.dto.LoginSuccessDto;
 import com.opdev.model.search.OperatorType;
 import com.opdev.model.search.TableName;
 import com.opdev.model.talent.Position;
@@ -42,7 +40,6 @@ import com.opdev.search.dto.SearchTemplateViewDto;
 
 @ActiveProfiles(Profiles.TEST_PROFILE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Rollback
 public class SearchTemplateCrudIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
@@ -86,11 +83,10 @@ public class SearchTemplateCrudIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     public void searchTemplateCrud() {
-        final CompanyRegistrationDto googleCompany = createNewCompany(DEFAULT_COMPANY_USERNAME);
-        ResponseEntity<Void> registerResponse = registerCompany(googleCompany);
-        ResponseEntity<LoginSuccessDto> loginResponse = login(googleCompany.getUsername(), googleCompany.getPassword());
-        String token = loginResponse.getBody().getToken();
+        createCompany(COMPANY_GOOGLE);
+        String token = getTokenForCompanyGoogle();
         HttpHeaders headers = createAuthHeaders(token);
 
         FacetAddDto backendDev = new FacetAddDto(TableName.POSITION, "BACKEND_DEVELOPER", "BACKEND_DEVELOPER", OperatorType.EQ);
@@ -101,7 +97,7 @@ public class SearchTemplateCrudIntegrationTest extends AbstractIntegrationTest {
         SearchTemplateAddDto javaDeveloperTemplate = new SearchTemplateAddDto("Senior java developer", facets);
 
         final HttpEntity<SearchTemplateAddDto> addJavaDevTemplate = new HttpEntity<>(javaDeveloperTemplate, headers);
-        final ResponseEntity<SearchTemplateViewDto> javaDevTemplateCreatedResponse = restTemplate.exchange("/v1/companies/" + DEFAULT_COMPANY_USERNAME + "/search-templates", HttpMethod.POST, addJavaDevTemplate, SearchTemplateViewDto.class);
+        final ResponseEntity<SearchTemplateViewDto> javaDevTemplateCreatedResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/search-templates", HttpMethod.POST, addJavaDevTemplate, SearchTemplateViewDto.class);
 
         assertThat(javaDevTemplateCreatedResponse.getStatusCode(), is(equalTo(HttpStatus.CREATED)));
 
@@ -112,30 +108,30 @@ public class SearchTemplateCrudIntegrationTest extends AbstractIntegrationTest {
 
 
         final HttpEntity<SearchTemplateEditDto> editJavaDevTemplate = new HttpEntity<>(new SearchTemplateEditDto(javaDevTemplateBody.getId(), "Senior java developer for SH"), headers);
-        final ResponseEntity<SearchTemplateViewDto> javaDevTemplateModifiedResponse = restTemplate.exchange("/v1/companies/" + DEFAULT_COMPANY_USERNAME + "/search-templates", HttpMethod.PUT, editJavaDevTemplate, SearchTemplateViewDto.class);
+        final ResponseEntity<SearchTemplateViewDto> javaDevTemplateModifiedResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/search-templates", HttpMethod.PUT, editJavaDevTemplate, SearchTemplateViewDto.class);
 
         assertThat(javaDevTemplateModifiedResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(javaDevTemplateModifiedResponse.getBody().getName(), is(equalTo("Senior java developer for SH")));
 
         HttpEntity<Void> getJavaDevTemplate = new HttpEntity<>(headers);
-        ResponseEntity<SearchTemplateViewDto> javaDevTemplateResponse = restTemplate.exchange("/v1/companies/" + DEFAULT_COMPANY_USERNAME + "/search-templates/" + javaDevTemplateBody.getId(), HttpMethod.GET, getJavaDevTemplate, SearchTemplateViewDto.class);
+        ResponseEntity<SearchTemplateViewDto> javaDevTemplateResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/search-templates/" + javaDevTemplateBody.getId(), HttpMethod.GET, getJavaDevTemplate, SearchTemplateViewDto.class);
 
         assertThat(javaDevTemplateResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(javaDevTemplateResponse.getBody().getName(), is(equalTo("Senior java developer for SH")));
         assertThat(javaDevTemplateResponse.getBody().getFacets().size(), is(equalTo(4)));
 
         HttpEntity<Void> getAllTemplates = new HttpEntity<>(headers);
-        final ResponseEntity<List<SearchTemplateViewDto>> allTemplatesResponse = restTemplate.exchange("/v1/companies/" + DEFAULT_COMPANY_USERNAME + "/search-templates/", HttpMethod.GET, getAllTemplates,  new ParameterizedTypeReference<>() {});
+        final ResponseEntity<List<SearchTemplateViewDto>> allTemplatesResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/search-templates/", HttpMethod.GET, getAllTemplates,  new ParameterizedTypeReference<>() {});
 
         assertThat(allTemplatesResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(allTemplatesResponse.getBody().size(), is(equalTo(1)));
 
         HttpEntity<FacetAddDto> addSqlFacet = new HttpEntity<>(new FacetAddDto(TableName.SKILL, "SQL", "SQL", OperatorType.EQ), headers);
-        final ResponseEntity<FacetViewDto> addSqlFacetResponse = restTemplate.exchange("/v1/companies/" + DEFAULT_COMPANY_USERNAME + "/search-templates/" + javaDevTemplateBody.getId() + "/facets", HttpMethod.POST, addSqlFacet, FacetViewDto.class);
+        final ResponseEntity<FacetViewDto> addSqlFacetResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/search-templates/" + javaDevTemplateBody.getId() + "/facets", HttpMethod.POST, addSqlFacet, FacetViewDto.class);
 
         assertThat(addSqlFacetResponse.getStatusCode(), is(equalTo(HttpStatus.CREATED)));
 
-        javaDevTemplateResponse = restTemplate.exchange("/v1/companies/" + DEFAULT_COMPANY_USERNAME + "/search-templates/" + javaDevTemplateBody.getId(), HttpMethod.GET, getJavaDevTemplate, SearchTemplateViewDto.class);
+        javaDevTemplateResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/search-templates/" + javaDevTemplateBody.getId(), HttpMethod.GET, getJavaDevTemplate, SearchTemplateViewDto.class);
 
         assertThat(javaDevTemplateResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(javaDevTemplateResponse.getBody().getName(), is(equalTo("Senior java developer for SH")));
@@ -145,17 +141,17 @@ public class SearchTemplateCrudIntegrationTest extends AbstractIntegrationTest {
         FacetEditDto maxSalaryModified = new FacetEditDto(maxSalaryFacetId, TableName.TERM, "SALARY", "2500", OperatorType.LTE);
         HttpEntity<FacetEditDto> editMaxSalary = new HttpEntity<>(maxSalaryModified, headers);
 
-        final ResponseEntity<FacetViewDto> editSqlFacetResponse = restTemplate.exchange("/v1/companies/" + DEFAULT_COMPANY_USERNAME + "/search-templates/" + javaDevTemplateBody.getId() + "/facets", HttpMethod.PUT, editMaxSalary, FacetViewDto.class);
+        final ResponseEntity<FacetViewDto> editSqlFacetResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/search-templates/" + javaDevTemplateBody.getId() + "/facets", HttpMethod.PUT, editMaxSalary, FacetViewDto.class);
 
         assertThat(editSqlFacetResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
 
         Long minSalaryFacetId = javaDevTemplateBody.getFacets().stream().filter(facetViewDto -> facetViewDto.getCode().equals("SALARY") && facetViewDto.getValue().equals("1500")).findFirst().get().getId();
         HttpEntity<Void> removeMinSalary = new HttpEntity<>(headers);
-        final ResponseEntity<Void> removeMinSalaryResponse = restTemplate.exchange("/v1/companies/" + DEFAULT_COMPANY_USERNAME + "/search-templates/" + javaDevTemplateBody.getId() + "/facets/" + minSalaryFacetId, HttpMethod.DELETE, removeMinSalary, Void.class);
+        final ResponseEntity<Void> removeMinSalaryResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/search-templates/" + javaDevTemplateBody.getId() + "/facets/" + minSalaryFacetId, HttpMethod.DELETE, removeMinSalary, Void.class);
         assertThat(removeMinSalaryResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
 
 
-        javaDevTemplateResponse = restTemplate.exchange("/v1/companies/" + DEFAULT_COMPANY_USERNAME + "/search-templates/" + javaDevTemplateBody.getId(), HttpMethod.GET, getJavaDevTemplate, SearchTemplateViewDto.class);
+        javaDevTemplateResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/search-templates/" + javaDevTemplateBody.getId(), HttpMethod.GET, getJavaDevTemplate, SearchTemplateViewDto.class);
 
         assertThat(javaDevTemplateResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(javaDevTemplateResponse.getBody().getFacets().size(), is(equalTo(4)));

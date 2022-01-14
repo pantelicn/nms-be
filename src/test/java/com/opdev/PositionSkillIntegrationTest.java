@@ -1,7 +1,6 @@
 package com.opdev;
 
 import com.opdev.common.services.Profiles;
-import com.opdev.dto.LoginSuccessDto;
 import com.opdev.model.talent.SkillStatus;
 import com.opdev.position.dto.PositionCreateDto;
 import com.opdev.position.dto.PositionSkillsViewDto;
@@ -11,7 +10,11 @@ import com.opdev.skill.dto.SkillStatusDto;
 import com.opdev.skill.dto.SkillViewDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -28,9 +31,8 @@ public class PositionSkillIntegrationTest extends AbstractIntegrationTest {
     @Test
     @DirtiesContext
     public void testCrud() {
-        ResponseEntity<LoginSuccessDto> loginResponse = login(ADMIN_GORAN, ADMIN_GORAN_PASSWORD);
-        assertThat(loginResponse.getBody(), is(notNullValue()));
-        final String token = loginResponse.getBody().getToken();
+        createAdmin();
+        final String token = getTokenForAdmin();
         final HttpHeaders headers = createAuthHeaders(token);
 
         PositionViewDto createdPosition = addPosition(headers);

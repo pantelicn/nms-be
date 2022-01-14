@@ -4,7 +4,6 @@ import com.opdev.benefit.dto.BenefitAddDto;
 import com.opdev.benefit.dto.BenefitEditDto;
 import com.opdev.benefit.dto.BenefitViewDto;
 import com.opdev.common.services.Profiles;
-import com.opdev.dto.LoginSuccessDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -13,7 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.Rollback;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -25,19 +24,17 @@ import static org.hamcrest.Matchers.notNullValue;
 
 @ActiveProfiles(Profiles.TEST_PROFILE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Rollback
 class BenefitCrudIntegrationTest extends AbstractIntegrationTest {
 
     @Test
+    @DirtiesContext
     void addUpdateGetDeleteTest() {
-        ResponseEntity<LoginSuccessDto> loginResponse = login("gox69@opdev.rs", "rav4");
-        assertThat(loginResponse.getBody(), is(notNullValue()));
-        final String token = loginResponse.getBody().getToken();
-        registerCompany(createNewCompany(DEFAULT_COMPANY_USERNAME));
-        final BenefitAddDto newBenefitDto = new BenefitAddDto("Insurance", "Health insurance", false, DEFAULT_COMPANY_USERNAME);
+        final String token = getTokenForCompanyGoogle();
+        createCompany(COMPANY_GOOGLE);
+        final BenefitAddDto newBenefitDto = new BenefitAddDto("Insurance", "Health insurance", false, "google@gmail.com");
         final HttpHeaders headers = createAuthHeaders(token);
         final HttpEntity<BenefitAddDto> httpEntityPOST = new HttpEntity<>(newBenefitDto, headers);
-        final ResponseEntity<BenefitViewDto> addResponse = restTemplate.exchange("/v1/benefits", HttpMethod.POST,
+        final ResponseEntity<BenefitViewDto> addResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/benefits", HttpMethod.POST,
                 httpEntityPOST, BenefitViewDto.class);
 
         assertThat(addResponse.getStatusCode(), is(equalTo(HttpStatus.CREATED)));
@@ -48,7 +45,7 @@ class BenefitCrudIntegrationTest extends AbstractIntegrationTest {
         final Long benefitId = addResponse.getBody().getId();
 
         final HttpEntity<Void> httpEntityGET = new HttpEntity<>(headers);
-        final ResponseEntity<BenefitViewDto> getResponse = restTemplate.exchange("/v1/benefits/" + benefitId,
+        final ResponseEntity<BenefitViewDto> getResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/benefits/" + benefitId,
                 HttpMethod.GET, httpEntityGET, BenefitViewDto.class);
 
         assertThat(getResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
@@ -57,7 +54,7 @@ class BenefitCrudIntegrationTest extends AbstractIntegrationTest {
         assertThat(getResponse.getBody().getDescription(), is(equalTo(newBenefitDto.getDescription())));
         assertThat(getResponse.getBody().getIsDefault(), is(equalTo(newBenefitDto.getIsDefault())));
 
-        ResponseEntity<List<BenefitViewDto>> findAllResponse = restTemplate.exchange("/v1/benefits", HttpMethod.GET,
+        ResponseEntity<List<BenefitViewDto>> findAllResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/benefits", HttpMethod.GET,
                 httpEntityGET, ParameterizedTypeReference.forType(List.class));
         assertThat(findAllResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(findAllResponse.getBody(), is(notNullValue()));
@@ -65,7 +62,7 @@ class BenefitCrudIntegrationTest extends AbstractIntegrationTest {
 
         final BenefitEditDto modifiedBenefitDto = new BenefitEditDto(benefitId, "Health insurance", "Insurance", true);
         final HttpEntity<BenefitEditDto> httpEntityPUT = new HttpEntity<>(modifiedBenefitDto, headers);
-        final ResponseEntity<BenefitViewDto> updateResponse = restTemplate.exchange("/v1/benefits", HttpMethod.PUT,
+        final ResponseEntity<BenefitViewDto> updateResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/benefits", HttpMethod.PUT,
                 httpEntityPUT, BenefitViewDto.class);
 
         assertThat(updateResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
@@ -75,12 +72,12 @@ class BenefitCrudIntegrationTest extends AbstractIntegrationTest {
         assertThat(updateResponse.getBody().getIsDefault(), is(equalTo(modifiedBenefitDto.getIsDefault())));
 
         final HttpEntity<Void> httpEntityDELETE = new HttpEntity<>(headers);
-        final ResponseEntity<Void> deleteResponse = restTemplate.exchange("/v1/benefits/" + benefitId,
+        final ResponseEntity<Void> deleteResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/benefits/" + benefitId,
                 HttpMethod.DELETE, httpEntityDELETE, Void.class);
 
         assertThat(deleteResponse.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
 
-        findAllResponse = restTemplate.exchange("/v1/benefits", HttpMethod.GET,
+        findAllResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/benefits", HttpMethod.GET,
                 httpEntityGET, ParameterizedTypeReference.forType(List.class));
         assertThat(findAllResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(findAllResponse.getBody(), is(notNullValue()));
