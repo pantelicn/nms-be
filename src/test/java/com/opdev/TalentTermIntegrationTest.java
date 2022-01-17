@@ -1,8 +1,6 @@
 package com.opdev;
 
 import com.opdev.common.services.Profiles;
-import com.opdev.dto.LoginSuccessDto;
-import com.opdev.dto.TalentRegistrationDto;
 import com.opdev.model.term.TermType;
 import com.opdev.talent.dto.TalentTermAddDto;
 import com.opdev.talent.dto.TalentTermEditDto;
@@ -19,7 +17,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -31,21 +28,15 @@ import static org.hamcrest.Matchers.notNullValue;
 
 @ActiveProfiles(Profiles.TEST_PROFILE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Rollback
 class TalentTermIntegrationTest extends AbstractIntegrationTest {
-
-    private static final String TALENT_PANTELA = "pantela@gmail.com";
 
     @Test
     @DirtiesContext
     void testCrud() {
-        final HttpHeaders adminHeaders = getAdminHeaders();
-
-        final TalentRegistrationDto pantela = createNewTalent(TALENT_PANTELA);
-        registerTalent(pantela);
-        final ResponseEntity<LoginSuccessDto> loginResponse = login(pantela.getUsername(), pantela.getPassword());
-        assertThat(loginResponse.getBody(), is(notNullValue()));
-        final String token = loginResponse.getBody().getToken();
+        createAdmin();
+        final HttpHeaders adminHeaders = createAuthHeaders(getTokenForAdmin());
+        createTalent(TALENT_GORAN);
+        final String token = getTokenForTalentGoran();
         final HttpHeaders headers = createAuthHeaders(token);
 
         final TermViewDto insurance = addTerm(new TermAddDto("Insurance", "Insurance", TermType.BOOLEAN), adminHeaders);
@@ -60,7 +51,7 @@ class TalentTermIntegrationTest extends AbstractIntegrationTest {
         final TalentTermViewDto insuranceTalentTerm = pantelaTerms.get(0);
         final TalentTermViewDto remoteTalentTerm = pantelaTerms.get(1);
 
-        List<TalentTermViewDto> foundTalentTerms = getTalentTerms(TALENT_PANTELA, headers);
+        List<TalentTermViewDto> foundTalentTerms = getTalentTerms(TALENT_GORAN, headers);
         assertThat(foundTalentTerms.containsAll(pantelaTerms), is(equalTo(true)));
 
         updateTalentTerm(new TalentTermEditDto(insuranceTalentTerm.getId(), "false", false), headers);
@@ -77,7 +68,7 @@ class TalentTermIntegrationTest extends AbstractIntegrationTest {
     private List<TalentTermViewDto> getTalentTermsAsAdmin(HttpHeaders headers) {
         final HttpEntity<Void> httpEntityGET = new HttpEntity<>(headers);
         ResponseEntity<List<TalentTermViewDto>> getTalentTermsResponse = restTemplate
-                .exchange("/v1/admin/talents/" + TALENT_PANTELA + "/terms", HttpMethod.GET,
+                .exchange("/v1/admin/talents/" + TALENT_GORAN + "/terms", HttpMethod.GET,
                         httpEntityGET, new ParameterizedTypeReference<>() {});
 
         assertThat(getTalentTermsResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
@@ -91,7 +82,7 @@ class TalentTermIntegrationTest extends AbstractIntegrationTest {
     private TalentTermViewDto getTalentTermAsAdmin(Long id, HttpHeaders headers) {
         final HttpEntity<Void> httpEntityGET = new HttpEntity<>(headers);
         final ResponseEntity<TalentTermViewDto> getTalentTermResponse = restTemplate
-                .exchange("/v1/admin/talents/" + TALENT_PANTELA + "/terms/" + id, HttpMethod.GET,
+                .exchange("/v1/admin/talents/" + TALENT_GORAN + "/terms/" + id, HttpMethod.GET,
                         httpEntityGET, TalentTermViewDto.class);
 
         assertThat(getTalentTermResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
@@ -99,17 +90,17 @@ class TalentTermIntegrationTest extends AbstractIntegrationTest {
     }
 
     private List<TalentTermViewDto> deleteTalentTerm(TalentTermViewDto talentTerm, HttpHeaders headers) {
-        List<TalentTermViewDto> foundTalentTerms = getTalentTerms(TALENT_PANTELA, headers);
+        List<TalentTermViewDto> foundTalentTerms = getTalentTerms(TALENT_GORAN, headers);
         assertThat(foundTalentTerms.contains(talentTerm), is(equalTo(true)));
 
         final HttpEntity<Void> httpEntityDELETE = new HttpEntity<>(headers);
         ResponseEntity<Void> deleteTalentTermsResponse = restTemplate
-                .exchange("/v1/talents/" + TALENT_PANTELA + "/terms/" + talentTerm.getId(), HttpMethod.DELETE,
+                .exchange("/v1/talents/" + TALENT_GORAN + "/terms/" + talentTerm.getId(), HttpMethod.DELETE,
                         httpEntityDELETE, Void.class);
 
         assertThat(deleteTalentTermsResponse.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
 
-        foundTalentTerms = getTalentTerms(TALENT_PANTELA, headers);
+        foundTalentTerms = getTalentTerms(TALENT_GORAN, headers);
         assertThat(foundTalentTerms.contains(talentTerm), is(equalTo(false)));
 
         return foundTalentTerms;
@@ -118,7 +109,7 @@ class TalentTermIntegrationTest extends AbstractIntegrationTest {
     private void updateTalentTerm(TalentTermEditDto modifiedTalentTerm, HttpHeaders headers) {
         final HttpEntity<TalentTermEditDto> httpEntityPUT = new HttpEntity<>(modifiedTalentTerm, headers);
         final ResponseEntity<TalentTermViewDto> updateTalentTermResponse = restTemplate
-                .exchange("/v1/talents/" + TALENT_PANTELA + "/terms",
+                .exchange("/v1/talents/" + TALENT_GORAN + "/terms",
                         HttpMethod.PUT,
                         httpEntityPUT,
                         TalentTermViewDto.class);
@@ -134,7 +125,7 @@ class TalentTermIntegrationTest extends AbstractIntegrationTest {
     private List<TalentTermViewDto> addTalentTerms(List<TalentTermAddDto> newTalentTerms, HttpHeaders headers) {
         final HttpEntity<List<TalentTermAddDto>> httpEntityPOST = new HttpEntity<>(newTalentTerms, headers);
         final ResponseEntity<List<TalentTermViewDto>> addTalentTermResponse = restTemplate
-                .exchange("/v1/talents/" + TALENT_PANTELA + "/terms",
+                .exchange("/v1/talents/" + TALENT_GORAN + "/terms",
                         HttpMethod.POST,
                         httpEntityPOST,
                         new ParameterizedTypeReference<>() {});

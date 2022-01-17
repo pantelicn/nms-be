@@ -1,8 +1,6 @@
 package com.opdev;
 
 import com.opdev.common.services.Profiles;
-import com.opdev.dto.LoginSuccessDto;
-import com.opdev.dto.TalentRegistrationDto;
 import com.opdev.model.talent.SkillStatus;
 import com.opdev.position.dto.PositionCreateDto;
 import com.opdev.position.dto.PositionSkillsViewDto;
@@ -19,7 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.Rollback;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
@@ -33,31 +31,30 @@ import static org.hamcrest.Matchers.notNullValue;
 
 @ActiveProfiles(Profiles.TEST_PROFILE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Rollback
 class TalentPositionIntegrationTest extends AbstractIntegrationTest {
 
     @Test
+    @DirtiesContext
     void addGetTest() {
-        ResponseEntity<LoginSuccessDto> loginResponse = login("gox69@opdev.rs", "rav4");
-        assertThat(loginResponse.getBody(), is(notNullValue()));
-        final String token = loginResponse.getBody().getToken();
-        final HttpHeaders headers = createAuthHeaders(token);
+        createAdmin();
+        final String adminToken = getTokenForAdmin();
+        final HttpHeaders adminHeaders = createAuthHeaders(adminToken);
 
-        final String talentGogara = "gogara@gmail.com";
-        final TalentRegistrationDto gogara = createNewTalent(talentGogara);
-        registerTalent(gogara);
+        createTalent(TALENT_GORAN);
+        final String goranToken = getTokenForTalentGoran();
+        final HttpHeaders goranHeaders = createAuthHeaders(goranToken);
 
-        PositionViewDto frontendPosition = addPosition(headers);
+        PositionViewDto frontendPosition = addPosition(adminHeaders);
 
-        SkillViewDto htmlSkill = addSkill(headers);
+        SkillViewDto htmlSkill = addSkill(goranHeaders);
 
-        approveSkill(headers, htmlSkill.getCode());
+        approveSkill(adminHeaders, htmlSkill.getCode());
 
-        addPositionSkills(headers, frontendPosition.getCode(), htmlSkill.getCode());
+        addPositionSkills(adminHeaders, frontendPosition.getCode(), htmlSkill.getCode());
 
-        addSkillToTalent(List.of(htmlSkill.getCode()), talentGogara, headers);
+        addSkillToTalent(List.of(htmlSkill.getCode()), TALENT_GORAN, goranHeaders);
 
-        List<PositionViewDto> gogaraPositions = getTalentPositions(headers, talentGogara);
+        List<PositionViewDto> gogaraPositions = getTalentPositions(adminHeaders, TALENT_GORAN);
 
         assertThat(gogaraPositions, hasSize(1));
     }

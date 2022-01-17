@@ -1,12 +1,29 @@
 package com.opdev;
 
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
+import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
+import com.amazonaws.services.cognitoidp.model.AdminInitiateAuthRequest;
+import com.amazonaws.services.cognitoidp.model.AdminInitiateAuthResult;
+import com.amazonaws.services.cognitoidp.model.AuthFlowType;
 import com.opdev.company.dto.CompanyRegistrationDto;
-import com.opdev.dto.LoginSuccessDto;
 import com.opdev.dto.TalentRegistrationDto;
+import com.opdev.model.company.Company;
 import com.opdev.model.location.CompanyLocation;
+import com.opdev.model.talent.Talent;
+import com.opdev.model.user.User;
+import com.opdev.model.user.UserType;
+import com.opdev.repository.CompanyRepository;
+import com.opdev.repository.TalentRepository;
+import com.opdev.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -15,70 +32,129 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 public abstract class AbstractIntegrationTest {
 
     protected static final String API_PREFIX = "/v1";
     protected static final String COMPANIES_API = "/companies/";
     protected static final String TALENTS_API = "/talents/";
-    protected static final String VERIFICATION_API = "/userverification/";
-
-    protected static final String ADMIN_NIKOLA = "znikola@xxx.xxx";
-    protected static final String ADMIN_NIKOLA_PASSWORD = "corolla";
-    protected static final String ADMIN_GORAN = "gox69@opdev.rs";
-    protected static final String ADMIN_GORAN_PASSWORD = "rav4";
 
     protected static final String DEFAULT_TALENT_FIRST_NAME = "Java";
     protected static final String DEFAULT_TALENT_LAST_NAME = "Dev";
-    protected static final String DEFAULT_TALENT_USERNAME = "xxx@java.com";
     protected static final String DEFAULT_TALENT_PASSWORD = "java4life";
 
     protected static final String DEFAULT_COMPANY_NAME = "opdev";
     protected static final String DEFAULT_COMPANY_DESCRIPTION = "the best.";
-    protected static final String DEFAULT_COMPANY_USERNAME = "gox@opdev.rs";
     protected static final String DEFAULT_COMPANY_PASSWORD = "rav4life";
     protected static final String DEFAULT_COMPANY_ADDRESS_1 = "Olge Petrov, no parking though";
-    protected static final String DEFAULT_COMPANY_ADDRESS_2 = "Apt. 69.";
-    protected static final String DEFAULT_COMPANY_UPDATED_ADDRESS_1 = "Olge Petrov, no parking though. Sometimes, if you're lucky.";
+    protected static final String USER_POOL_CLIENT_ID = "3ci4jkku7sii8nb7ka12v5khpa";
+    protected static final String USER_POOL_CLIENT_SECRET = "1gveddn2e7ch52uskkjbf8buci9p9ihjn5cg7up6t27o57dvha7";
+    protected static final String USER_POOL_ID = "eu-central-1_46Qqd7W2Z";
+    protected static final String AWS_ACCESS_KEY = "AKIAUMWR7AX6DECK2CEC";
+    protected static final String AWS_SECRET_KEY = "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";
+    protected static final String COMPANY_GOOGLE = "google@gmail.com";
+    protected static final String COMPANY_FACEBOOK = "facebook@facebook.com";
+    protected static final String TALENT_GORAN = "goransasic@gmail.com";
+    protected static final String TALENT_NIKOLA = "nikola@gmail.com";
+    protected static final String ADMIN = "admin@gmail.com";
+    private final AWSCognitoIdentityProvider awsCognitoIDPClient  = AWSCognitoIdentityProviderClientBuilder.standard().withRegion(Regions.EU_CENTRAL_1)
+            .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(AWS_ACCESS_KEY, AWS_SECRET_KEY)))
+            .build();
 
     @LocalServerPort
     protected int port;
 
     @Autowired
     protected TestRestTemplate restTemplate;
-
-    protected String generateNewEmail() {
-        final String username = Long.toString(System.nanoTime());
-        return username + "@xxx.xxx";
-    }
+    @Autowired
+    private CompanyRepository companyRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private TalentRepository talentRepository;
 
     protected TalentRegistrationDto createNewTalent(final String username) {
-        final String talentUsername = StringUtils.hasText(username) ? username : generateNewEmail();
-
         return TalentRegistrationDto.builder().firstName(DEFAULT_TALENT_FIRST_NAME).lastName(DEFAULT_TALENT_LAST_NAME)
-                .username(talentUsername).password(DEFAULT_TALENT_PASSWORD).passwordConfirmed(DEFAULT_TALENT_PASSWORD)
+                .username(username).password(DEFAULT_TALENT_PASSWORD).passwordConfirmed(DEFAULT_TALENT_PASSWORD)
                 .build();
     }
 
-    protected CompanyRegistrationDto createNewCompany(final String username) {
-        final String companyUsername = StringUtils.hasText(username) ? username : generateNewEmail();
+    protected User createAdmin() {
+        return userRepository.save(User.builder()
+                                           .enabled(true)
+                                           .type(UserType.ADMIN)
+                                           .password("some password")
+                                           .username(ADMIN)
+                                           .build());
+    }
+
+    protected Talent createTalent(final String username) {
+        User user = userRepository.save(User.builder()
+                                                .enabled(true)
+                                                .type(UserType.TALENT)
+                                                .password("some password")
+                                                .username(username)
+                                                .build());
+        Talent talent = Talent.builder()
+                .firstName("goran")
+                .lastName("sasic")
+                .user(user)
+                .available(true)
+                .availabilityChangeDate(Instant.now())
+                .build();
+
+        return talentRepository.save(talent);
+    }
+
+    protected Company createCompany(final String username) {
+        User user = userRepository.save(User.builder()
+                .enabled(true)
+                .type(UserType.COMPANY)
+                .password("some password")
+                .username(username)
+                .build());
         CompanyLocation location = CompanyLocation.builder()
                 .city("Novi Sad")
                 .country("Serbia")
                 .countryCode("RS")
                 .build();
 
+        Company company = Company.builder()
+                .address1("San Francisco")
+                .description("google company")
+                .name("Google")
+                .location(location)
+                .user(user)
+                .build();
+        return companyRepository.save(company);
+    }
+
+    protected CompanyRegistrationDto createNewCompany(final String username) {
+        User user = User.builder()
+                .enabled(true)
+                .type(UserType.COMPANY)
+                .password("some password")
+                .username(username)
+                .build();
+        CompanyLocation location = CompanyLocation.builder()
+                .city("Novi Sad")
+                .country("Serbia")
+                .countryCode("RS")
+                .build();
+
+        Company.builder()
+                .address1("San Francisco")
+                .description("google company")
+                .name("Google")
+                .location(location)
+                .user(user)
+                .build();
+
         return CompanyRegistrationDto.builder().name(DEFAULT_COMPANY_NAME).description(DEFAULT_COMPANY_DESCRIPTION)
-                .address1(DEFAULT_COMPANY_ADDRESS_1).username(companyUsername).password(DEFAULT_COMPANY_PASSWORD)
+                .address1(DEFAULT_COMPANY_ADDRESS_1).username(username).password(DEFAULT_COMPANY_PASSWORD)
                 .passwordConfirmed(DEFAULT_COMPANY_PASSWORD).location(location).build();
     }
 
@@ -89,21 +165,6 @@ public abstract class AbstractIntegrationTest {
         return headers;
     }
 
-    protected ResponseEntity<Void> registerTalent(final TalentRegistrationDto dto) {
-        return restTemplate.postForEntity(API_PREFIX + TALENTS_API, dto, Void.class);
-    }
-
-    protected ResponseEntity<LoginSuccessDto> login(final String username, final String password) {
-        final LoginDto loginDto = LoginDto.builder().username(username).password(password).build();
-        return restTemplate.postForEntity("/login", loginDto, LoginSuccessDto.class);
-    }
-
-    protected String talentRegisterAndLogin(final TalentRegistrationDto dto) {
-        registerTalent(dto);
-      final  ResponseEntity<LoginSuccessDto> loginResponse = login(dto.getUsername(), dto.getPassword());
-      return loginResponse.getBody().getToken();
-    }
-
     protected ResponseEntity<Void> disableTalent(final String token, final String username) {
         return disable(token, username, TALENTS_API);
     }
@@ -112,23 +173,12 @@ public abstract class AbstractIntegrationTest {
         return delete(token, username, TALENTS_API);
     }
 
-    protected ResponseEntity<Void> registerCompany(final CompanyRegistrationDto dto) {
-        return restTemplate.postForEntity(API_PREFIX + COMPANIES_API, dto, Void.class);
-    }
-
     protected ResponseEntity<Void> disableCompany(final String token, final String username) {
         return disable(token, username, COMPANIES_API);
     }
 
     protected ResponseEntity<Void> deleteCompany(final String token, final String username) {
         return delete(token, username, COMPANIES_API);
-    }
-
-    protected HttpHeaders getAdminHeaders() {
-        ResponseEntity<LoginSuccessDto> loginResponse = login("gox69@opdev.rs", "rav4");
-        assertThat(loginResponse.getBody(), is(notNullValue()));
-        final String token = loginResponse.getBody().getToken();
-        return createAuthHeaders(token);
     }
 
     private ResponseEntity<Void> delete(final String token, final String username, final String api) {
@@ -150,12 +200,77 @@ public abstract class AbstractIntegrationTest {
         return restTemplate.exchange(endpoint, HttpMethod.DELETE, httpEntity, Void.class, urlParams);
     }
 
-    @Builder
-    @RequiredArgsConstructor
-    @Getter
-    protected static class LoginDto {
-        private final String username;
-        private final String password;
+    protected String getTokenForAdmin() {
+        String username = "admin@gmail.com";
+        String password = "Admin12345!";
+        Map<String,String> params = getCognitoAuthParams(username, password);
+        return getTokenFromCognito(params);
+    }
+
+    protected String getTokenForTalentNikola() {
+        String username = "nikola@gmail.com";
+        String password = "Nikola12345!";
+        Map<String,String> params = getCognitoAuthParams(username, password);
+        return getTokenFromCognito(params);
+    }
+
+    protected String getTokenForTalentGoran() {
+        String username = "goransasic@gmail.com";
+        String password = "G0r@n123@1990";
+        Map<String,String> params = getCognitoAuthParams(username, password);
+        return getTokenFromCognito(params);
+    }
+
+    protected String getTokenForCompanyGoogle() {
+        String username = "google@gmail.com";
+        String password = "Google12345!";
+        Map<String,String> params = getCognitoAuthParams(username, password);
+        return getTokenFromCognito(params);
+    }
+
+    protected String getTokenForCompanyFacebook() {
+        String username = "facebook@facebook.com";
+        String password = "Facebook12345!";
+        Map<String,String> params = getCognitoAuthParams(username, password);
+        return getTokenFromCognito(params);
+    }
+
+    private String getTokenFromCognito(Map<String,String> params) {
+        AdminInitiateAuthRequest initialRequest = new AdminInitiateAuthRequest()
+                .withAuthFlow(AuthFlowType.ADMIN_USER_PASSWORD_AUTH)
+                .withAuthParameters(params)
+                .withClientId(USER_POOL_CLIENT_ID)
+                .withUserPoolId(USER_POOL_ID);
+
+        AdminInitiateAuthResult initialResponse = awsCognitoIDPClient.adminInitiateAuth(initialRequest);
+        return initialResponse.getAuthenticationResult().getIdToken();
+    }
+
+    private Map<String,String> getCognitoAuthParams(String username, String password) {
+        Map<String,String>
+                params =new HashMap<String,String>
+                ();
+        params.put("USERNAME", username);
+        params.put("PASSWORD", password);
+        params.put("SECRET_HASH", calculateSecretHash(USER_POOL_CLIENT_ID, USER_POOL_CLIENT_SECRET, username));
+        return params;
+    }
+
+    private String calculateSecretHash(String userPoolClientId, String userPoolClientSecret, String userName) {
+        final String HMAC_SHA256_ALGORITHM = "HmacSHA256";
+
+        SecretKeySpec signingKey = new SecretKeySpec(
+                userPoolClientSecret.getBytes(StandardCharsets.UTF_8),
+                HMAC_SHA256_ALGORITHM);
+        try {
+            Mac mac = Mac.getInstance(HMAC_SHA256_ALGORITHM);
+            mac.init(signingKey);
+            mac.update(userName.getBytes(StandardCharsets.UTF_8));
+            byte[] rawHmac = mac.doFinal(userPoolClientId.getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(rawHmac);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while calculating ");
+        }
     }
 
 }

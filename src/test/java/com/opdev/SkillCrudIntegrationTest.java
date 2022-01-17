@@ -1,7 +1,6 @@
 package com.opdev;
 
 import com.opdev.common.services.Profiles;
-import com.opdev.dto.LoginSuccessDto;
 import com.opdev.model.talent.SkillStatus;
 import com.opdev.skill.dto.SkillAddDto;
 import com.opdev.skill.dto.SkillEditDto;
@@ -10,8 +9,12 @@ import com.opdev.skill.dto.SkillViewDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
-import org.springframework.test.annotation.Rollback;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -22,14 +25,13 @@ import static org.hamcrest.Matchers.equalTo;
 
 @ActiveProfiles(Profiles.TEST_PROFILE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Rollback
 public class SkillCrudIntegrationTest extends AbstractIntegrationTest {
 
     @Test
+    @DirtiesContext
     public void crudTest() {
-        ResponseEntity<LoginSuccessDto> loginResponse = login(ADMIN_GORAN, ADMIN_GORAN_PASSWORD);
-        assertThat(loginResponse.getBody(), is(notNullValue()));
-        final String token = loginResponse.getBody().getToken();
+        createAdmin();
+        final String token = getTokenForAdmin();
         final SkillAddDto newSkillDto = new SkillAddDto("Java", "JAVA");
         final HttpHeaders headers = createAuthHeaders(token);
         final HttpEntity<SkillAddDto> httpEntityPOST = new HttpEntity<>(newSkillDto, headers);

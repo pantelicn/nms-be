@@ -1,14 +1,12 @@
 package com.opdev;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 import java.util.List;
 
-import com.opdev.company.dto.CompanyRegistrationDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -17,126 +15,99 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.Rollback;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.opdev.common.services.Profiles;
 import com.opdev.company.message.dto.MessageSendDto;
 import com.opdev.company.message.dto.MessageViewDto;
-import com.opdev.dto.LoginSuccessDto;
-import com.opdev.dto.TalentRegistrationDto;
 
 @ActiveProfiles(Profiles.TEST_PROFILE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Rollback
 public class ChatCrudIntegrationTest extends AbstractIntegrationTest {
 
     @Test
+    @DirtiesContext
     public void messageCrud() {
-        final CompanyRegistrationDto googleCompany = createNewCompany(DEFAULT_COMPANY_USERNAME);
-        ResponseEntity<Void> registerResponse = registerCompany(googleCompany);
-        assertThat(registerResponse.getStatusCode(), is(equalTo(HttpStatus.CREATED)));
-        assertThat(registerResponse.getHeaders().getLocation().getRawPath(), containsString("login"));
+        createCompany(COMPANY_GOOGLE);
+        String googleToken = getTokenForCompanyGoogle();
+        HttpHeaders headers = createAuthHeaders(googleToken);
 
-        ResponseEntity<LoginSuccessDto> loginResponse = login(googleCompany.getUsername(), googleCompany.getPassword());
-        String token = loginResponse.getBody().getToken();
-        HttpHeaders headers = createAuthHeaders(token);
+        createTalent(TALENT_GORAN);
 
-        TalentRegistrationDto goranTalent = createNewTalent("goran@gmail.com");
-        registerTalent(goranTalent);
+        MessageViewDto sentMessage = companySendMessage(COMPANY_GOOGLE, "job offer", TALENT_GORAN, headers);
 
-        MessageViewDto sentMessage = companySendMessage(googleCompany.getUsername(), "job offer", goranTalent.getUsername(), headers);
+        String goranToken = getTokenForTalentGoran();
+        headers = createAuthHeaders(goranToken);
 
-        loginResponse = login(goranTalent.getUsername(), goranTalent.getPassword());
-        token = loginResponse.getBody().getToken();
-        headers = createAuthHeaders(token);
+        List<com.opdev.talent.message.dto.MessageViewDto> talentChats = talentGetAllChats(TALENT_GORAN, headers, 1);
 
-        List<com.opdev.talent.message.dto.MessageViewDto> talentChats = talentGetAllChats(goranTalent.getUsername(), headers, 1);
+        talentGetChatContent(TALENT_GORAN, talentChats.get(0).getId(), headers, 1);
 
-        talentGetChatContent(goranTalent.getUsername(), talentChats.get(0).getId(), headers, 1);
+        talentSendMessage(TALENT_GORAN, "not interested", COMPANY_GOOGLE, headers);
 
-        talentSendMessage(goranTalent.getUsername(), "not interested", googleCompany.getUsername(), headers);
+        headers = createAuthHeaders(googleToken);
 
-        loginResponse = login(googleCompany.getUsername(), googleCompany.getPassword());
-        token = loginResponse.getBody().getToken();
-        headers = createAuthHeaders(token);
+        List<MessageViewDto> companyChats = companyGetAllChats(COMPANY_GOOGLE, headers, 1);
 
-        List<MessageViewDto> companyChats = companyGetAllChats(googleCompany.getUsername(), headers, 1);
-
-        companyGetChatContent(googleCompany.getUsername(), companyChats.get(0).getId(), headers, 2);
+        companyGetChatContent(COMPANY_GOOGLE, companyChats.get(0).getId(), headers, 2);
 
 
-        TalentRegistrationDto nikolaTalent = createNewTalent("nikola@gmail.com");
-        registerTalent(nikolaTalent);
+        createTalent(TALENT_NIKOLA);
 
-        sentMessage = companySendMessage(googleCompany.getUsername(), "job offer", nikolaTalent.getUsername(), headers);
+        sentMessage = companySendMessage(COMPANY_GOOGLE, "job offer", TALENT_NIKOLA, headers);
 
-        loginResponse = login(nikolaTalent.getUsername(), nikolaTalent.getPassword());
-        token = loginResponse.getBody().getToken();
-        headers = createAuthHeaders(token);
+        String nikolaToken = getTokenForTalentNikola();
+        headers = createAuthHeaders(nikolaToken);
 
-        talentChats = talentGetAllChats(nikolaTalent.getUsername(), headers, 1);
+        talentChats = talentGetAllChats(TALENT_NIKOLA, headers, 1);
 
-        talentGetChatContent(nikolaTalent.getUsername(), talentChats.get(0).getId(), headers, 1);
+        talentGetChatContent(TALENT_NIKOLA, talentChats.get(0).getId(), headers, 1);
 
-        talentSendMessage(nikolaTalent.getUsername(), "not interested", googleCompany.getUsername(), headers);
+        talentSendMessage(TALENT_NIKOLA, "not interested", COMPANY_GOOGLE, headers);
 
-        loginResponse = login(googleCompany.getUsername(), googleCompany.getPassword());
-        token = loginResponse.getBody().getToken();
-        headers = createAuthHeaders(token);
+        headers = createAuthHeaders(googleToken);
 
-        companyChats = companyGetAllChats(googleCompany.getUsername(), headers, 2);
+        companyChats = companyGetAllChats(COMPANY_GOOGLE, headers, 2);
 
-        companyGetChatContent(googleCompany.getUsername(), companyChats.get(1).getId(), headers, 2);
+        companyGetChatContent(COMPANY_GOOGLE, companyChats.get(1).getId(), headers, 2);
 
-        final CompanyRegistrationDto facebookCompany = createNewCompany("facebook@facebook.com");
-        registerResponse = registerCompany(facebookCompany);
-        assertThat(registerResponse.getStatusCode(), is(equalTo(HttpStatus.CREATED)));
-        assertThat(registerResponse.getHeaders().getLocation().getRawPath(), containsString("login"));
+        createCompany(COMPANY_FACEBOOK);
 
-        loginResponse = login(facebookCompany.getUsername(), facebookCompany.getPassword());
-        token = loginResponse.getBody().getToken();
-        headers = createAuthHeaders(token);
+        String facebookToken = getTokenForCompanyFacebook();
+        headers = createAuthHeaders(facebookToken);
 
-        sentMessage = companySendMessage(facebookCompany.getUsername(), "job offer", goranTalent.getUsername(), headers);
+        sentMessage = companySendMessage(COMPANY_FACEBOOK, "job offer", TALENT_GORAN, headers);
 
-        loginResponse = login(goranTalent.getUsername(), goranTalent.getPassword());
-        token = loginResponse.getBody().getToken();
-        headers = createAuthHeaders(token);
+        headers = createAuthHeaders(goranToken);
 
-        talentChats = talentGetAllChats(goranTalent.getUsername(), headers, 2);
+        talentChats = talentGetAllChats(TALENT_GORAN, headers, 2);
 
-        talentGetChatContent(goranTalent.getUsername(), talentChats.get(0).getId(), headers, 1);
+        talentGetChatContent(TALENT_GORAN, talentChats.get(0).getId(), headers, 1);
 
-        talentSendMessage(goranTalent.getUsername(), "not interested", facebookCompany.getUsername(), headers);
+        talentSendMessage(TALENT_GORAN, "not interested", COMPANY_FACEBOOK, headers);
 
-        loginResponse = login(facebookCompany.getUsername(), facebookCompany.getPassword());
-        token = loginResponse.getBody().getToken();
-        headers = createAuthHeaders(token);
+        headers = createAuthHeaders(facebookToken);
 
-        companyChats = companyGetAllChats(facebookCompany.getUsername(), headers, 1);
+        companyChats = companyGetAllChats(COMPANY_FACEBOOK, headers, 1);
 
-        companyGetChatContent(facebookCompany.getUsername(), companyChats.get(0).getId(), headers, 2);
+        companyGetChatContent(COMPANY_FACEBOOK, companyChats.get(0).getId(), headers, 2);
 
-        sentMessage = companySendMessage(facebookCompany.getUsername(), "job offer", nikolaTalent.getUsername(), headers);
+        sentMessage = companySendMessage(COMPANY_FACEBOOK, "job offer", TALENT_NIKOLA, headers);
 
-        loginResponse = login(nikolaTalent.getUsername(), nikolaTalent.getPassword());
-        token = loginResponse.getBody().getToken();
-        headers = createAuthHeaders(token);
+        headers = createAuthHeaders(nikolaToken);
 
-        talentChats = talentGetAllChats(nikolaTalent.getUsername(), headers, 2);
+        talentChats = talentGetAllChats(TALENT_NIKOLA, headers, 2);
 
-        talentGetChatContent(nikolaTalent.getUsername(), talentChats.get(0).getId(), headers, 1);
+        talentGetChatContent(TALENT_NIKOLA, talentChats.get(0).getId(), headers, 1);
 
-        talentSendMessage(nikolaTalent.getUsername(), "not interested", facebookCompany.getUsername(), headers);
+        talentSendMessage(TALENT_NIKOLA, "not interested", COMPANY_FACEBOOK, headers);
 
-        loginResponse = login(facebookCompany.getUsername(), facebookCompany.getPassword());
-        token = loginResponse.getBody().getToken();
-        headers = createAuthHeaders(token);
+        headers = createAuthHeaders(facebookToken);
 
-        companyChats = companyGetAllChats(facebookCompany.getUsername(), headers, 2);
+        companyChats = companyGetAllChats(COMPANY_FACEBOOK, headers, 2);
 
-        companyGetChatContent(facebookCompany.getUsername(), companyChats.get(1).getId(), headers, 2);
+        companyGetChatContent(COMPANY_FACEBOOK, companyChats.get(1).getId(), headers, 2);
     }
 
     private MessageViewDto companySendMessage(String companyUsername, String messageContent, String talentUsername, HttpHeaders headers) {
