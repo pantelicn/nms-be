@@ -5,7 +5,7 @@ import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.talent.Talent;
 import com.opdev.model.user.User;
 import com.opdev.repository.TalentRepository;
-import com.opdev.repository.UserRoleRepository;
+
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,6 @@ class TalentServiceImpl implements TalentService {
 
     private final UserService userService;
     private final TalentRepository talentRepository;
-    private final UserRoleRepository userRoleRepository;
 
     @Transactional
     @Override
@@ -29,7 +28,6 @@ class TalentServiceImpl implements TalentService {
         validateTalent(talent);
 
         userService.save(talent.getUser());
-        talent.getUser().getUserRoles().forEach(userRoleRepository::save);
         return talentRepository.save(talent);
     }
 

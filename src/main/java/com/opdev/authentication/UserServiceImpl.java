@@ -15,7 +15,6 @@ import com.opdev.exception.ApiUserNotLoggedException;
 import com.opdev.model.user.User;
 import com.opdev.model.user.UserType;
 import com.opdev.repository.UserRepository;
-import com.opdev.repository.UserRoleRepository;
 import com.opdev.repository.VerificationTokenRepository;
 
 import lombok.NonNull;
@@ -29,7 +28,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,7 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
-    private final UserRoleRepository userRoleRepository;
     private final VerificationTokenRepository verificationTokenRepository;
     private final ProfileService profileService;
 
@@ -61,8 +58,6 @@ class UserServiceImpl implements UserService, UserDetailsService {
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
         final Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         final User user = findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
-        user.getUserRoles()
-                .forEach(userRole -> authorities.add(new SimpleGrantedAuthority(userRole.getRole().getName())));
 
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
                 user.getEnabled(), true, true, true, authorities);
@@ -100,7 +95,6 @@ class UserServiceImpl implements UserService, UserDetailsService {
         final User user = findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
 
         verificationTokenRepository.findByUser(user).forEach(verificationTokenRepository::delete);
-        user.getUserRoles().forEach(userRoleRepository::delete);
         userRepository.delete(user);
     }
 

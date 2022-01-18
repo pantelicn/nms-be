@@ -66,10 +66,6 @@ public class User extends Audit {
     @Builder.Default
     private List<Setting> settings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
-    @Builder.Default
-    private List<UserRole> userRoles = new ArrayList<>();
-
     @ElementCollection
     @Builder.Default
     private List<Long> likedPosts = new ArrayList<>();

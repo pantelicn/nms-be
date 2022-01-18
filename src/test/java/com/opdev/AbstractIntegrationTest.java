@@ -136,7 +136,7 @@ public abstract class AbstractIntegrationTest {
         User user = User.builder()
                 .enabled(true)
                 .type(UserType.COMPANY)
-                .password("some password")
+                .password("Company123!")
                 .username(username)
                 .build();
         CompanyLocation location = CompanyLocation.builder()
@@ -153,9 +153,9 @@ public abstract class AbstractIntegrationTest {
                 .user(user)
                 .build();
 
-        return CompanyRegistrationDto.builder().name(DEFAULT_COMPANY_NAME).description(DEFAULT_COMPANY_DESCRIPTION)
-                .address1(DEFAULT_COMPANY_ADDRESS_1).username(username).password(DEFAULT_COMPANY_PASSWORD)
-                .passwordConfirmed(DEFAULT_COMPANY_PASSWORD).location(location).build();
+        return CompanyRegistrationDto.builder().name(username).description(DEFAULT_COMPANY_DESCRIPTION)
+                .address1(DEFAULT_COMPANY_ADDRESS_1).username(username).password("Company123!")
+                .passwordConfirmed("Company123!").location(location).build();
     }
 
     protected HttpHeaders createAuthHeaders(final String token) {

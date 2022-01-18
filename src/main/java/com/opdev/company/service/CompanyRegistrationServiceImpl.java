@@ -3,12 +3,12 @@ package com.opdev.company.service;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.opdev.aws.cognito.CognitoService;
 import com.opdev.exception.ApiEmailExistsException;
 import com.opdev.model.company.Company;
 import com.opdev.model.user.User;
 import com.opdev.repository.CompanyRepository;
 import com.opdev.repository.UserRepository;
-import com.opdev.repository.UserRoleRepository;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +23,7 @@ class CompanyRegistrationServiceImpl implements CompanyRegistrationService {
 
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
-    private final UserRoleRepository userRoleRepository;
+    private final CognitoService cognitoService;
 
     @Transactional
     @Override
@@ -31,8 +31,9 @@ class CompanyRegistrationServiceImpl implements CompanyRegistrationService {
         validateCompany(company);
 
         userRepository.save(company.getUser());
-        company.getUser().getUserRoles().forEach(userRoleRepository::save);
-        return companyRepository.save(company);
+        Company created =  companyRepository.save(company);
+        cognitoService.createCompany(company.getUser().getUsername(), company.getUser().getPassword());
+        return created;
     }
 
     private void validateCompany(final Company company) throws ApiEmailExistsException {
@@ -46,4 +47,5 @@ class CompanyRegistrationServiceImpl implements CompanyRegistrationService {
                     .id(company.getUser().getUsername()).build();
         }
     }
+
 }

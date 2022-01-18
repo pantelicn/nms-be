@@ -1,7 +1,5 @@
 package com.opdev.authentication;
 
-import java.util.Optional;
-
 import javax.validation.Valid;
 
 import com.opdev.authentication.dto.TalentBasicInfoUpdateDto;
@@ -9,9 +7,7 @@ import com.opdev.authentication.dto.TalentViewDto;
 import com.opdev.common.events.UserRegisteredEvent;
 import com.opdev.config.security.Roles;
 import com.opdev.dto.TalentRegistrationDto;
-import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.talent.Talent;
-import com.opdev.model.user.Role;
 import com.opdev.model.user.User;
 
 import org.springframework.context.ApplicationEventPublisher;
@@ -39,7 +35,6 @@ class TalentController {
 
   private final ApplicationEventPublisher eventPublisher;
   private final TalentService talentService;
-  private final RoleService roleService;
   private final PasswordEncoder passwordEncoder;
   private final UserService userService;
 
@@ -49,17 +44,16 @@ class TalentController {
     LOGGER.info("Registering a new talent: {}", talentRegistrationDto.getUsername());
 
     final String encodedPassword = passwordEncoder.encode(talentRegistrationDto.getPassword());
-    final Role talentRole = roleService.findByName(Roles.TALENT);
 
     User admin = null;
     if (userService.isAdminLoggedIn()) {
       admin = userService.getLoggedInUser();
     }
 
-    final Talent talent = talentRegistrationDto.asTalent(encodedPassword, talentRole, admin);
-    final Talent registeredTalent = talentService.register(talent);
+    //final Talent talent = talentRegistrationDto.asTalent(encodedPassword, talentRole, admin);
+    //final Talent registeredTalent = talentService.register(talent);
 
-    eventPublisher.publishEvent(new UserRegisteredEvent(this, registeredTalent.getUser()));
+    eventPublisher.publishEvent(new UserRegisteredEvent(this, null));
   }
 
   @GetMapping("/{username}")

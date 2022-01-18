@@ -17,11 +17,9 @@ import com.opdev.model.talent.*;
 import com.opdev.model.term.TalentTerm;
 import com.opdev.model.term.Term;
 import com.opdev.model.term.TermType;
-import com.opdev.model.user.Role;
 import com.opdev.model.user.Setting;
 import com.opdev.model.user.Setting.SettingBuilder;
 import com.opdev.model.user.User;
-import com.opdev.model.user.UserRole;
 import com.opdev.model.user.UserType;
 import com.opdev.repository.*;
 
@@ -39,8 +37,6 @@ class TestDataServiceImpl implements TestDataService {
 
         private final PasswordEncoder passwordEncoder;
         private final UserRepository userRepository;
-        private final RoleRepository roleRepository;
-        private final UserRoleRepository userRoleRepository;
         private final SettingRepository settingRepository;
         private final TalentRepository talentRepository;
         private final LocationRepository locationRepository;
@@ -57,8 +53,6 @@ class TestDataServiceImpl implements TestDataService {
         @Transactional
         @Override
         public void insert() {
-                final Role roleTalent = roleRepository.findByName(Roles.TALENT);
-                final Role roleCompany = roleRepository.findByName(Roles.COMPANY);
 
                 final User userTotti = User.builder().username("500-matora@sindikat.is")
                                 .password(passwordEncoder.encode("island-ostrvo")).enabled(Boolean.TRUE)
@@ -81,17 +75,6 @@ class TestDataServiceImpl implements TestDataService {
                                 .orElseThrow(() -> new RuntimeException("The user is not found."));
                 final User userNikola = userRepository.findByUsername("znikola@xxx.xxx")
                                 .orElseThrow(() -> new RuntimeException("The user is not found."));
-
-                final UserRole tottiTalent = UserRole.builder().role(roleTalent).user(userTotti).build();
-                final UserRole grujaTalent = UserRole.builder().role(roleTalent).user(userGruja).build();
-                final UserRole mikicaTalent = UserRole.builder().role(roleTalent).user(userMikica).build();
-                userRoleRepository.save(tottiTalent);
-                userRoleRepository.save(grujaTalent);
-                userRoleRepository.save(mikicaTalent);
-                final UserRole sindikatCompany = UserRole.builder().role(roleCompany).user(userSindikat).build();
-                final UserRole pantelaCompany = UserRole.builder().role(roleCompany).user(userPantela).build();
-                userRoleRepository.save(sindikatCompany);
-                userRoleRepository.save(pantelaCompany);
 
                 final SettingBuilder settingBuilder = Setting.builder().name("language").value("en");
                 final Setting tottiSetting = settingBuilder.user(userTotti).build();

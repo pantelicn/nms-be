@@ -12,9 +12,7 @@ import com.opdev.dto.paging.RegistrationDto;
 import com.opdev.model.location.Location;
 import com.opdev.model.talent.Talent;
 import com.opdev.model.talent.Talent.TalentBuilder;
-import com.opdev.model.user.Role;
 import com.opdev.model.user.User;
-import com.opdev.model.user.UserRole;
 import com.opdev.model.user.UserType;
 import com.opdev.validation.Password;
 
@@ -62,13 +60,10 @@ public class TalentRegistrationDto implements RegistrationDto {
 
   private LocationDto currentLocation;
 
-  public Talent asTalent(final String encryptedPassword, final Role talentRole, final User admin) {
+  public Talent asTalent(final String encryptedPassword, final User admin) {
     Objects.requireNonNull(encryptedPassword);
-    Objects.requireNonNull(talentRole);
 
     final User user = User.builder().username(username).password(encryptedPassword).type(UserType.TALENT).build();
-    final UserRole userRole = UserRole.builder().role(talentRole).user(user).build();
-    user.getUserRoles().add(userRole);
 
     final TalentBuilder builder = Talent.builder().user(user).firstName(firstName).lastName(lastName)
         .middleName(middleName).dateOfBirth(dateOfBirth).availabilityChangeDate(Instant.now());

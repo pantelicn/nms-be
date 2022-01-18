@@ -63,4 +63,17 @@ spring:
 
 cognito:
     userpool:
-        nms: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_46Qqd7W2Z
+        nms:
+            fullPoolId: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_46Qqd7W2Z
+            poolId: eu-central-1_46Qqd7W2Z
+
+nms:
+    cognito:
+        appClient:
+            id: 3ci4jkku7sii8nb7ka12v5khpa
+            secret: 1gveddn2e7ch52uskkjbf8buci9p9ihjn5cg7up6t27o57dvha7
+
+
+aws:
+    accessKey: AKIAUMWR7AX6DECK2CEC
+    secretKey: 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
