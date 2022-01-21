@@ -1,4 +1,4 @@
-package com.opdev.talent;
+package com.opdev.talent.position;
 
 import com.opdev.model.talent.Position;
 

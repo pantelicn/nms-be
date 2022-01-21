@@ -46,10 +46,6 @@ public class User extends Audit {
 
     @NonNull
     @Column(nullable = false)
-    private String password;
-
-    @NonNull
-    @Column(nullable = false)
     @Builder.Default
     private Boolean enabled = Boolean.FALSE;
 

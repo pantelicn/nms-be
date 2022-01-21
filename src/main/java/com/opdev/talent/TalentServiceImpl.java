@@ -1,18 +1,21 @@
-package com.opdev.authentication;
+package com.opdev.talent;
 
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.opdev.aws.cognito.CognitoService;
 import com.opdev.exception.ApiEmailExistsException;
 import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.talent.Talent;
 import com.opdev.model.user.User;
 import com.opdev.repository.TalentRepository;
+import com.opdev.user.UserService;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -21,14 +24,16 @@ class TalentServiceImpl implements TalentService {
 
     private final UserService userService;
     private final TalentRepository talentRepository;
+    private final CognitoService cognitoService;
 
     @Transactional
     @Override
-    public Talent register(@NonNull final Talent talent) {
+    public Talent register(@NonNull final Talent talent, @NonNull final String password) {
         validateTalent(talent);
-
         userService.save(talent.getUser());
-        return talentRepository.save(talent);
+        Talent created = talentRepository.save(talent);
+        cognitoService.createTalent(talent.getUser().getUsername(), password);
+        return created;
     }
 
     @Transactional(readOnly = true)

@@ -1,4 +1,4 @@
-package com.opdev.talent;
+package com.opdev.talent.term;
 
 import com.opdev.model.term.TalentTerm;
 

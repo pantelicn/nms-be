@@ -1,4 +1,4 @@
-package com.opdev.talent;
+package com.opdev.talent.skill;
 
 import com.opdev.model.talent.TalentSkill;
 

@@ -1,9 +1,10 @@
 package com.opdev.talent;
 
 import com.opdev.config.security.Roles;
-import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.term.TalentTerm;
 import com.opdev.talent.dto.TalentTermViewDto;
+import com.opdev.talent.term.TalentTermService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;

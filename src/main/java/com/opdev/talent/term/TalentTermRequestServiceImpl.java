@@ -1,6 +1,5 @@
-package com.opdev.talent;
+package com.opdev.talent.term;
 
-import com.opdev.authentication.UserService;
 import com.opdev.company.dto.TalentTermRequestEditDto;
 import com.opdev.exception.ApiBadRequestException;
 import com.opdev.exception.ApiValidationException;
@@ -13,6 +12,8 @@ import com.opdev.model.user.UserType;
 import com.opdev.request.RequestService;
 import com.opdev.request.dto.RequestResponseDto;
 import com.opdev.term.validation.TalentTermValidator;
+import com.opdev.user.UserService;
+
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

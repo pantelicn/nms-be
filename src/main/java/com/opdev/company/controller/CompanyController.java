@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import com.opdev.authentication.UserService;
 import com.opdev.company.service.CompanyRegistrationService;
 import com.opdev.company.service.CompanyService;
 import com.opdev.company.dto.CompanyRegistrationDto;
@@ -15,6 +14,7 @@ import com.opdev.dto.CompanyViewDto;
 import com.opdev.dto.paging.PageDto;
 import com.opdev.model.company.Company;
 import com.opdev.model.user.User;
+import com.opdev.user.UserService;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -55,7 +55,7 @@ class CompanyController {
         LOGGER.info("Registering a new company: {}", companyRegistrationDto.getUsername());
 
         final Company company = companyRegistrationDto.asCompany();
-        final Company registeredCompany = companyRegistrationService.register(company);
+        final Company registeredCompany = companyRegistrationService.register(company, companyRegistrationDto.getPassword());
 
         return new CompanyViewDto(registeredCompany);
     }

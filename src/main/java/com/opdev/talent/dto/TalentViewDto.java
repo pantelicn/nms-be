@@ -1,4 +1,4 @@
-package com.opdev.authentication.dto;
+package com.opdev.talent.dto;
 
 import java.util.Objects;
 

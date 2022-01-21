@@ -1,9 +1,10 @@
 package com.opdev.term;
 
-import com.opdev.authentication.UserService;
 import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.term.Term;
 import com.opdev.repository.TermRepository;
+import com.opdev.user.UserService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

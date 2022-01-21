@@ -1,6 +1,5 @@
 package com.opdev.talent.dto;
 
-import com.opdev.authentication.dto.TalentViewDto;
 import com.opdev.model.talent.TalentSkill;
 import com.opdev.skill.dto.SkillViewDto;
 import lombok.AccessLevel;

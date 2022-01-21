@@ -1,7 +1,5 @@
 package com.opdev.company.dto;
 
-import java.util.Objects;
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
@@ -62,7 +60,7 @@ public class CompanyRegistrationDto implements RegistrationDto {
 
     public Company asCompany() {
 
-        final User user = User.builder().username(username).password(password).type(UserType.COMPANY).build();
+        final User user = User.builder().username(username).type(UserType.COMPANY).build();
         final Company company = Company.builder().user(user).name(name).description(description).address1(address1)
                 .address2(address2).location(location).build();
         return company;

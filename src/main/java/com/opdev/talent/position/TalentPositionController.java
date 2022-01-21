@@ -1,4 +1,4 @@
-package com.opdev.talent;
+package com.opdev.talent.position;
 
 import com.opdev.config.security.Roles;
 import com.opdev.position.dto.PositionViewDto;

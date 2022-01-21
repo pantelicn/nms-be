@@ -1,10 +1,11 @@
-package com.opdev.talent;
+package com.opdev.talent.position;
 
-import com.opdev.authentication.TalentService;
 import com.opdev.model.talent.Position;
 import com.opdev.model.talent.Talent;
 import com.opdev.model.talent.TalentPosition;
 import com.opdev.repository.TalentPositionRepository;
+import com.opdev.talent.TalentService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

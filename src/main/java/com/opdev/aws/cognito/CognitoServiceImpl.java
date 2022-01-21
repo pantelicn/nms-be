@@ -16,7 +16,7 @@ import com.amazonaws.services.cognitoidp.model.AdminDeleteUserRequest;
 import com.amazonaws.services.cognitoidp.model.SignUpRequest;
 import com.amazonaws.services.cognitoidp.model.SignUpResult;
 import com.opdev.exception.CanNotAddGroupToUserException;
-import com.opdev.exception.CanNotCreateUserOnCognito;
+import com.opdev.exception.CanNotCreateUserOnCognitoException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -56,7 +56,7 @@ public class CognitoServiceImpl implements CognitoService {
         if (result.getSdkHttpMetadata().getHttpStatusCode() == 200) {
             addUserToGroup(username, group);
         } else {
-            throw new CanNotCreateUserOnCognito(username);
+            throw new CanNotCreateUserOnCognitoException(username);
         }
     }
 

@@ -1,4 +1,4 @@
-package com.opdev.talent;
+package com.opdev.talent.term;
 
 import com.opdev.model.request.Request;
 import com.opdev.request.dto.RequestResponseDto;

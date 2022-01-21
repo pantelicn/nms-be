@@ -1,12 +1,12 @@
-package com.opdev.authentication;
-
-import com.opdev.model.talent.Talent;
+package com.opdev.talent;
 
 import java.util.Optional;
 
+import com.opdev.model.talent.Talent;
+
 public interface TalentService {
 
-    Talent register(final Talent talent);
+    Talent register(final Talent talent, String password);
 
     Talent getByUsername(final String username);
 

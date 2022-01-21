@@ -1,11 +1,12 @@
 package com.opdev.skill;
 
-import com.opdev.authentication.UserService;
 import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.talent.Skill;
 import com.opdev.model.talent.SkillStatus;
 import com.opdev.model.user.User;
 import com.opdev.repository.SkillRepository;
+import com.opdev.user.UserService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

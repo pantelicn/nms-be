@@ -1,11 +1,16 @@
-package com.opdev.authentication;
+package com.opdev.user;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opdev.common.services.ProfileService;
 import com.opdev.config.security.Roles;
@@ -18,23 +23,13 @@ import com.opdev.repository.UserRepository;
 import com.opdev.repository.VerificationTokenRepository;
 
 import lombok.NonNull;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-class UserServiceImpl implements UserService, UserDetailsService {
+class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final VerificationTokenRepository verificationTokenRepository;
@@ -51,16 +46,6 @@ class UserServiceImpl implements UserService, UserDetailsService {
     public User getByUsername(@NonNull String username) {
         return findByUsername(username).orElseThrow(() -> ApiEntityNotFoundException.builder()
                 .entity("User").id(username).message("Entity.not.found").build());
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-        final Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        final User user = findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
-
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
-                user.getEnabled(), true, true, true, authorities);
     }
 
     @Transactional(readOnly = true)

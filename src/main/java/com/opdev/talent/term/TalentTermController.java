@@ -1,7 +1,6 @@
-package com.opdev.talent;
+package com.opdev.talent.term;
 
 import com.opdev.config.security.Roles;
-import com.opdev.exception.ApiUnauthorizedException;
 import com.opdev.model.term.TalentTerm;
 import com.opdev.talent.dto.TalentTermAddDto;
 import com.opdev.talent.dto.TalentTermEditDto;

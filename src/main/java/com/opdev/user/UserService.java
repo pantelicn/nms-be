@@ -1,4 +1,4 @@
-package com.opdev.authentication;
+package com.opdev.user;
 
 import java.util.Optional;
 

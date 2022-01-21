@@ -3,11 +3,11 @@ package com.opdev.company.service;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.opdev.authentication.UserService;
 import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.company.Company;
 import com.opdev.model.user.User;
 import com.opdev.repository.CompanyRepository;
+import com.opdev.user.UserService;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

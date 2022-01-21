@@ -1,7 +1,5 @@
 package com.opdev.contact;
 
-import com.opdev.authentication.TalentService;
-import com.opdev.authentication.UserService;
 import com.opdev.company.service.CompanyService;
 import com.opdev.exception.ApiContactEditValidationException;
 import com.opdev.exception.ApiEntityNotFoundException;
@@ -10,6 +8,9 @@ import com.opdev.model.contact.Contact;
 import com.opdev.model.talent.Talent;
 import com.opdev.model.user.User;
 import com.opdev.repository.ContactRepository;
+import com.opdev.talent.TalentService;
+import com.opdev.user.UserService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

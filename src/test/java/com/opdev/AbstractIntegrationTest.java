@@ -86,7 +86,6 @@ public abstract class AbstractIntegrationTest {
         return userRepository.save(User.builder()
                                            .enabled(true)
                                            .type(UserType.ADMIN)
-                                           .password("some password")
                                            .username(ADMIN)
                                            .build());
     }
@@ -95,7 +94,6 @@ public abstract class AbstractIntegrationTest {
         User user = userRepository.save(User.builder()
                                                 .enabled(true)
                                                 .type(UserType.TALENT)
-                                                .password("some password")
                                                 .username(username)
                                                 .build());
         Talent talent = Talent.builder()
@@ -113,7 +111,6 @@ public abstract class AbstractIntegrationTest {
         User user = userRepository.save(User.builder()
                 .enabled(true)
                 .type(UserType.COMPANY)
-                .password("some password")
                 .username(username)
                 .build());
         CompanyLocation location = CompanyLocation.builder()
@@ -136,7 +133,6 @@ public abstract class AbstractIntegrationTest {
         User user = User.builder()
                 .enabled(true)
                 .type(UserType.COMPANY)
-                .password("Company123!")
                 .username(username)
                 .build();
         CompanyLocation location = CompanyLocation.builder()

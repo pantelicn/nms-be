@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.opdev.common.services.Profiles;
-import com.opdev.config.security.Roles;
 import com.opdev.model.company.Benefit;
 import com.opdev.model.company.Company;
 import com.opdev.model.company.Post;
@@ -55,19 +54,19 @@ class TestDataServiceImpl implements TestDataService {
         public void insert() {
 
                 final User userTotti = User.builder().username("500-matora@sindikat.is")
-                                .password(passwordEncoder.encode("island-ostrvo")).enabled(Boolean.TRUE)
+                                .enabled(Boolean.TRUE)
                                 .type(UserType.TALENT).build();
                 final User userGruja = User.builder().username("lav-pivo@sindikat.ba")
-                                .password(passwordEncoder.encode("curkovic-govno")).enabled(Boolean.TRUE)
+                                .enabled(Boolean.TRUE)
                                 .type(UserType.TALENT).build();
                 final User userMikica = User.builder().username("kafa@gmail.com")
-                                .password(passwordEncoder.encode("lepak")).enabled(Boolean.TRUE).type(UserType.TALENT)
+                                .enabled(Boolean.TRUE).type(UserType.TALENT)
                                 .build();
                 final User userSindikat = User.builder().username("zavisnost@sindikat.rs")
-                                .password(passwordEncoder.encode("curkovic-govno")).enabled(Boolean.TRUE)
+                                .enabled(Boolean.TRUE)
                                 .type(UserType.COMPANY).build();
                 final User userPantela = User.builder().username("nikola@pantelic.rs")
-                                .password(passwordEncoder.encode("pantela")).enabled(Boolean.TRUE)
+                                .enabled(Boolean.TRUE)
                                 .type(UserType.COMPANY).build();
                 final List<User> users = Arrays.asList(userTotti, userGruja, userMikica, userSindikat, userPantela);
                 users.forEach(userRepository::save);

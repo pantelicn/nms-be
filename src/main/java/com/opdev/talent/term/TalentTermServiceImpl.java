@@ -1,14 +1,15 @@
-package com.opdev.talent;
+package com.opdev.talent.term;
 
-import com.opdev.authentication.TalentService;
-import com.opdev.authentication.UserService;
 import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.talent.Talent;
 import com.opdev.model.term.TalentTerm;
 import com.opdev.model.term.Term;
 import com.opdev.repository.TalentTermRepository;
+import com.opdev.talent.TalentService;
 import com.opdev.term.TermService;
 import com.opdev.term.validation.TalentTermValidator;
+import com.opdev.user.UserService;
+
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

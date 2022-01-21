@@ -1,7 +1,5 @@
-package com.opdev.talent;
+package com.opdev.talent.skill;
 
-import com.opdev.authentication.TalentService;
-import com.opdev.authentication.UserService;
 import com.opdev.model.talent.Position;
 import com.opdev.model.talent.PositionSkill;
 import com.opdev.model.talent.Skill;
@@ -9,6 +7,10 @@ import com.opdev.model.talent.Talent;
 import com.opdev.model.talent.TalentSkill;
 import com.opdev.repository.TalentSkillRepository;
 import com.opdev.skill.SkillService;
+import com.opdev.talent.TalentService;
+import com.opdev.talent.position.TalentPositionService;
+import com.opdev.user.UserService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

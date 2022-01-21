@@ -1,12 +1,13 @@
 package com.opdev.benefit;
 
-import com.opdev.authentication.UserService;
 import com.opdev.company.service.CompanyService;
 import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.company.Benefit;
 import com.opdev.model.company.Company;
 import com.opdev.model.user.User;
 import com.opdev.repository.BenefitRepository;
+import com.opdev.user.UserService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
