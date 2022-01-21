@@ -1,16 +1,12 @@
 package com.opdev.company.dto;
 
-import java.util.Objects;
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 import com.opdev.dto.paging.RegistrationDto;
 import com.opdev.model.company.Company;
 import com.opdev.model.location.CompanyLocation;
-import com.opdev.model.user.Role;
 import com.opdev.model.user.User;
-import com.opdev.model.user.UserRole;
 import com.opdev.model.user.UserType;
 import com.opdev.validation.Password;
 
@@ -31,6 +27,7 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @ToString(callSuper = true)
 public class CompanyRegistrationDto implements RegistrationDto {
+
     @NotBlank
     @NonNull
     private String name;
@@ -61,19 +58,11 @@ public class CompanyRegistrationDto implements RegistrationDto {
     @NonNull
     private CompanyLocation location;
 
-    public Company asCompany(final String encryptedPassword, final Role companyRole, final User admin) {
-        Objects.requireNonNull(encryptedPassword);
-        Objects.requireNonNull(companyRole);
+    public Company asCompany() {
 
-        final User user = User.builder().username(username).password(encryptedPassword).type(UserType.COMPANY).build();
-        final UserRole userRole = UserRole.builder().role(companyRole).user(user).build();
-        user.getUserRoles().add(userRole);
-
+        final User user = User.builder().username(username).type(UserType.COMPANY).build();
         final Company company = Company.builder().user(user).name(name).description(description).address1(address1)
                 .address2(address2).location(location).build();
-        if (null != admin) {
-            company.setCreatedBy(admin);
-        }
         return company;
     }
 

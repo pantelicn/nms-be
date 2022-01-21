@@ -18,6 +18,7 @@ public class NMSEntityListener {
   @PrePersist
   public void prePersist(final Audit audit) {
     audit.setCreatedOn(Instant.now());
+    audit.setModifiedOn(Instant.now());
   }
 
   @PreUpdate

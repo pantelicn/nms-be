@@ -12,9 +12,7 @@ import com.opdev.dto.paging.RegistrationDto;
 import com.opdev.model.location.Location;
 import com.opdev.model.talent.Talent;
 import com.opdev.model.talent.Talent.TalentBuilder;
-import com.opdev.model.user.Role;
 import com.opdev.model.user.User;
-import com.opdev.model.user.UserRole;
 import com.opdev.model.user.UserType;
 import com.opdev.validation.Password;
 
@@ -62,16 +60,17 @@ public class TalentRegistrationDto implements RegistrationDto {
 
   private LocationDto currentLocation;
 
-  public Talent asTalent(final String encryptedPassword, final Role talentRole, final User admin) {
-    Objects.requireNonNull(encryptedPassword);
-    Objects.requireNonNull(talentRole);
+  public Talent asTalent() {
 
-    final User user = User.builder().username(username).password(encryptedPassword).type(UserType.TALENT).build();
-    final UserRole userRole = UserRole.builder().role(talentRole).user(user).build();
-    user.getUserRoles().add(userRole);
+    final User user = User.builder().username(username).type(UserType.TALENT).build();
 
-    final TalentBuilder builder = Talent.builder().user(user).firstName(firstName).lastName(lastName)
-        .middleName(middleName).dateOfBirth(dateOfBirth).availabilityChangeDate(Instant.now());
+    final TalentBuilder builder = Talent.builder()
+            .user(user)
+            .firstName(firstName)
+            .lastName(lastName)
+            .middleName(middleName)
+            .dateOfBirth(dateOfBirth)
+            .availabilityChangeDate(Instant.now());
 
     final Optional<Location> location = createLocation();
     if (location.isPresent()) {
@@ -79,9 +78,7 @@ public class TalentRegistrationDto implements RegistrationDto {
     }
 
     final Talent talent = builder.build();
-    if (null != admin) {
-      talent.setCreatedBy(admin);
-    }
+    talent.setCreatedBy(user);
 
     return talent;
   }

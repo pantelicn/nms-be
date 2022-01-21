@@ -33,7 +33,7 @@ public class CognitoWebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Value("${cognito.userpool.nms}")
+    @Value("${cognito.userpool.nms.fullPoolId}")
     private String cognitoUrl;
 
     @Override

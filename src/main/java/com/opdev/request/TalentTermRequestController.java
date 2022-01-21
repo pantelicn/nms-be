@@ -4,7 +4,7 @@ import com.opdev.company.dto.RequestViewDto;
 import com.opdev.config.security.Roles;
 import com.opdev.model.request.Request;
 import com.opdev.request.dto.RequestResponseDto;
-import com.opdev.talent.TalentTermRequestService;
+import com.opdev.talent.term.TalentTermRequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;

@@ -1,11 +1,12 @@
 package com.opdev.post.service;
 
-import com.opdev.authentication.UserService;
 import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.company.Post;
 import com.opdev.model.user.User;
 import com.opdev.post.service.noimpl.PostViewService;
 import com.opdev.repository.PostRepository;
+import com.opdev.user.UserService;
+
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

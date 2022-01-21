@@ -46,10 +46,6 @@ public class User extends Audit {
 
     @NonNull
     @Column(nullable = false)
-    private String password;
-
-    @NonNull
-    @Column(nullable = false)
     @Builder.Default
     private Boolean enabled = Boolean.FALSE;
 
@@ -65,10 +61,6 @@ public class User extends Audit {
     @OneToMany(mappedBy = "user")
     @Builder.Default
     private List<Setting> settings = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user")
-    @Builder.Default
-    private List<UserRole> userRoles = new ArrayList<>();
 
     @ElementCollection
     @Builder.Default

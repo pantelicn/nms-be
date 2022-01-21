@@ -6,11 +6,11 @@ import static org.hamcrest.Matchers.is;
 
 import java.util.Optional;
 
-import com.opdev.authentication.dto.TalentBasicInfoUpdateDto;
-import com.opdev.authentication.dto.TalentViewDto;
 import com.opdev.common.services.Profiles;
 import com.opdev.model.talent.Talent;
 import com.opdev.repository.TalentRepository;
+import com.opdev.talent.dto.TalentBasicInfoUpdateDto;
+import com.opdev.talent.dto.TalentViewDto;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

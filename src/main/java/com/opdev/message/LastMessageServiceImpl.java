@@ -8,13 +8,13 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.opdev.authentication.UserService;
 import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.request.LastMessage;
 import com.opdev.model.request.Message;
 import com.opdev.model.user.User;
 import com.opdev.model.user.UserType;
 import com.opdev.repository.LastMessageRepository;
+import com.opdev.user.UserService;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

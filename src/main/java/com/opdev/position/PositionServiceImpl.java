@@ -1,10 +1,11 @@
 package com.opdev.position;
 
-import com.opdev.authentication.UserService;
 import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.talent.Position;
 import com.opdev.model.user.User;
 import com.opdev.repository.PositionRepository;
+import com.opdev.user.UserService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

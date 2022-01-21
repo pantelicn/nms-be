@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.opdev.authentication.TalentService;
 import com.opdev.company.service.CompanyService;
 import com.opdev.company.dto.RequestCreateDto;
 import com.opdev.company.dto.TermCreateDto;
@@ -27,6 +26,7 @@ import com.opdev.model.request.TalentTermRequestStatus;
 import com.opdev.model.talent.Talent;
 import com.opdev.model.term.TalentTerm;
 import com.opdev.repository.RequestRepository;
+import com.opdev.talent.TalentService;
 import com.opdev.util.encoding.TalentIdEncoder;
 
 import lombok.NonNull;

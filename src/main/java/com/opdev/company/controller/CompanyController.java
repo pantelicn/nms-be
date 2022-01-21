@@ -5,9 +5,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import com.opdev.authentication.RoleService;
-import com.opdev.authentication.UserService;
-import com.opdev.common.events.UserRegisteredEvent;
 import com.opdev.company.service.CompanyRegistrationService;
 import com.opdev.company.service.CompanyService;
 import com.opdev.company.dto.CompanyRegistrationDto;
@@ -16,16 +13,16 @@ import com.opdev.config.security.Roles;
 import com.opdev.dto.CompanyViewDto;
 import com.opdev.dto.paging.PageDto;
 import com.opdev.model.company.Company;
-import com.opdev.model.user.Role;
 import com.opdev.model.user.User;
+import com.opdev.user.UserService;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +31,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -48,27 +46,18 @@ class CompanyController {
     private final ApplicationEventPublisher eventPublisher;
     private final CompanyRegistrationService companyRegistrationService;
     private final CompanyService companyService;
-    private final RoleService roleService;
-    private final PasswordEncoder passwordEncoder;
     private final UserService userService;
 
     @PostMapping
     @PreAuthorize("permitAll()")
-    public void add(@Valid @RequestBody final CompanyRegistrationDto companyRegistrationDto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public CompanyViewDto add(@Valid @RequestBody final CompanyRegistrationDto companyRegistrationDto) {
         LOGGER.info("Registering a new company: {}", companyRegistrationDto.getUsername());
 
-        final String encodedPassword = passwordEncoder.encode(companyRegistrationDto.getPassword());
-        final Role companyRole = roleService.findByName(Roles.COMPANY);
+        final Company company = companyRegistrationDto.asCompany();
+        final Company registeredCompany = companyRegistrationService.register(company, companyRegistrationDto.getPassword());
 
-        User admin = null;
-        if (userService.isAdminLoggedIn()) {
-            admin = userService.getLoggedInUser();
-        }
-
-        final Company company = companyRegistrationDto.asCompany(encodedPassword, companyRole, admin);
-        final Company registeredCompany = companyRegistrationService.register(company);
-
-        eventPublisher.publishEvent(new UserRegisteredEvent(this, registeredCompany.getUser()));
+        return new CompanyViewDto(registeredCompany);
     }
 
     @GetMapping
