@@ -4,11 +4,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -17,18 +15,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opdev.common.services.Profiles;
 import com.opdev.model.company.Company;
 import com.opdev.post.dto.PostAddDto;
 import com.opdev.post.dto.PostViewDto;
+import com.opdev.util.SimplePageImpl;
 
 @ActiveProfiles(Profiles.TEST_PROFILE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class PostCrudIntegrationTest extends AbstractIntegrationTest {
-
-    @Autowired
-    private ObjectMapper mapper;
 
     @Test
     @DirtiesContext
@@ -46,12 +41,12 @@ public class PostCrudIntegrationTest extends AbstractIntegrationTest {
         restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/posts", HttpMethod.POST, post2Http, PostViewDto.class);
 
         final HttpEntity<Void> getPostsForCompany = new HttpEntity<>(headers);
-        final ResponseEntity<Object> getPostsForCompanyResponse = restTemplate.exchange("/v1/posts?company=" + googleCompany.getId(), HttpMethod.GET, getPostsForCompany, Object.class);
+        final ResponseEntity<SimplePageImpl<PostViewDto>> getPostsForCompanyResponse = restTemplate.exchange("/v1/posts?company=" + googleCompany.getId(), HttpMethod.GET, getPostsForCompany, new ParameterizedTypeReference<>() {});
 
-        Map mapResponse = (Map)getPostsForCompanyResponse.getBody();
         assertThat(getPostsForCompanyResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertThat(mapResponse.get("totalElements"), is(equalTo(2)));
-        assertThat(mapResponse.get("totalPages"), is(equalTo(1)));
+        assertThat(getPostsForCompanyResponse.getBody().getContent().size(), is(equalTo(2)));
+        assertThat(getPostsForCompanyResponse.getBody().getTotalElements(), is(equalTo(2L)));
+        assertThat(getPostsForCompanyResponse.getBody().getTotalPages(), is(equalTo(1)));
     }
 
 }
