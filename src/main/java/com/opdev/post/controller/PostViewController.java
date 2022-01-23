@@ -6,6 +6,10 @@ import com.opdev.model.company.Post;
 import com.opdev.post.dto.PostViewDto;
 import com.opdev.post.service.noimpl.PostViewService;
 import lombok.AllArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,40 +19,35 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("v1/posts")
 @AllArgsConstructor
 public class PostViewController {
 
+    private static final int MAX_POSTS_PER_PAGE = 30;
+
     private final PostViewService postViewService;
 
     // TODO @nikolagudelj Find user feed
 
     @GetMapping
-//    @PreAuthorize(SpELAuthorizationExpressions.isAuthenticated)
-    public List<PostViewDto> find(
+    @PreAuthorize(SpELAuthorizationExpressions.isAuthenticated)
+    public Page<PostViewDto> find(
             @RequestParam(value = "company", required = false) final Long companyId,
             @RequestParam(value = "country", required = false) final String country,
-            @RequestParam(value = "city", required = false) final String city
-    ) {
-        List<Post> foundPosts;
+            @RequestParam(value = "city", required = false) final String city,
+            @RequestParam(defaultValue = "0") Integer page) {
+        Pageable pageable = PageRequest.of(page, MAX_POSTS_PER_PAGE);
+        Page<Post> foundPosts;
 
         if (companyId != null) {
-            foundPosts = postViewService.findByCompanyId(companyId);
-        }
-        else if (city != null && country != null) {
-            System.out.println(country + " " + city);
-            foundPosts = postViewService.findByLocation(country, city);
-        }
-        else throw new ApiBadRequestException("Incorrect query params");
-
-        return foundPosts
-                .stream()
-                .map(PostViewDto::new)
-                .collect(Collectors.toList());
+            foundPosts = postViewService.findByCompanyId(companyId, pageable);
+        } else if (city != null && country != null) {
+            foundPosts = postViewService.findByLocation(country, city, pageable);
+        } else throw new ApiBadRequestException("Incorrect query params");
+        System.out.println(foundPosts.getTotalPages());
+        return foundPosts.map(PostViewDto::new);
     }
 
     @GetMapping("{postId}")
