@@ -8,6 +8,9 @@ import com.opdev.repository.PostRepository;
 import com.opdev.user.UserService;
 
 import lombok.AllArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +32,8 @@ public class PostViewServiceImpl implements PostViewService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Post> findByCompanyId(final Long companyId) {
-        return repository.findByCompanyId(companyId);
+    public Page<Post> findByCompanyId(final Long companyId, final Pageable pageable) {
+        return repository.findByCompanyId(companyId, pageable);
     }
 
     @Transactional(readOnly = true)
@@ -47,8 +50,8 @@ public class PostViewServiceImpl implements PostViewService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Post> findByLocation(String country, String city) {
-        return repository.findByCountryAndCity(country, city);
+    public Page<Post> findByLocation(String country, String city, Pageable pageable) {
+        return repository.findByCountryAndCity(country, city, pageable);
     }
 
     @Override
