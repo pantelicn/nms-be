@@ -62,7 +62,11 @@ public class TalentRegistrationDto implements RegistrationDto {
 
   public Talent asTalent() {
 
-    final User user = User.builder().username(username).type(UserType.TALENT).build();
+    final User user = User.builder()
+            .username(username)
+            .password(password)
+            .type(UserType.TALENT)
+            .build();
 
     final TalentBuilder builder = Talent.builder()
             .user(user)

@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 
 import com.opdev.model.Audit;
@@ -43,6 +44,9 @@ public class User extends Audit {
     @Email
     @Column(nullable = false, unique = true)
     private String username;
+
+    @Transient
+    private String password;
 
     @NonNull
     @Column(nullable = false)

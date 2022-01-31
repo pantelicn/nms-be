@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -41,5 +42,9 @@ public class CompanyLocation {
     @NonNull
     @Column(name = "country_code")
     private String countryCode;
+
+    @NotBlank
+    @NonNull
+    private String address;
 
 }

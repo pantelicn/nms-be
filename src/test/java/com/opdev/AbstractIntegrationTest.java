@@ -14,7 +14,6 @@ import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder
 import com.amazonaws.services.cognitoidp.model.AdminInitiateAuthRequest;
 import com.amazonaws.services.cognitoidp.model.AdminInitiateAuthResult;
 import com.amazonaws.services.cognitoidp.model.AuthFlowType;
-import com.opdev.company.dto.CompanyRegistrationDto;
 import com.opdev.dto.TalentRegistrationDto;
 import com.opdev.model.company.Company;
 import com.opdev.model.location.CompanyLocation;
@@ -39,17 +38,12 @@ import javax.crypto.spec.SecretKeySpec;
 public abstract class AbstractIntegrationTest {
 
     protected static final String API_PREFIX = "/v1";
-    protected static final String COMPANIES_API = "/companies/";
     protected static final String TALENTS_API = "/talents/";
 
     protected static final String DEFAULT_TALENT_FIRST_NAME = "Java";
     protected static final String DEFAULT_TALENT_LAST_NAME = "Dev";
     protected static final String DEFAULT_TALENT_PASSWORD = "java4life";
 
-    protected static final String DEFAULT_COMPANY_NAME = "opdev";
-    protected static final String DEFAULT_COMPANY_DESCRIPTION = "the best.";
-    protected static final String DEFAULT_COMPANY_PASSWORD = "rav4life";
-    protected static final String DEFAULT_COMPANY_ADDRESS_1 = "Olge Petrov, no parking though";
     protected static final String USER_POOL_CLIENT_ID = "3ci4jkku7sii8nb7ka12v5khpa";
     protected static final String USER_POOL_CLIENT_SECRET = "1gveddn2e7ch52uskkjbf8buci9p9ihjn5cg7up6t27o57dvha7";
     protected static final String USER_POOL_ID = "eu-central-1_46Qqd7W2Z";
@@ -117,6 +111,7 @@ public abstract class AbstractIntegrationTest {
                 .city("Novi Sad")
                 .country("Serbia")
                 .countryCode("RS")
+                .address("Olge Petrov 27")
                 .build();
 
         Company company = Company.builder()
@@ -129,31 +124,6 @@ public abstract class AbstractIntegrationTest {
         return companyRepository.save(company);
     }
 
-    protected CompanyRegistrationDto createNewCompany(final String username) {
-        User user = User.builder()
-                .enabled(true)
-                .type(UserType.COMPANY)
-                .username(username)
-                .build();
-        CompanyLocation location = CompanyLocation.builder()
-                .city("Novi Sad")
-                .country("Serbia")
-                .countryCode("RS")
-                .build();
-
-        Company.builder()
-                .address1("San Francisco")
-                .description("google company")
-                .name("Google")
-                .location(location)
-                .user(user)
-                .build();
-
-        return CompanyRegistrationDto.builder().name(username).description(DEFAULT_COMPANY_DESCRIPTION)
-                .address1(DEFAULT_COMPANY_ADDRESS_1).username(username).password("Company123!")
-                .passwordConfirmed("Company123!").location(location).build();
-    }
-
     protected HttpHeaders createAuthHeaders(final String token) {
         final HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
@@ -163,18 +133,6 @@ public abstract class AbstractIntegrationTest {
 
     protected ResponseEntity<Void> disableTalent(final String token, final String username) {
         return disable(token, username, TALENTS_API);
-    }
-
-    protected ResponseEntity<Void> deleteTalent(final String token, final String username) {
-        return delete(token, username, TALENTS_API);
-    }
-
-    protected ResponseEntity<Void> disableCompany(final String token, final String username) {
-        return disable(token, username, COMPANIES_API);
-    }
-
-    protected ResponseEntity<Void> deleteCompany(final String token, final String username) {
-        return delete(token, username, COMPANIES_API);
     }
 
     private ResponseEntity<Void> delete(final String token, final String username, final String api) {
