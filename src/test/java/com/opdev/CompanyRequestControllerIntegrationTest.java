@@ -36,6 +36,7 @@ import com.opdev.repository.RequestRepository;
 import com.opdev.repository.TalentRepository;
 import com.opdev.repository.TalentTermRepository;
 import com.opdev.repository.TermRepository;
+import com.opdev.util.SimplePageImpl;
 import com.opdev.util.encoding.aes.AESTalentIdEncoder;
 
 @ActiveProfiles(Profiles.TEST_PROFILE)
@@ -121,40 +122,40 @@ public class CompanyRequestControllerIntegrationTest extends AbstractIntegration
     private List<RequestViewDto> getPendingRequests(String companyUsername, String token, int expectedRequests) {
         HttpHeaders headers = createAuthHeaders(token);
         HttpEntity<RequestCreateDto> httpEntityGet = new HttpEntity<>(headers);
-        ResponseEntity<List<RequestViewDto>> getResponse = restTemplate.exchange("/v1/companies/" + companyUsername + "/requests/pending", HttpMethod.GET, httpEntityGet,
-                                                                           new ParameterizedTypeReference<>() {});
+        ResponseEntity<SimplePageImpl<RequestViewDto>> getResponse = restTemplate.exchange("/v1/companies/" + companyUsername + "/requests/pending", HttpMethod.GET, httpEntityGet,
+                                                                                           new ParameterizedTypeReference<>() {});
 
         assertThat(getResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(getResponse.getBody(), is(notNullValue()));
-        assertThat(getResponse.getBody().size(), is(equalTo(expectedRequests)));
+        assertThat(getResponse.getBody().getContent().size(), is(equalTo(expectedRequests)));
 
-        return getResponse.getBody();
+        return getResponse.getBody().getContent();
     }
 
     private List<RequestViewDto> getCounterOffer(String companyUsername, String token, int expectedRequests) {
         HttpHeaders headers = createAuthHeaders(token);
         HttpEntity<RequestCreateDto> httpEntityGet = new HttpEntity<>(headers);
-        ResponseEntity<List<RequestViewDto>> getResponse = restTemplate.exchange("/v1/companies/" + companyUsername + "/requests/counter-offers", HttpMethod.GET, httpEntityGet,
+        ResponseEntity<SimplePageImpl<RequestViewDto>> getResponse = restTemplate.exchange("/v1/companies/" + companyUsername + "/requests/counter-offers", HttpMethod.GET, httpEntityGet,
                                                                                  new ParameterizedTypeReference<>() {});
 
         assertThat(getResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(getResponse.getBody(), is(notNullValue()));
-        assertThat(getResponse.getBody().size(), is(equalTo(expectedRequests)));
+        assertThat(getResponse.getBody().getContent().size(), is(equalTo(expectedRequests)));
 
-        return getResponse.getBody();
+        return getResponse.getBody().getContent();
     }
 
     private List<RequestViewDto> getAccepted(String companyUsername, String token, int expectedRequests) {
         HttpHeaders headers = createAuthHeaders(token);
         HttpEntity<RequestCreateDto> httpEntityGet = new HttpEntity<>(headers);
-        ResponseEntity<List<RequestViewDto>> getResponse = restTemplate.exchange("/v1/companies/" + companyUsername + "/requests/accepted", HttpMethod.GET, httpEntityGet,
+        ResponseEntity<SimplePageImpl<RequestViewDto>> getResponse = restTemplate.exchange("/v1/companies/" + companyUsername + "/requests/accepted", HttpMethod.GET, httpEntityGet,
                                                                                  new ParameterizedTypeReference<>() {});
 
         assertThat(getResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(getResponse.getBody(), is(notNullValue()));
-        assertThat(getResponse.getBody().size(), is(equalTo(expectedRequests)));
+        assertThat(getResponse.getBody().getContent().size(), is(equalTo(expectedRequests)));
 
-        return getResponse.getBody();
+        return getResponse.getBody().getContent();
     }
 
     private RequestViewDto createRequest(Long talentId, String companyUsername, Long talentTermId, String token) {

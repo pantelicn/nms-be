@@ -1,6 +1,7 @@
 package com.opdev.request;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.opdev.company.dto.RequestCreateDto;
 import com.opdev.model.request.Request;
@@ -11,9 +12,9 @@ public interface RequestService {
 
     Request create(RequestCreateDto newRequest, String username);
 
-    List<Request> findByStatusForCompany(String username, RequestStatus status);
+    Page<Request> findByStatusForCompany(String username, RequestStatus status, Pageable pageable);
 
-    List<Request> findByStatusForTalent(String username, RequestStatus status);
+    Page<Request> findByStatusForTalent(String username, RequestStatus status, Pageable pageable);
 
     Request editStatusForTalent(String username, Long id, RequestStatus newStatus);
 

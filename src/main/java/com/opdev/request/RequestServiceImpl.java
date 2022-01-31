@@ -9,6 +9,9 @@ import java.util.stream.Collectors;
 
 import com.opdev.model.user.User;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -89,16 +92,20 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Request> findByStatusForCompany(@NonNull final String username, @NonNull final RequestStatus status) {
+    public Page<Request> findByStatusForCompany(@NonNull final String username,
+                                                @NonNull final RequestStatus status,
+                                                @NonNull final Pageable pageable) {
         Company foundCompany = companyService.getByUsername(username);
-        return repository.findByCompanyAndStatus(foundCompany, status);
+        return repository.findByCompanyAndStatus(foundCompany, status, pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Request> findByStatusForTalent(@NonNull final String username, @NonNull final RequestStatus status) {
+    public Page<Request> findByStatusForTalent(@NonNull final String username,
+                                               @NonNull final RequestStatus status,
+                                               @NonNull final Pageable pageable) {
         Talent foundTalent = talentService.getByUsername(username);
-        return repository.findByTalentAndStatus(foundTalent, status);
+        return repository.findByTalentAndStatus(foundTalent, status, pageable);
     }
 
     @Override
