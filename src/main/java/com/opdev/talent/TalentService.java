@@ -6,7 +6,7 @@ import com.opdev.model.talent.Talent;
 
 public interface TalentService {
 
-    Talent register(final Talent talent, String password);
+    Talent register(final Talent talent);
 
     Talent getByUsername(final String username);
 

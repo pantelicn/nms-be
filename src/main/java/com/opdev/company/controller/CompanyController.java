@@ -55,7 +55,7 @@ class CompanyController {
         LOGGER.info("Registering a new company: {}", companyRegistrationDto.getUsername());
 
         final Company company = companyRegistrationDto.asCompany();
-        final Company registeredCompany = companyRegistrationService.register(company, companyRegistrationDto.getPassword());
+        final Company registeredCompany = companyRegistrationService.register(company);
 
         return new CompanyViewDto(registeredCompany);
     }

@@ -28,11 +28,11 @@ class TalentServiceImpl implements TalentService {
 
     @Transactional
     @Override
-    public Talent register(@NonNull final Talent talent, @NonNull final String password) {
+    public Talent register(@NonNull final Talent talent) {
         validateTalent(talent);
         userService.save(talent.getUser());
         Talent created = talentRepository.save(talent);
-        cognitoService.createTalent(talent.getUser().getUsername(), password);
+        cognitoService.createTalent(talent.getUser().getUsername(), talent.getUser().getPassword());
         return created;
     }
 

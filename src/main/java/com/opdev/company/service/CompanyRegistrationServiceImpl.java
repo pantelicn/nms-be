@@ -27,12 +27,12 @@ class CompanyRegistrationServiceImpl implements CompanyRegistrationService {
 
     @Transactional
     @Override
-    public Company register(Company company, String password) {
+    public Company register(Company company) {
         validateCompany(company);
 
         userRepository.save(company.getUser());
         Company created =  companyRepository.save(company);
-        cognitoService.createCompany(company.getUser().getUsername(), password);
+        cognitoService.createCompany(company.getUser().getUsername(), company.getUser().getPassword());
         return created;
     }
 

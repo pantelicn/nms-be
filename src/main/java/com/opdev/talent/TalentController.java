@@ -43,7 +43,7 @@ public class TalentController {
         LOGGER.info("Registering a new talent: {}", talentRegistrationDto.getUsername());
 
         final Talent talent = talentRegistrationDto.asTalent();
-        final Talent registeredTalent = talentService.register(talent, talentRegistrationDto.getPassword());
+        final Talent registeredTalent = talentService.register(talent);
 
        return new TalentViewDto(registeredTalent);
     }
