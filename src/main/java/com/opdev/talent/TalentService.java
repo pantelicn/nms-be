@@ -1,5 +1,6 @@
 package com.opdev.talent;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.opdev.model.talent.Talent;
@@ -21,5 +22,7 @@ public interface TalentService {
     void delete(final String username);
 
     Talent getById(Long id);
+
+    List<Talent> findLatest10ByCountry(final String country);
 
 }

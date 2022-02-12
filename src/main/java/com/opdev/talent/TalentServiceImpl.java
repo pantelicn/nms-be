@@ -1,5 +1,6 @@
 package com.opdev.talent;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -112,6 +113,12 @@ class TalentServiceImpl implements TalentService {
             throw ApiEmailExistsException.builder().message("User.already.exists").entity(Talent.class.getSimpleName())
                     .id(talent.getUser().getUsername()).build();
         }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Talent> findLatest10ByCountry(@NonNull final String country) {
+        return talentRepository.findLatest10ByCountry(country);
     }
 
 }
