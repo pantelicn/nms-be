@@ -58,7 +58,7 @@ public class TalentRegistrationDto implements RegistrationDto {
   @NotBlank
   private String passwordConfirmed;
 
-  private LocationDto currentLocation;
+  private LocationDto location;
 
   public Talent asTalent() {
 
@@ -76,10 +76,8 @@ public class TalentRegistrationDto implements RegistrationDto {
             .dateOfBirth(dateOfBirth)
             .availabilityChangeDate(Instant.now());
 
-    final Optional<Location> location = createLocation();
-    if (location.isPresent()) {
-      builder.currentLocation(location.get());
-    }
+    final Optional<Location> currentLocation = createLocation();
+    currentLocation.ifPresent(builder::currentLocation);
 
     final Talent talent = builder.build();
     talent.setCreatedBy(user);
@@ -88,13 +86,13 @@ public class TalentRegistrationDto implements RegistrationDto {
   }
 
   private Optional<Location> createLocation() {
-    Location location = null;
-    if (!Objects.isNull(currentLocation)) {
-      location = Location.builder().city(currentLocation.getCity()).country(currentLocation.getCountry())
-          .province(currentLocation.getProvince()).countryCode(currentLocation.getCountryCode()).build();
+    Location currentLocation = null;
+    if (!Objects.isNull(this.location)) {
+      currentLocation = Location.builder().city(this.location.getCity()).country(this.location.getCountry())
+          .province(this.location.getProvince()).countryCode(this.location.getCountryCode()).build();
     }
 
-    return Optional.ofNullable(location);
+    return Optional.ofNullable(currentLocation);
   }
 
 }

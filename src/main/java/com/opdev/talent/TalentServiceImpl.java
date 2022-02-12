@@ -31,6 +31,7 @@ class TalentServiceImpl implements TalentService {
     @Override
     public Talent register(@NonNull final Talent talent) {
         validateTalent(talent);
+        talent.getCurrentLocation().setTalent(talent);
         userService.save(talent.getUser());
         Talent created = talentRepository.save(talent);
         cognitoService.createTalent(talent.getUser().getUsername(), talent.getUser().getPassword());

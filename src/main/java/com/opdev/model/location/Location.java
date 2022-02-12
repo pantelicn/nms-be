@@ -19,6 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @RequiredArgsConstructor
@@ -53,10 +54,10 @@ public class Location extends Audit {
     @Column(name = "country_code")
     private String countryCode;
 
+    @Setter
     @ToString.Exclude
-    @NonNull
     @ManyToOne
-    @JoinColumn(name = "talent_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "talent_id", referencedColumnName = "id")
     private Talent talent;
 
 }
