@@ -1,9 +1,23 @@
 package com.opdev.model.talent;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import com.opdev.model.Audit;
+import com.opdev.model.contact.Contact;
+import com.opdev.model.location.Location;
+import com.opdev.model.post.ReactionType;
+import com.opdev.model.request.Request;
+import com.opdev.model.term.TalentTerm;
+import com.opdev.model.user.User;
+import com.vladmihalcea.hibernate.type.json.JsonStringType;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,22 +29,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
-import com.opdev.model.Audit;
-import com.opdev.model.contact.Contact;
-import com.opdev.model.location.Location;
-import com.opdev.model.request.Request;
-import com.opdev.model.term.TalentTerm;
-import com.opdev.model.user.User;
-
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -40,6 +44,7 @@ import lombok.ToString;
 @Entity
 @ToString(callSuper = true)
 @Table(name = "talent")
+@TypeDef(name = "json", typeClass = JsonStringType.class)
 public class Talent extends Audit {
 
     @Id
@@ -70,7 +75,6 @@ public class Talent extends Audit {
      * This field will be updated when user change it location or change
      * availability from false to true. It's used by search template when cron job
      * starts.
-     *
      */
     @NonNull
     @Column(name = "availability_change_date", nullable = false)
@@ -116,4 +120,28 @@ public class Talent extends Audit {
     @Builder.Default
     private List<TalentTerm> terms = new ArrayList<>();
 
+    @ToString.Exclude
+    @Type(type = "json")
+    @Builder.Default
+    private Map<Long, ReactionType> postReactions = new HashMap<>();
+
+    public boolean alreadyReacted(Long postId) {
+        return postReactions.containsKey(postId);
+    }
+
+    public void addPostReaction(Long postId, ReactionType reaction) {
+        postReactions.put(postId, reaction);
+    }
+
+    public void removePostReaction(Long postId, ReactionType reaction) {
+        postReactions.remove(postId, reaction);
+    }
+
+    public void replacePostReaction(Long postId, ReactionType reaction) {
+        postReactions.replace(postId, reaction);
+    }
+
+    public ReactionType getReactionForPost(Long postId) {
+        return postReactions.get(postId);
+    }
 }

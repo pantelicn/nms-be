@@ -1,10 +1,5 @@
 package com.opdev.talent;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.opdev.aws.cognito.CognitoService;
 import com.opdev.exception.ApiEmailExistsException;
@@ -13,10 +8,14 @@ import com.opdev.model.talent.Talent;
 import com.opdev.model.user.User;
 import com.opdev.repository.TalentRepository;
 import com.opdev.user.UserService;
-
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -36,6 +35,11 @@ class TalentServiceImpl implements TalentService {
         Talent created = talentRepository.save(talent);
         cognitoService.createTalent(talent.getUser().getUsername(), talent.getUser().getPassword());
         return created;
+    }
+
+    @Override
+    public Talent save(@NonNull Talent talent) {
+        return talentRepository.save(talent);
     }
 
     @Transactional(readOnly = true)

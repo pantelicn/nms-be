@@ -3,7 +3,7 @@ package com.opdev.post.controller;
 import com.opdev.company.service.CompanyService;
 import com.opdev.config.security.SpELAuthorizationExpressions;
 import com.opdev.model.company.Company;
-import com.opdev.model.company.Post;
+import com.opdev.model.post.Post;
 import com.opdev.post.service.noimpl.PostManagementService;
 import com.opdev.post.dto.PostAddDto;
 import com.opdev.post.dto.PostViewDto;

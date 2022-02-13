@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.opdev.model.company.Post;
+import com.opdev.model.post.Post;
 import com.opdev.post.dto.PostViewDto;
 import com.opdev.post.service.noimpl.PublicPostService;
 

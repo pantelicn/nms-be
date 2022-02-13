@@ -1,4 +1,15 @@
-package com.opdev.model.company;
+package com.opdev.model.post;
+
+import com.opdev.model.Audit;
+import com.opdev.model.company.Company;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,16 +20,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.opdev.model.Audit;
-
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -54,12 +55,25 @@ public class Post extends Audit {
     @JoinColumn(name = "company_id", referencedColumnName = "id", nullable = false)
     private Company company;
 
-    public void addLike() {
-        this.likes ++;
+    public void addReaction(ReactionType reaction) {
+        if (reaction == ReactionType.LIKE) {
+            addLike();
+        }
     }
 
-    public void removeLike() {
-        this.likes --;
+    public void removeReaction(ReactionType reaction) {
+        if (reaction == ReactionType.LIKE) {
+            removeLike();
+        }
     }
+
+    private void addLike() {
+        this.likes++;
+    }
+
+    private void removeLike() {
+        this.likes--;
+    }
+
 
 }

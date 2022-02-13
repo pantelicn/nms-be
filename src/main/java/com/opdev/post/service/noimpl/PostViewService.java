@@ -1,6 +1,6 @@
 package com.opdev.post.service.noimpl;
 
-import com.opdev.model.company.Post;
+import com.opdev.model.post.Post;
 
 import java.util.List;
 
@@ -16,9 +16,5 @@ public interface PostViewService {
     List<Post> findByCompanyIds(List<Long> companyIds);
 
     Page<Post> findByLocation(String country, String city, Pageable pageable);
-
-    void like(Long postId, String username);
-
-    void unlike(Long postId, String username);
 
 }

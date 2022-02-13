@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.opdev.model.company.Post;
+import com.opdev.model.post.Post;
 import com.opdev.post.service.noimpl.PublicPostService;
 import com.opdev.repository.PostRepository;
 

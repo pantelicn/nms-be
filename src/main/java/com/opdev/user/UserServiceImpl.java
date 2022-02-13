@@ -1,18 +1,5 @@
 package com.opdev.user;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.opdev.common.services.ProfileService;
 import com.opdev.config.security.Roles;
 import com.opdev.exception.ApiEntityDisabledException;
 import com.opdev.exception.ApiEntityNotFoundException;
@@ -21,10 +8,20 @@ import com.opdev.model.user.User;
 import com.opdev.model.user.UserType;
 import com.opdev.repository.UserRepository;
 import com.opdev.repository.VerificationTokenRepository;
-
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -33,7 +30,6 @@ class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final VerificationTokenRepository verificationTokenRepository;
-    private final ProfileService profileService;
 
     @Transactional(readOnly = true)
     @Override

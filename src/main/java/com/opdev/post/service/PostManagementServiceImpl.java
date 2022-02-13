@@ -1,6 +1,6 @@
 package com.opdev.post.service;
 
-import com.opdev.model.company.Post;
+import com.opdev.model.post.Post;
 import com.opdev.post.service.noimpl.PostManagementService;
 import com.opdev.repository.PostRepository;
 import lombok.AllArgsConstructor;

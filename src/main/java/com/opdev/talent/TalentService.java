@@ -1,13 +1,16 @@
 package com.opdev.talent;
 
+import com.opdev.model.talent.Talent;
+
 import java.util.List;
 import java.util.Optional;
 
-import com.opdev.model.talent.Talent;
 
 public interface TalentService {
 
     Talent register(final Talent talent);
+
+    Talent save(final Talent talent);
 
     Talent getByUsername(final String username);
 

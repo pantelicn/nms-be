@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import com.opdev.model.Audit;
 import com.opdev.model.contact.Contact;
 import com.opdev.model.location.CompanyLocation;
+import com.opdev.model.post.Post;
 import com.opdev.model.request.Request;
 import com.opdev.model.search.SearchTemplate;
 import com.opdev.model.user.User;

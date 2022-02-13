@@ -66,8 +66,4 @@ public class User extends Audit {
     @Builder.Default
     private List<Setting> settings = new ArrayList<>();
 
-    @ElementCollection
-    @Builder.Default
-    private List<Long> likedPosts = new ArrayList<>();
-
 }

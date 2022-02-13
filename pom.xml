@@ -19,6 +19,8 @@
         <spring-security-oauth2-resource-server.version>5.6.1</spring-security-oauth2-resource-server.version>
         <spring-security-oauth2-jose.version>5.6.1</spring-security-oauth2-jose.version>
         <httpclient.version>4.5.13</httpclient.version>
+        <jackson-datatype-hibernate5.version>2.13.1</jackson-datatype-hibernate5.version>
+        <hibernate-types-52.version>2.14.0</hibernate-types-52.version>
     </properties>
 
     <groupId>com.opdev</groupId>
@@ -130,6 +132,16 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${httpclient.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-hibernate5</artifactId>
+            <version>${jackson-datatype-hibernate5.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vladmihalcea</groupId>
+            <artifactId>hibernate-types-52</artifactId>
+            <version>${hibernate-types-52.version}</version>
         </dependency>
     </dependencies>
 

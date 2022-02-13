@@ -1,7 +1,7 @@
 package com.opdev.post.dto;
 
 import com.opdev.model.company.Company;
-import com.opdev.model.company.Post;
+import com.opdev.model.post.Post;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

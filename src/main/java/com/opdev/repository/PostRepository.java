@@ -1,6 +1,6 @@
 package com.opdev.repository;
 
-import com.opdev.model.company.Post;
+import com.opdev.model.post.Post;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
