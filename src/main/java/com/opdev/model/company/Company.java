@@ -54,12 +54,6 @@ public class Company extends Audit {
     @Column(nullable = false)
     private String description;
 
-    @NonNull
-    @Column(nullable = false)
-    private String address1;
-
-    @Column
-    private String address2;
 
     @NonNull
     @OneToOne(cascade = CascadeType.ALL)

@@ -1,12 +1,12 @@
 package com.opdev.dto;
 
-import java.util.Objects;
-
+import com.opdev.company.dto.CompanyLocationViewDto;
 import com.opdev.model.company.Company;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
@@ -22,29 +22,20 @@ public class CompanyViewDto {
 
     private String description;
 
-    private String address1;
-
-    private String address2;
-
     private UserViewDto user;
 
-    public CompanyViewDto(final Company company) {
-        this.asView(company);
+    private CompanyLocationViewDto location;
+
+    public CompanyViewDto(@NonNull final Company company) {
+        asView(company);
     }
 
     private void asView(final Company company) {
-        Objects.requireNonNull(company);
-
-        this.id = company.getId();
-        this.name = company.getName();
-        this.description = company.getDescription();
-        this.address1 = company.getAddress1();
-
-        if (null != company.getAddress2()) {
-            this.address2 = company.getAddress2();
-        }
-
-        this.user = new UserViewDto(company.getUser());
+        id = company.getId();
+        name = company.getName();
+        description = company.getDescription();
+        user = new UserViewDto(company.getUser());
+        location = new CompanyLocationViewDto(company.getLocation());
     }
 
 }

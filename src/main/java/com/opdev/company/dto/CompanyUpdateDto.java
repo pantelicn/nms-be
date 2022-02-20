@@ -3,6 +3,7 @@ package com.opdev.company.dto;
 import java.util.Objects;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.opdev.common.utils.MappingUtils;
 import com.opdev.model.company.Company;
@@ -22,16 +23,15 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @ToString(callSuper = true)
 public class CompanyUpdateDto {
+
     @NotBlank
     private String name;
 
     @NotBlank
     private String description;
 
-    @NotBlank
-    private String address1;
-
-    private String address2;
+    @NotNull
+    private UpdateCompanyLocationDto newLocation;
 
     public Company asCompany(final Company oldCompany, final User admin) {
         Objects.requireNonNull(oldCompany);
@@ -44,10 +44,9 @@ public class CompanyUpdateDto {
         if (MappingUtils.shouldUpdate(description, oldCompany.getDescription())) {
             oldCompanyBuilder.description(description);
         }
-        if (MappingUtils.shouldUpdate(address1, oldCompany.getAddress1())) {
-            oldCompanyBuilder.address1(address1);
+        if (oldCompany.getLocation().getId().equals(newLocation.getId())) {
+            oldCompanyBuilder.location(newLocation.asCompanyLocation());
         }
-        oldCompanyBuilder.address2(address2);
 
         final Company updatedCompany = oldCompanyBuilder.build();
         if (null != admin) {

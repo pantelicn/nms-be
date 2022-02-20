@@ -115,7 +115,6 @@ public abstract class AbstractIntegrationTest {
                 .build();
 
         Company company = Company.builder()
-                .address1("San Francisco")
                 .description("google company")
                 .name("Google")
                 .location(location)
