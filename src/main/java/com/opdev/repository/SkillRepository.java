@@ -12,4 +12,5 @@ public interface SkillRepository extends JpaRepository<Skill, Long>, JpaSpecific
 
     Long deleteByCode(String code);
 
+    Skill getByCode(String code);
 }

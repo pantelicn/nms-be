@@ -11,4 +11,5 @@ public interface PositionRepository extends JpaRepository<Position, Long> {
 
     Long deleteByCode(final String code);
 
+    Position getByCode(final String code);
 }

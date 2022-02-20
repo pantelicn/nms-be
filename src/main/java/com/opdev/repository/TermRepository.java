@@ -9,4 +9,5 @@ public interface TermRepository extends JpaRepository<Term, Long> {
 
     Optional<Term> findByCode(final String code);
 
+    Term getByCode(String code);
 }
