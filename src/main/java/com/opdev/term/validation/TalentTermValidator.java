@@ -3,6 +3,8 @@ package com.opdev.term.validation;
 import com.opdev.exception.ApiValidationException;
 import com.opdev.model.term.TalentTerm;
 import com.opdev.model.term.TermType;
+import com.opdev.model.term.UnitOfMeasure;
+
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -17,10 +19,10 @@ import static java.time.LocalDate.parse;
 public class TalentTermValidator {
 
     public static void validate(@NonNull TalentTerm talentTerm) {
-        validate(talentTerm.getTerm().getType(), talentTerm.getValue());
+        validate(talentTerm.getTerm().getType(), talentTerm.getValue(), talentTerm.getUnitOfMeasure());
     }
 
-    public static void validate(@NonNull TermType type, @NonNull String value) {
+    public static void validate(@NonNull TermType type, @NonNull String value, UnitOfMeasure unitOfMeasure) {
         try {
             switch (type) {
                 case INT:
@@ -39,6 +41,9 @@ public class TalentTermValidator {
                     break;
             }
         } catch (DateTimeParseException | IllegalArgumentException e) {
+            throw new ApiValidationException("Invalid value");
+        }
+        if ((type == TermType.BIGINT || type == TermType.INT) && unitOfMeasure == null) {
             throw new ApiValidationException("Invalid value");
         }
     }

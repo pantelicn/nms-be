@@ -93,7 +93,7 @@ public class TalentTermRequestServiceImpl implements TalentTermRequestService {
                 .throwIf(() -> currentTermRequest.getCounterOffer().equals(newTermRequest.getCounterOffer()));
         try {
             TalentTermValidator.validate(currentTermRequest.getTalentTerm().getTerm().getType(),
-                    newTermRequest.getCounterOffer());
+                    newTermRequest.getCounterOffer(), currentTermRequest.getTalentTerm().getUnitOfMeasure());
         } catch (ApiValidationException e) {
             throw ApiBadRequestException.message("Invalid term request counter offer");
         }

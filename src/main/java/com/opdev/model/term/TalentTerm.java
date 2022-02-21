@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -62,6 +64,10 @@ public class TalentTerm extends Audit {
     @Setter
     @JoinColumn(name = "term_id", referencedColumnName = "id", nullable = false)
     private Term term;
+
+    @Enumerated(EnumType.STRING)
+    @Column
+    private UnitOfMeasure unitOfMeasure;
 
     @ToString.Exclude
     @OneToMany(mappedBy = "talentTerm")

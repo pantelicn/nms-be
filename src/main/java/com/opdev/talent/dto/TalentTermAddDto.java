@@ -2,6 +2,8 @@ package com.opdev.talent.dto;
 
 import com.opdev.model.term.TalentTerm;
 import com.opdev.model.term.Term;
+import com.opdev.model.term.UnitOfMeasure;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,10 +30,13 @@ public class TalentTermAddDto {
     @NotBlank
     private String code;
 
+    private UnitOfMeasure unitOfMeasure;
+
     public TalentTerm asTalentTerm() {
         return TalentTerm.builder()
                 .value(value)
                 .negotiable(negotiable)
+                .unitOfMeasure(unitOfMeasure)
                 .term(new Term(code)).build();
     }
 

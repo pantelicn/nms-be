@@ -4,6 +4,8 @@ import com.opdev.exception.ApiValidationException;
 import com.opdev.model.term.TalentTerm;
 import com.opdev.model.term.Term;
 import com.opdev.model.term.TermType;
+import com.opdev.model.term.UnitOfMeasure;
+
 import org.junit.jupiter.api.Test;
 
 import static com.opdev.term.validation.TalentTermValidator.validate;
@@ -32,7 +34,7 @@ class TalentTermValidatorTest {
     @Test
     void validate_validInteger() {
         final Term term = createTerm(TermType.INT);
-        TalentTerm talentTerm = TalentTerm.builder().value("123").negotiable(true).term(term).build();
+        TalentTerm talentTerm = TalentTerm.builder().value("123").unitOfMeasure(UnitOfMeasure.EURO).negotiable(true).term(term).build();
 
         validate(talentTerm);
     }
@@ -51,7 +53,7 @@ class TalentTermValidatorTest {
     @Test
     void validate_validBigInteger() {
         final Term term = createTerm(TermType.BIGINT);
-        TalentTerm talentTerm = TalentTerm.builder().value("21474836490").negotiable(true).term(term).build();
+        TalentTerm talentTerm = TalentTerm.builder().value("21474836490").unitOfMeasure(UnitOfMeasure.DOLLAR).negotiable(true).term(term).build();
 
         validate(talentTerm);
     }

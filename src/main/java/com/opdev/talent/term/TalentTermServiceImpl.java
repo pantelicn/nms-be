@@ -90,6 +90,7 @@ public class TalentTermServiceImpl implements TalentTermService {
         final TalentTerm newTalentTerm = TalentTerm.builder()
                 .value(talentTerm.getValue())
                 .negotiable(talentTerm.getNegotiable())
+                .unitOfMeasure(talentTerm.getUnitOfMeasure())
                 .talent(talent)
                 .term(foundTerm).build();
         validate(newTalentTerm);

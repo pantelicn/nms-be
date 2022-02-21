@@ -1,6 +1,8 @@
 package com.opdev.talent.dto;
 
 import com.opdev.model.term.TalentTerm;
+import com.opdev.model.term.UnitOfMeasure;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,12 +24,14 @@ public class TalentTermEditDto {
     @NotNull
     private String value;
 
+    private UnitOfMeasure unitOfMeasure;
+
     @NonNull
     @NotNull
     private Boolean negotiable;
 
     public TalentTerm asTalentTerm() {
-        return TalentTerm.builder().id(id).value(value).negotiable(negotiable).build();
+        return TalentTerm.builder().unitOfMeasure(unitOfMeasure).id(id).value(value).negotiable(negotiable).build();
     }
 
 }

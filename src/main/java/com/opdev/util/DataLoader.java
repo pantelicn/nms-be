@@ -21,6 +21,7 @@ import com.opdev.model.user.User;
 import com.opdev.model.user.UserType;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -29,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
+@ConditionalOnProperty(name="import.local.data", havingValue="true")
 public class DataLoader extends RepositoryBundler implements ApplicationRunner {
 
     @Override
@@ -229,7 +231,6 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .build();
 
         return companyRepository.save(Company.builder()
-                .address1("San Francisco")
                 .description("Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.")
                 .name("Google")
                 .location(location)
@@ -326,7 +327,6 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .build();
 
         return companyRepository.save(Company.builder()
-                .address1("Moa")
                 .description("Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.")
                 .name("Facebook")
                 .location(location)
