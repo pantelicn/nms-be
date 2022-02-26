@@ -15,14 +15,16 @@ import javax.validation.constraints.NotNull;
 public class PostAddDto {
 
     @NotNull
-    private String description;
-    // TODO @nikolagudelj We may want to check for our custom image hosting domain
+    private String content;
+    @NotNull
+    private String title;
     private String url;
 
     public Post asPostFromCompany(Company company) {
         return Post.builder()
                 .company(company)
-                .description(description)
+                .content(content)
+                .title(title)
                 .country(company.getLocation().getCountry())
                 .url(url)
                 .build();

@@ -38,7 +38,11 @@ public class Post extends Audit {
 
     @NonNull
     @Column(nullable = false)
-    private String description;
+    private String content;
+
+    @NonNull
+    @Column(nullable = false)
+    private String title;
 
     @NonNull
     @Column(nullable = false)

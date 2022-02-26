@@ -241,19 +241,22 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     private void initializeGooglePosts(Company company) {
         postRepository.saveAll(Arrays.asList(
                 Post.builder()
-                        .description("Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa.")
+                        .content("Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa.")
+                        .title("Duis title")
                         .url("http://dummyimage.com/136x100.png/ff4444/ffffff")
                         .country("Ghana")
                         .company(company)
                         .build(),
                 Post.builder()
-                        .description("Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl.")
+                        .content("Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl.")
+                        .title("Duis title")
                         .url("http://dummyimage.com/163x100.png/ff4444/ffffff")
                         .country("Indonesia")
                         .company(company)
                         .build(),
                 Post.builder()
-                        .description("Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis.")
+                        .content("Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis.")
+                        .title("Duis title")
                         .url("http://dummyimage.com/207x100.png/cc0000/ffffff")
                         .country("Argentina")
                         .company(company)
@@ -337,19 +340,22 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     private void initializeFacebookPosts(Company company) {
         postRepository.saveAll(Arrays.asList(
                 Post.builder()
-                        .description("Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.")
+                        .content("Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.")
+                        .title("Duis title")
                         .url("http://dummyimage.com/190x100.png/dddddd/000000")
                         .country("Nigeria")
                         .company(company)
                         .build(),
                 Post.builder()
-                        .description("Proin interdum mauris non ligula pellentesque ultrices.")
+                        .content("Proin interdum mauris non ligula pellentesque ultrices.")
+                        .title("Proin title")
                         .url("http://dummyimage.com/236x100.png/cc0000/ffffff")
                         .country("Japan")
                         .company(company)
                         .build(),
                 Post.builder()
-                        .description("Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc.")
+                        .content("Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc.")
+                        .title("Maecenas title")
                         .url("http://dummyimage.com/146x100.png/5fa2dd/ffffff")
                         .country("China")
                         .company(company)

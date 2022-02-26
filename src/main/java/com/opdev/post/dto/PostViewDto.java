@@ -12,7 +12,8 @@ import java.time.Instant;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PostViewDto {
     private Long id;
-    private String description;
+    private String content;
+    private String title;
     private String url;
     private Integer likes;
     private CompanyPublicViewDto company;
@@ -20,7 +21,8 @@ public class PostViewDto {
 
     public PostViewDto(final Post post) {
         this.id = post.getId();
-        this.description = post.getDescription();
+        this.content = post.getContent();
+        this.title = post.getTitle();
         this.url = post.getUrl();
         this.likes = post.getLikes();
         this.company = new CompanyPublicViewDto(post.getCompany());

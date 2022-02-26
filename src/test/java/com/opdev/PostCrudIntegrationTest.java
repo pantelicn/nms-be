@@ -31,8 +31,8 @@ public class PostCrudIntegrationTest extends AbstractIntegrationTest {
         Company googleCompany = createCompany(COMPANY_GOOGLE);
         HttpHeaders headers = createAuthHeaders(getTokenForCompanyGoogle());
 
-        PostAddDto post1 = new PostAddDto("some description 1", "google.com");
-        PostAddDto post2 = new PostAddDto("some description 2", "google.com");
+        PostAddDto post1 = new PostAddDto("some description 1", "google title 1", "google.com");
+        PostAddDto post2 = new PostAddDto("some description 2", "google title 2", "google.com");
 
         final HttpEntity<PostAddDto> post1Http = new HttpEntity<>(post1, headers);
         restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/posts", HttpMethod.POST, post1Http, PostViewDto.class);

@@ -89,7 +89,8 @@ class PostReactionIntegrationTest extends AbstractIntegrationTest {
         Company google = createCompany(COMPANY_GOOGLE);
         Post post = Post.builder()
                 .company(google)
-                .description("description")
+                .content("description")
+                .title("title")
                 .country(google.getLocation().getCountry())
                 .url("url")
                 .build();
