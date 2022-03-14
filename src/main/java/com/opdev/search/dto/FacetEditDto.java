@@ -1,24 +1,24 @@
 package com.opdev.search.dto;
 
-import javax.validation.constraints.NotEmpty;
-
 import com.opdev.model.search.Facet;
 import com.opdev.model.search.OperatorType;
 import com.opdev.model.search.SearchTemplate;
 import com.opdev.model.search.TableName;
-
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import javax.validation.constraints.NotEmpty;
+
 @RequiredArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 @Getter
 public class FacetEditDto {
 
-    @NonNull
     private Long id;
     @NonNull
     private TableName type;

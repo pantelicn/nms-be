@@ -1,7 +1,16 @@
 package com.opdev.model.search;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.opdev.model.Audit;
+import com.opdev.model.company.Company;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.springframework.lang.NonNull;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,19 +22,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import com.opdev.model.Audit;
-import com.opdev.model.company.Company;
-
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import java.util.ArrayList;
+import java.util.List;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -56,4 +54,11 @@ public class SearchTemplate extends Audit {
     @Setter
     private Company company;
 
+    public Facet getFacet(Long facetId) {
+        return facets
+                .stream()
+                .filter(facet -> facet.getId().equals(facetId))
+                .findAny()
+                .orElse(null);
+    }
 }

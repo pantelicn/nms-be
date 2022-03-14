@@ -9,7 +9,7 @@ public interface SearchTemplateService {
 
     SearchTemplate add(String name, List<Facet> facets, String companyUsername);
 
-    SearchTemplate edit(Long id, String newName, String companyUsername);
+    SearchTemplate edit(SearchTemplate modified, String companyUsername);
 
     List<SearchTemplate> findAllForCompany(String companyUsername);
 

@@ -1,10 +1,5 @@
 package com.opdev.search;
 
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.opdev.company.service.CompanyService;
 import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.exception.FacetInvalidPositionException;
@@ -24,9 +19,12 @@ import com.opdev.repository.FacetRepository;
 import com.opdev.repository.SearchTemplateRepository;
 import com.opdev.skill.SkillService;
 import com.opdev.term.TermService;
-
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -57,13 +55,21 @@ public class SearchTemplateServiceImpl implements SearchTemplateService {
 
     @Override
     @Transactional
-    public SearchTemplate edit(@NonNull final Long id, @NonNull final String newName, @NonNull final String companyUsername) {
+    public SearchTemplate edit(@NonNull final SearchTemplate modified, @NonNull final String companyUsername) {
         Company foundCompany = companyService.getByUsername(companyUsername);
-        SearchTemplate found = repository.findByIdAndCompany(id, foundCompany).orElseThrow(() -> ApiEntityNotFoundException.builder()
-                .message("Entity.not.found").entity("SearchTemplate").id(id.toString() + "_" + companyUsername).build());
-        found.setName(newName);
+        SearchTemplate found = repository
+                .findByIdAndCompany(modified.getId(), foundCompany)
+                .orElseThrow(() -> ApiEntityNotFoundException
+                        .builder()
+                        .message("Entity.not.found")
+                        .entity("SearchTemplate")
+                        .id(modified.getId().toString() + "_" + companyUsername)
+                        .build());
+        updateFacets(found, modified, companyUsername);
+        found.setName(modified.getName());
         return repository.save(found);
     }
+
 
     @Override
     @Transactional(readOnly = true)
@@ -77,7 +83,7 @@ public class SearchTemplateServiceImpl implements SearchTemplateService {
     public SearchTemplate get(@NonNull final Long id, @NonNull final String companyUsername) {
         Company foundCompany = companyService.getByUsername(companyUsername);
         return repository.findByIdAndCompany(id, foundCompany).orElseThrow(() -> ApiEntityNotFoundException.builder()
-                .message("Entity.not.found").entity("SearchTemplate").id(id.toString() + "_" + companyUsername).build());
+                .message("Entity.not.found").entity("SearchTemplate").id(id + "_" + companyUsername).build());
     }
 
     @Override
@@ -92,7 +98,7 @@ public class SearchTemplateServiceImpl implements SearchTemplateService {
     public Facet addFacet(@NonNull final Long id, @NonNull final Facet newFacet, @NonNull final String companyUsername) {
         get(id, companyUsername);
         validateFacet(newFacet);
-        Facet created =  facetRepository.save(newFacet);
+        Facet created = facetRepository.save(newFacet);
         return created;
     }
 
@@ -111,8 +117,18 @@ public class SearchTemplateServiceImpl implements SearchTemplateService {
     public void removeFacet(@NonNull final Long id, @NonNull final Long facetId, @NonNull final String companyUsername) {
         SearchTemplate foundSearchTemplate = get(id, companyUsername);
         Facet foundFacet = facetRepository.findByIdAndSearchTemplate(facetId, foundSearchTemplate).orElseThrow(() -> ApiEntityNotFoundException.builder()
-                .message("Entity.not.found").entity("Facet").id(facetId.toString() + "_" + foundSearchTemplate.getId().toString()).build());
+                .message("Entity.not.found").entity("Facet").id(facetId + "_" + foundSearchTemplate.getId().toString()).build());
         facetRepository.delete(foundFacet);
+    }
+
+    private void updateFacets(SearchTemplate found, SearchTemplate modified, String companyUsername) {
+        modified.getFacets().forEach(facet -> {
+            if (facet.getId() == null) {
+                addFacet(found.getId(), facet, companyUsername);
+            } else {
+                editFacet(found.getId(), facet, companyUsername);
+            }
+        });
     }
 
     private void validateFacet(Facet facet) {
@@ -120,7 +136,8 @@ public class SearchTemplateServiceImpl implements SearchTemplateService {
             validatePosition(facet);
         } else if (facet.getTableName() == TableName.SKILL) {
             validateSkill(facet);
-        } if (facet.getTableName() == TableName.TERM) {
+        }
+        if (facet.getTableName() == TableName.TERM) {
             validateTerm(facet);
         }
     }

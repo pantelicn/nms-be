@@ -1,10 +1,15 @@
 package com.opdev.search;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.validation.Valid;
-
+import com.opdev.config.security.Roles;
+import com.opdev.model.search.Facet;
+import com.opdev.model.search.SearchTemplate;
+import com.opdev.search.dto.FacetAddDto;
+import com.opdev.search.dto.FacetEditDto;
+import com.opdev.search.dto.FacetViewDto;
+import com.opdev.search.dto.SearchTemplateAddDto;
+import com.opdev.search.dto.SearchTemplateEditDto;
+import com.opdev.search.dto.SearchTemplateViewDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,17 +22,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.opdev.config.security.Roles;
-import com.opdev.model.search.Facet;
-import com.opdev.model.search.SearchTemplate;
-import com.opdev.search.dto.FacetAddDto;
-import com.opdev.search.dto.FacetEditDto;
-import com.opdev.search.dto.FacetViewDto;
-import com.opdev.search.dto.SearchTemplateAddDto;
-import com.opdev.search.dto.SearchTemplateEditDto;
-import com.opdev.search.dto.SearchTemplateViewDto;
-
-import lombok.RequiredArgsConstructor;
+import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,7 +45,8 @@ public class SearchTemplateController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.COMPANY + "'))")
     public SearchTemplateViewDto edit(@RequestBody @Valid SearchTemplateEditDto searchTemplateEditDto, @PathVariable String username) {
-        SearchTemplate updated = service.edit(searchTemplateEditDto.getId(), searchTemplateEditDto.getName(), username);
+        SearchTemplate found = service.get(searchTemplateEditDto.getId(), username);
+        SearchTemplate updated = service.edit(searchTemplateEditDto.asSearchTemplate(found), username);
         return new SearchTemplateViewDto(updated);
     }
 

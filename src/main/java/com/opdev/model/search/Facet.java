@@ -69,4 +69,10 @@ public class Facet extends Audit {
     @Setter
     private SearchTemplate searchTemplate;
 
+    public void update(Facet facet) {
+        tableName = facet.tableName;
+        code = facet.code;
+        value = facet.value;
+        operatorType = facet.operatorType;
+    }
 }
