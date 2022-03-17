@@ -183,19 +183,27 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 Arrays.asList(
                         Term.builder()
                                 .name("Salary")
-                                .code("Salary")
+                                .code("SALARY")
                                 .description("Cras sed lacinia metus, ut aliquet metus. Integer posuere nibh non dui imperdiet")
                                 .type(TermType.BIGINT)
+                                .availableForSearch(true)
+                                .build(),
+                        Term.builder()
+                                .name("Vacation days")
+                                .code("VACATION-DAYS")
+                                .description("Cras sed lacinia metus, ut aliquet metus. Integer posuere nibh non dui imperdiet")
+                                .type(TermType.BIGINT)
+                                .availableForSearch(true)
                                 .build(),
                         Term.builder()
                                 .name("Parking")
-                                .code("Parking")
+                                .code("PARKING")
                                 .description("Vivamus mi sem, pharetra a scelerisque a, tincidunt congue")
                                 .type(TermType.BOOLEAN)
                                 .build(),
                         Term.builder()
                                 .name("Holidays")
-                                .code("Holidays")
+                                .code("HOLIDAYS")
                                 .description("Phasellus fermentum vel sem et tempor. Nulla ac turpis finibus augue dapibus ornare.")
                                 .type(TermType.INT)
                                 .build()
@@ -525,13 +533,13 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                                 .value("2000")
                                 .negotiable(true)
                                 .talent(talent)
-                                .term(termRepository.getByCode("Salary"))
+                                .term(termRepository.getByCode("SALARY"))
                                 .build(),
                         TalentTerm.builder()
                                 .value("20")
                                 .negotiable(true)
                                 .talent(talent)
-                                .term(termRepository.getByCode("Holidays"))
+                                .term(termRepository.getByCode("HOLIDAYS"))
                                 .build()
                 ));
     }
@@ -633,19 +641,19 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                                 .value("5000")
                                 .negotiable(true)
                                 .talent(talent)
-                                .term(termRepository.getByCode("Salary"))
+                                .term(termRepository.getByCode("SALARY"))
                                 .build(),
                         TalentTerm.builder()
                                 .value("20")
                                 .negotiable(true)
                                 .talent(talent)
-                                .term(termRepository.getByCode("Holidays"))
+                                .term(termRepository.getByCode("HOLIDAYS"))
                                 .build(),
                         TalentTerm.builder()
                                 .value("true")
                                 .negotiable(true)
                                 .talent(talent)
-                                .term(termRepository.getByCode("Parking"))
+                                .term(termRepository.getByCode("PARKING"))
                                 .build()
                 ));
     }

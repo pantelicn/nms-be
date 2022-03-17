@@ -63,6 +63,8 @@ public class Term extends Audit {
     @Column(nullable = false, unique = true)
     private String code;
 
+    private boolean availableForSearch;
+
     @ToString.Exclude
     @OneToMany(mappedBy = "talent")
     @Builder.Default

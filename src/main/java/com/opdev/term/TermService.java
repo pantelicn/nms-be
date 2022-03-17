@@ -4,13 +4,15 @@ import com.opdev.model.term.Term;
 
 import java.util.List;
 
+import org.springframework.data.jpa.domain.Specification;
+
 public interface TermService {
 
     Term add(final Term newTerm);
 
     Term get(final String code);
 
-    List<Term> findAll();
+    List<Term> findAll(Specification<Term> termSpec);
 
     Term edit(final Term modified);
 

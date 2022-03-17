@@ -7,6 +7,8 @@ import com.opdev.user.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,8 +43,8 @@ public class TermServiceImpl implements TermService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Term> findAll() {
-        return repository.findAll();
+    public List<Term> findAll(Specification<Term> termSpec) {
+        return repository.findAll(termSpec);
     }
 
     @Override

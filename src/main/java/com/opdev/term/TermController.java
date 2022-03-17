@@ -6,6 +6,10 @@ import com.opdev.term.dto.TermAddDto;
 import com.opdev.term.dto.TermEditDto;
 import com.opdev.term.dto.TermViewDto;
 import lombok.RequiredArgsConstructor;
+import net.kaczmarzyk.spring.data.jpa.domain.Equal;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
+
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,8 +35,8 @@ public class TermController {
 
     @GetMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<TermViewDto>> findAll() {
-        final List<Term> found = service.findAll();
+    public ResponseEntity<List<TermViewDto>> findAll(@Spec(path = "availableForSearch", spec = Equal.class) Specification<Term> termSpec) {
+        final List<Term> found = service.findAll(termSpec);
         final List<TermViewDto> response = found.stream().map(TermViewDto::new).collect(Collectors.toList());
         return ResponseEntity.ok(response);
      }

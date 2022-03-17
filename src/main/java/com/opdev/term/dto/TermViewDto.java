@@ -20,10 +20,13 @@ public class TermViewDto {
 
     private TermType type;
 
+    private boolean availableForSearch;
+
     public TermViewDto(Term term) {
         name = term.getName();
         code = term.getCode();
         description = term.getDescription();
         type = term.getType();
+        availableForSearch = term.isAvailableForSearch();
     }
 }

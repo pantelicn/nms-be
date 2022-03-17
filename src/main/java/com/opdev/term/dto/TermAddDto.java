@@ -23,12 +23,15 @@ public class TermAddDto {
     @NonNull
     private TermType type;
 
+    private boolean availableForSearch;
+
     public Term asTerm() {
         return Term.builder()
                 .name(name)
                 .description(description)
                 .type(type)
                 .code(CodeGenerator.generate(name))
+                .availableForSearch(availableForSearch)
                 .build();
     }
 
