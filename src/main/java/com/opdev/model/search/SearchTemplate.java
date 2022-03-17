@@ -45,7 +45,7 @@ public class SearchTemplate extends Audit {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "searchTemplate")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "searchTemplate", orphanRemoval = true)
     @Builder.Default
     private List<Facet> facets = new ArrayList<>();
 
@@ -60,5 +60,15 @@ public class SearchTemplate extends Audit {
                 .filter(facet -> facet.getId().equals(facetId))
                 .findAny()
                 .orElse(null);
+    }
+
+    public boolean containsFacet(Facet facet) {
+        return facets
+                .stream()
+                .anyMatch(f -> f.getId().equals(facet.getId()));
+    }
+
+    public void removeAllFacets(List<Facet> facets) {
+        this.facets.removeAll(facets);
     }
 }

@@ -8,6 +8,7 @@ import com.opdev.model.talent.Skill;
 import com.opdev.model.talent.SkillStatus;
 import com.opdev.model.term.Term;
 import com.opdev.model.term.TermType;
+import com.opdev.repository.FacetRepository;
 import com.opdev.repository.PositionRepository;
 import com.opdev.repository.SkillRepository;
 import com.opdev.repository.TermRepository;
@@ -47,6 +48,8 @@ public class SearchTemplateCrudIntegrationTest extends AbstractIntegrationTest {
     private SkillRepository skillRepository;
     @Autowired
     private TermRepository termRepository;
+    @Autowired
+    private FacetRepository facetRepository;
 
     @BeforeEach
     public void init() {
@@ -65,6 +68,12 @@ public class SearchTemplateCrudIntegrationTest extends AbstractIntegrationTest {
         Skill java = Skill.builder()
                 .code("JAVA")
                 .name("java")
+                .status(SkillStatus.APPROVED)
+                .build();
+
+        Skill jenkins = Skill.builder()
+                .code("JENKINS")
+                .name("jenkins")
                 .status(SkillStatus.APPROVED)
                 .build();
 
@@ -97,6 +106,7 @@ public class SearchTemplateCrudIntegrationTest extends AbstractIntegrationTest {
         positionRepository.save(backendDeveloper);
         positionRepository.save(fullstackDeveloper);
         skillRepository.save(java);
+        skillRepository.save(jenkins);
         skillRepository.save(scala);
         skillRepository.save(django);
         skillRepository.save(sql);
@@ -131,7 +141,6 @@ public class SearchTemplateCrudIntegrationTest extends AbstractIntegrationTest {
         FacetEditDto backendDevEdit = new FacetEditDto(backendDevView.getId(), TableName.POSITION, "FULLSTACK_DEVELOPER", "FULLSTACK_DEVELOPER", OperatorType.EQ);
 
         FacetViewDto javaView = javaDevTemplateBody.getFacets().stream().filter(e -> e.getCode().equals("JAVA")).findFirst().orElse(null);
-        FacetEditDto javaEdit = new FacetEditDto(javaView.getId(), TableName.SKILL, "SCALA", "SCALA", OperatorType.EQ);
 
         FacetViewDto minSalaryView = javaDevTemplateBody.getFacets().stream().filter(e -> e.getCode().equals("SALARY") && e.getOperatorType().equals(OperatorType.GTE)).findFirst().orElse(null);
         FacetEditDto minSalaryEdit = new FacetEditDto(minSalaryView.getId(), TableName.TERM, "SALARY", "2000", OperatorType.GTE);
@@ -139,9 +148,11 @@ public class SearchTemplateCrudIntegrationTest extends AbstractIntegrationTest {
         FacetViewDto maxSalaryView = javaDevTemplateBody.getFacets().stream().filter(e -> e.getCode().equals("SALARY") && e.getOperatorType().equals(OperatorType.LTE)).findFirst().orElse(null);
         FacetEditDto maxSalaryEdit = new FacetEditDto(maxSalaryView.getId(), TableName.TERM, "SALARY", "2500", OperatorType.LTE);
 
-        FacetEditDto newFacet = new FacetEditDto(TableName.SKILL, "DJANGO", "DJANGO", OperatorType.EQ);
+        FacetEditDto django = new FacetEditDto(TableName.SKILL, "DJANGO", "DJANGO", OperatorType.EQ);
 
-        List<FacetEditDto> facetEdits = new ArrayList<>(List.of(backendDevEdit, javaEdit, minSalaryEdit, maxSalaryEdit, newFacet));
+        FacetEditDto jenkins = new FacetEditDto(TableName.SKILL, "JENKINS", "JENKINS", OperatorType.EQ);
+
+        List<FacetEditDto> facetEdits = new ArrayList<>(List.of(backendDevEdit, minSalaryEdit, maxSalaryEdit, django, jenkins));
 
         SearchTemplateEditDto javaDeveloperTemplateEdit = new SearchTemplateEditDto(javaDevTemplateBody.getId(), "Senior java developer for SH", facetEdits);
 
@@ -151,6 +162,8 @@ public class SearchTemplateCrudIntegrationTest extends AbstractIntegrationTest {
         assertThat(javaDevTemplateModifiedResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(javaDevTemplateModifiedResponse.getBody().getName(), is(equalTo(javaDeveloperTemplateEdit.getName())));
         assertThat(javaDevTemplateModifiedResponse.getBody().getFacets().size(), is(equalTo(5)));
+
+        assertThat(facetRepository.findById(javaView.getId()).isPresent(), is(equalTo(false)));
 
         HttpEntity<Void> getJavaDevTemplate = new HttpEntity<>(headers);
         ResponseEntity<SearchTemplateViewDto> javaDevTemplateResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/search-templates/" + javaDevTemplateBody.getId(), HttpMethod.GET, getJavaDevTemplate, SearchTemplateViewDto.class);

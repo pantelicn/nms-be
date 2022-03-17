@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -57,14 +58,7 @@ public class SearchTemplateServiceImpl implements SearchTemplateService {
     @Transactional
     public SearchTemplate edit(@NonNull final SearchTemplate modified, @NonNull final String companyUsername) {
         Company foundCompany = companyService.getByUsername(companyUsername);
-        SearchTemplate found = repository
-                .findByIdAndCompany(modified.getId(), foundCompany)
-                .orElseThrow(() -> ApiEntityNotFoundException
-                        .builder()
-                        .message("Entity.not.found")
-                        .entity("SearchTemplate")
-                        .id(modified.getId().toString() + "_" + companyUsername)
-                        .build());
+        SearchTemplate found = get(modified.getId(), companyUsername);
         updateFacets(found, modified, companyUsername);
         found.setName(modified.getName());
         return repository.save(found);
@@ -121,14 +115,37 @@ public class SearchTemplateServiceImpl implements SearchTemplateService {
         facetRepository.delete(foundFacet);
     }
 
-    private void updateFacets(SearchTemplate found, SearchTemplate modified, String companyUsername) {
-        modified.getFacets().forEach(facet -> {
-            if (facet.getId() == null) {
-                addFacet(found.getId(), facet, companyUsername);
-            } else {
-                editFacet(found.getId(), facet, companyUsername);
-            }
-        });
+    @Transactional
+    public void updateFacets(SearchTemplate found, SearchTemplate modified, String companyUsername) {
+        addNewFacets(found, modified, companyUsername);
+        updateExistingFacets(found, modified, companyUsername);
+        removeRedundantFacets(found, modified, companyUsername);
+    }
+
+    private void addNewFacets(SearchTemplate found, SearchTemplate modified, String companyUsername) {
+        modified
+                .getFacets()
+                .stream()
+                .filter(facet -> facet.getId() == null)
+                .forEach(facet -> addFacet(found.getId(), facet, companyUsername));
+    }
+
+    private void updateExistingFacets(SearchTemplate found, SearchTemplate modified, String companyUsername) {
+        modified
+                .getFacets()
+                .stream()
+                .filter(facet -> facet.getId() != null)
+                .forEach(facet -> editFacet(found.getId(), facet, companyUsername));
+    }
+
+    private void removeRedundantFacets(SearchTemplate found, SearchTemplate modified, String companyUsername) {
+        List<Facet> redundantFacets = found
+                .getFacets()
+                .stream()
+                .filter(facet -> !modified.containsFacet(facet))
+                .collect(Collectors.toList());
+
+        found.removeAllFacets(redundantFacets);
     }
 
     private void validateFacet(Facet facet) {
