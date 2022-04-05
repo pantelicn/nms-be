@@ -6,7 +6,6 @@ import com.opdev.config.security.Roles;
 import com.opdev.model.request.Request;
 import com.opdev.model.request.RequestStatus;
 import com.opdev.request.RequestService;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,7 +25,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 
 @RestController
 @RequestMapping("/v1/companies/{username}/requests")
@@ -86,7 +85,7 @@ public class CompanyRequestController {
     @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.COMPANY + "'))")
     public ResponseEntity<RequestViewDto> editNote(@PathVariable Long id,
                                                    @PathVariable String username,
-                                                   @RequestBody @NotNull @NonNull String note) {
+                                                   @RequestBody @NotEmpty String note) {
         Request updatedRequest = service.editRequestNote(id, username, note);
 
         return ResponseEntity.ok(new RequestViewDto(updatedRequest));
