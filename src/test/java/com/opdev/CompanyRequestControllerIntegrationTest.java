@@ -1,25 +1,5 @@
 package com.opdev;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-
 import com.opdev.common.services.Profiles;
 import com.opdev.company.dto.RequestCreateDto;
 import com.opdev.company.dto.RequestViewDto;
@@ -38,6 +18,25 @@ import com.opdev.repository.TalentTermRepository;
 import com.opdev.repository.TermRepository;
 import com.opdev.util.SimplePageImpl;
 import com.opdev.util.encoding.aes.AESTalentIdEncoder;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 @ActiveProfiles(Profiles.TEST_PROFILE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -64,33 +63,9 @@ public class CompanyRequestControllerIntegrationTest extends AbstractIntegration
     @Test
     @DirtiesContext
     public void createFindPendingAndRemoveRequest() {
-        createTalent(TALENT_GORAN);
-        createCompany(COMPANY_GOOGLE);
-
         String googleToken = getTokenForCompanyGoogle();
 
-        Term sallaryTerm = Term.builder()
-                .type(TermType.INT)
-                .description("Sallary")
-                .code("SALLARY")
-                .name("Sallary")
-                .build();
-
-        termRepository.save(sallaryTerm);
-
-        Talent talentGoran = talentRepository.findByUserUsername(TALENT_GORAN).get();
-        TalentTerm talentTermSallary = TalentTerm.builder()
-                .talent(talentGoran)
-                .term(sallaryTerm)
-                .negotiable(false)
-                .value("1000")
-                .build();
-
-        talentTermSallary = talentTermRepository.save(talentTermSallary);
-
-        talentGoran = talentRepository.save(talentGoran);
-
-        RequestViewDto createdRequest = createRequest(talentGoran.getId(), COMPANY_GOOGLE, talentTermSallary.getId(), googleToken);
+        RequestViewDto createdRequest = createRequestWithDependencies(googleToken);
 
         getPendingRequests(COMPANY_GOOGLE, googleToken, 1);
 
@@ -110,11 +85,62 @@ public class CompanyRequestControllerIntegrationTest extends AbstractIntegration
         getPendingRequests(COMPANY_GOOGLE, googleToken, 0);
     }
 
+    @Test
+    @DirtiesContext
+    public void updateRequestNote() {
+        String googleToken = getTokenForCompanyGoogle();
+
+        RequestViewDto createdRequest = createRequestWithDependencies(googleToken);
+        String updatedNote = "Updated note";
+
+        HttpHeaders headers = createAuthHeaders(googleToken);
+        HttpEntity<String> httpEntityPatch = new HttpEntity<>(updatedNote, headers);
+        ResponseEntity<RequestViewDto> patchResponse = restTemplate.exchange(
+                "/v1/companies/" + COMPANY_GOOGLE + "/requests/" + createdRequest.getId() + "/note",
+                HttpMethod.PATCH,
+                httpEntityPatch,
+                RequestViewDto.class
+        );
+
+        assertThat(patchResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        assertThat(patchResponse.getBody(), is(notNullValue()));
+        assertThat(patchResponse.getBody().getId(), is(equalTo(createdRequest.getId())));
+        assertThat(patchResponse.getBody().getNote(), is(equalTo(updatedNote)));
+    }
+
+    private RequestViewDto createRequestWithDependencies(String googleToken) {
+        createTalent(TALENT_GORAN);
+        createCompany(COMPANY_GOOGLE);
+
+        Term salaryTerm = Term.builder()
+                .type(TermType.INT)
+                .description("Salary")
+                .code("SALARY")
+                .name("Salary")
+                .build();
+
+        termRepository.save(salaryTerm);
+
+        Talent talentGoran = talentRepository.findByUserUsername(TALENT_GORAN).get();
+        TalentTerm talentTermSalary = TalentTerm.builder()
+                .talent(talentGoran)
+                .term(salaryTerm)
+                .negotiable(false)
+                .value("1000")
+                .build();
+
+        talentTermSalary = talentTermRepository.save(talentTermSalary);
+
+        talentGoran = talentRepository.save(talentGoran);
+
+        return createRequest(talentGoran.getId(), COMPANY_GOOGLE, talentTermSalary.getId(), googleToken);
+    }
+
     private void removeRequest(String companyUsername, String token, Long requestId) {
         HttpHeaders headers = createAuthHeaders(token);
         HttpEntity<RequestCreateDto> httpEntityDelete = new HttpEntity<>(headers);
         ResponseEntity<Void> deleteResponse = restTemplate.exchange("/v1/companies/" + companyUsername + "/requests/" + requestId, HttpMethod.DELETE, httpEntityDelete,
-                                                                                 Void.class);
+                Void.class);
 
         assertThat(deleteResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
     }
@@ -123,7 +149,8 @@ public class CompanyRequestControllerIntegrationTest extends AbstractIntegration
         HttpHeaders headers = createAuthHeaders(token);
         HttpEntity<RequestCreateDto> httpEntityGet = new HttpEntity<>(headers);
         ResponseEntity<SimplePageImpl<RequestViewDto>> getResponse = restTemplate.exchange("/v1/companies/" + companyUsername + "/requests/pending", HttpMethod.GET, httpEntityGet,
-                                                                                           new ParameterizedTypeReference<>() {});
+                new ParameterizedTypeReference<>() {
+                });
 
         assertThat(getResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(getResponse.getBody(), is(notNullValue()));
@@ -136,7 +163,8 @@ public class CompanyRequestControllerIntegrationTest extends AbstractIntegration
         HttpHeaders headers = createAuthHeaders(token);
         HttpEntity<RequestCreateDto> httpEntityGet = new HttpEntity<>(headers);
         ResponseEntity<SimplePageImpl<RequestViewDto>> getResponse = restTemplate.exchange("/v1/companies/" + companyUsername + "/requests/counter-offers", HttpMethod.GET, httpEntityGet,
-                                                                                 new ParameterizedTypeReference<>() {});
+                new ParameterizedTypeReference<>() {
+                });
 
         assertThat(getResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(getResponse.getBody(), is(notNullValue()));
@@ -149,7 +177,8 @@ public class CompanyRequestControllerIntegrationTest extends AbstractIntegration
         HttpHeaders headers = createAuthHeaders(token);
         HttpEntity<RequestCreateDto> httpEntityGet = new HttpEntity<>(headers);
         ResponseEntity<SimplePageImpl<RequestViewDto>> getResponse = restTemplate.exchange("/v1/companies/" + companyUsername + "/requests/accepted", HttpMethod.GET, httpEntityGet,
-                                                                                 new ParameterizedTypeReference<>() {});
+                new ParameterizedTypeReference<>() {
+                });
 
         assertThat(getResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(getResponse.getBody(), is(notNullValue()));
@@ -160,11 +189,11 @@ public class CompanyRequestControllerIntegrationTest extends AbstractIntegration
 
     private RequestViewDto createRequest(Long talentId, String companyUsername, Long talentTermId, String token) {
         List<TermCreateDto> terms = new ArrayList<>();
-        TermCreateDto salarryTerm = TermCreateDto.builder()
+        TermCreateDto salaryTerm = TermCreateDto.builder()
                 .termId(talentTermId)
                 .status(TalentTermRequestStatus.ACCEPTED)
                 .build();
-        terms.add(salarryTerm);
+        terms.add(salaryTerm);
         RequestCreateDto requestCreateDto = RequestCreateDto.builder()
                 .note("Java developer")
                 .talentId(talentIdEncoder.encode(talentId, companyRepository.findByUserUsername(companyUsername).get().getId()))
@@ -174,7 +203,7 @@ public class CompanyRequestControllerIntegrationTest extends AbstractIntegration
         HttpHeaders headers = createAuthHeaders(token);
         HttpEntity<RequestCreateDto> httpEntityPOST = new HttpEntity<>(requestCreateDto, headers);
         ResponseEntity<RequestViewDto> addResponse = restTemplate.exchange("/v1/companies/" + companyUsername + "/requests", HttpMethod.POST,
-                                                                           httpEntityPOST, RequestViewDto.class);
+                httpEntityPOST, RequestViewDto.class);
 
         assertThat(addResponse.getStatusCode(), is(equalTo(HttpStatus.CREATED)));
         assertThat(addResponse.getBody(), is(notNullValue()));

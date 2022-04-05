@@ -1,7 +1,17 @@
 package com.opdev.model.request;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.opdev.model.Audit;
+import com.opdev.model.company.Company;
+import com.opdev.model.talent.Talent;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,20 +25,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import com.opdev.model.Audit;
-import com.opdev.model.company.Company;
-import com.opdev.model.talent.Talent;
-
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import java.util.ArrayList;
+import java.util.List;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -65,6 +63,7 @@ public class Request extends Audit {
 
     @NonNull
     @Column(nullable = false)
+    @Setter
     private String note;
 
     @OneToMany(mappedBy = "request", cascade = CascadeType.ALL)

@@ -1,23 +1,8 @@
 package com.opdev.request;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import com.opdev.model.user.User;
-import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.opdev.company.service.CompanyService;
 import com.opdev.company.dto.RequestCreateDto;
 import com.opdev.company.dto.TermCreateDto;
+import com.opdev.company.service.CompanyService;
 import com.opdev.exception.ApiBadRequestException;
 import com.opdev.exception.ApiBadRequestStatusException;
 import com.opdev.exception.ApiEntityNotFoundException;
@@ -28,12 +13,24 @@ import com.opdev.model.request.TalentTermRequest;
 import com.opdev.model.request.TalentTermRequestStatus;
 import com.opdev.model.talent.Talent;
 import com.opdev.model.term.TalentTerm;
+import com.opdev.model.user.User;
 import com.opdev.repository.RequestRepository;
 import com.opdev.talent.TalentService;
 import com.opdev.util.encoding.TalentIdEncoder;
-
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -55,7 +52,7 @@ public class RequestServiceImpl implements RequestService {
         List<TalentTerm> talentTerms = foundTalent.getTerms();
 
         validateTerms(talentTerms.stream().map(TalentTerm::getId).collect(Collectors.toList()),
-                      newRequestDto.getTerms().stream().map(TermCreateDto::getTermId).collect(Collectors.toList()));
+                newRequestDto.getTerms().stream().map(TermCreateDto::getTermId).collect(Collectors.toList()));
 
         Request newRequest = Request.builder()
                 .talent(foundTalent)
@@ -140,6 +137,18 @@ public class RequestServiceImpl implements RequestService {
         Talent foundTalent = talentService.getByUsername(username);
         return repository.findByIdAndTalent(id, foundTalent).orElseThrow(() -> ApiEntityNotFoundException.builder()
                 .entity(Request.class.getSimpleName()).id(id + "_" + username).build());
+    }
+
+    @Override
+    @Transactional
+    public Request editRequestNote(Long id, String username, String note) {
+        Company foundCompany = companyService.getByUsername(username);
+        Request found = getByIdAndCompany(id, foundCompany);
+
+        found.setNote(note);
+        edit(found, foundCompany.getUser());
+
+        return repository.save(found);
     }
 
     @Override

@@ -1,14 +1,22 @@
 package com.opdev.company.controller;
 
-import javax.validation.Valid;
-
+import com.opdev.company.dto.RequestCreateDto;
+import com.opdev.company.dto.RequestViewDto;
+import com.opdev.config.security.Roles;
+import com.opdev.model.request.Request;
+import com.opdev.model.request.RequestStatus;
+import com.opdev.request.RequestService;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,14 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.opdev.company.dto.RequestCreateDto;
-import com.opdev.company.dto.RequestViewDto;
-import com.opdev.config.security.Roles;
-import com.opdev.model.request.Request;
-import com.opdev.model.request.RequestStatus;
-import com.opdev.request.RequestService;
-
-import lombok.RequiredArgsConstructor;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 @RestController
 @RequestMapping("/v1/companies/{username}/requests")
@@ -78,6 +80,16 @@ public class CompanyRequestController {
     @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.COMPANY + "'))")
     public void remove(@PathVariable Long id, @PathVariable String username) {
         service.removeRequestForCompany(id, username);
+    }
+
+    @PatchMapping("{id}/note")
+    @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.COMPANY + "'))")
+    public ResponseEntity<RequestViewDto> editNote(@PathVariable Long id,
+                                                   @PathVariable String username,
+                                                   @RequestBody @NotNull @NonNull String note) {
+        Request updatedRequest = service.editRequestNote(id, username, note);
+
+        return ResponseEntity.ok(new RequestViewDto(updatedRequest));
     }
 
 }
