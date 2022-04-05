@@ -46,6 +46,7 @@ public class CompanyChatController {
                 .id(created.getId())
                 .content(created.getContent())
                 .talentUsername(newMessage.getTalentUsername())
+                .createdBy(created.getCreatedBy().getType())
                 .seen(created.getSeen())
                 .build();
     }
@@ -59,6 +60,7 @@ public class CompanyChatController {
                 .id(message.getId())
                 .content(message.getContent())
                 .talentUsername(message.getCreatedBy().getType() == UserType.COMPANY ? message.getTo().getUsername() : message.getCreatedBy().getUsername())
+                .createdBy(message.getCreatedBy().getType())
                 .seen(message.getSeen())
                 .build()).collect(Collectors.toList());
     }
@@ -72,6 +74,7 @@ public class CompanyChatController {
                 .id(message.getId())
                 .content(message.getContent())
                 .talentUsername(message.getCreatedBy().getType() == UserType.COMPANY ? message.getTo().getUsername() : message.getCreatedBy().getUsername())
+                .createdBy(message.getCreatedBy().getType())
                 .seen(message.getSeen())
                 .build()).collect(Collectors.toList());
     }

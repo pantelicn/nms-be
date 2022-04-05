@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.notNullValue;
 
 import java.util.List;
 
+import com.opdev.model.user.UserType;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -24,11 +25,11 @@ import com.opdev.company.message.dto.MessageViewDto;
 
 @ActiveProfiles(Profiles.TEST_PROFILE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ChatCrudIntegrationTest extends AbstractIntegrationTest {
+class ChatCrudIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     @DirtiesContext
-    public void messageCrud() {
+    void messageCrud() {
         createCompany(COMPANY_GOOGLE);
         String googleToken = getTokenForCompanyGoogle();
         HttpHeaders headers = createAuthHeaders(googleToken);
@@ -121,6 +122,7 @@ public class ChatCrudIntegrationTest extends AbstractIntegrationTest {
         assertThat(sentMessageBody, is(notNullValue()));
         assertThat(sentMessageBody.getContent(), is(equalTo(message.getContent())));
         assertThat(sentMessageBody.getTalentUsername(), is(equalTo(message.getTalentUsername())));
+        assertThat(sentMessageBody.getCreatedBy(), is(equalTo(UserType.COMPANY)));
 
         return sentMessageBody;
     }
@@ -137,6 +139,7 @@ public class ChatCrudIntegrationTest extends AbstractIntegrationTest {
         assertThat(talentSentMessageBody, is(notNullValue()));
         assertThat(talentSentMessageBody.getContent(), is(equalTo(talentMessage.getContent())));
         assertThat(talentSentMessageBody.getCompanyUsername(), is(equalTo(talentMessage.getCompanyUsername())));
+        assertThat(talentSentMessageBody.getCreatedBy(), is(equalTo(UserType.TALENT)));
 
         return talentSentMessageBody;
     }

@@ -45,6 +45,7 @@ public class TalentChatsController {
                 .id(created.getId())
                 .content(created.getContent())
                 .companyUsername(newMessage.getCompanyUsername())
+                .createdBy(created.getCreatedBy().getType())
                 .seen(created.getSeen())
                 .build();
     }
@@ -58,6 +59,7 @@ public class TalentChatsController {
                 .id(message.getId())
                 .content(message.getContent())
                 .companyUsername(message.getCreatedBy().getType() == UserType.TALENT ? message.getTo().getUsername() : message.getCreatedBy().getUsername())
+                .createdBy(message.getCreatedBy().getType())
                 .seen(message.getSeen())
                 .build()).collect(Collectors.toList());
     }
@@ -71,6 +73,7 @@ public class TalentChatsController {
                 .id(message.getId())
                 .content(message.getContent())
                 .companyUsername(message.getCreatedBy().getType() == UserType.TALENT ? message.getTo().getUsername() : message.getCreatedBy().getUsername())
+                .createdBy(message.getCreatedBy().getType())
                 .seen(message.getSeen())
                 .build()).collect(Collectors.toList());
     }
