@@ -91,7 +91,7 @@ class TalentTermRequestIntegrationTest extends AbstractIntegrationTest {
 
         final RequestResponseDto requestResponseByTalent = RequestResponseDto.builder()
                 .requestId(request.getId())
-                .newTermRequests(List.of(newTermRequestByTalent))
+                .newTermRequest(newTermRequestByTalent)
                 .modifiedOn(request.getModifiedOn()).build();
         RequestViewDto updatedRequest = editByTalent(requestResponseByTalent, nikolicaHeaders);
 
@@ -102,7 +102,7 @@ class TalentTermRequestIntegrationTest extends AbstractIntegrationTest {
 
         final RequestResponseDto requestResponseByCompany = RequestResponseDto.builder()
                 .requestId(request.getId())
-                .newTermRequests(List.of(newTermRequestByCompany))
+                .newTermRequest(newTermRequestByCompany)
                 .modifiedOn(updatedRequest.getModifiedOn()).build();
         editByCompany(requestResponseByCompany, prikolicaHeaders);
     }
@@ -123,7 +123,7 @@ class TalentTermRequestIntegrationTest extends AbstractIntegrationTest {
         assertThat(updatedRequest.getStatus(), is(equalTo(RequestStatus.COUNTER_OFFER_TALENT)));
         assertThat(updatedRequest.getTalentTermRequests(), is(notNullValue()));
         assertThat(updatedRequest.getTalentTermRequests().get(0).getStatus(), is(equalTo(TalentTermRequestStatus.COUNTER_OFFER_TALENT)));
-        assertThat(updatedRequest.getTalentTermRequests().get(0).getCounterOffer(), is(equalTo(requestResponse.getNewTermRequests().get(0).getCounterOffer())));
+        assertThat(updatedRequest.getTalentTermRequests().get(0).getCounterOffer(), is(equalTo(requestResponse.getNewTermRequest().getCounterOffer())));
 
         return updatedRequest;
     }
@@ -144,7 +144,7 @@ class TalentTermRequestIntegrationTest extends AbstractIntegrationTest {
         assertThat(updatedRequest.getStatus(), is(equalTo(RequestStatus.COUNTER_OFFER_COMPANY)));
         assertThat(updatedRequest.getTalentTermRequests(), is(notNullValue()));
         assertThat(updatedRequest.getTalentTermRequests().get(0).getStatus(), is(equalTo(TalentTermRequestStatus.COUNTER_OFFER_COMPANY)));
-        assertThat(updatedRequest.getTalentTermRequests().get(0).getCounterOffer(), is(equalTo(requestResponse.getNewTermRequests().get(0).getCounterOffer())));
+        assertThat(updatedRequest.getTalentTermRequests().get(0).getCounterOffer(), is(equalTo(requestResponse.getNewTermRequest().getCounterOffer())));
 
         return updatedRequest;
     }
@@ -163,7 +163,8 @@ class TalentTermRequestIntegrationTest extends AbstractIntegrationTest {
                 .exchange("/v1/talents/" + TALENT_GORAN + "/terms",
                         HttpMethod.POST,
                         httpEntityPOST,
-                        new ParameterizedTypeReference<>() {});
+                        new ParameterizedTypeReference<>() {
+                        });
 
         assertThat(addTalentTermResponse.getStatusCode(), is(equalTo(HttpStatus.CREATED)));
 

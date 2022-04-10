@@ -2,6 +2,7 @@ package com.opdev.talent.term;
 
 import com.opdev.company.dto.TalentTermRequestEditDto;
 import com.opdev.exception.ApiBadRequestException;
+import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.exception.ApiValidationException;
 import com.opdev.model.request.Request;
 import com.opdev.model.request.RequestStatus;
@@ -13,7 +14,6 @@ import com.opdev.request.RequestService;
 import com.opdev.request.dto.RequestResponseDto;
 import com.opdev.term.validation.TalentTermValidator;
 import com.opdev.user.UserService;
-
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.time.temporal.ChronoUnit;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
@@ -58,13 +56,21 @@ public class TalentTermRequestServiceImpl implements TalentTermRequestService {
         validateRequestIsUpToDate(request.getModifiedOn(), requestResponse.getModifiedOn());
         User user = userService.getByUsername(username);
 
-        Map<Long, TalentTermRequest> currentTermRequestMap = request.getTalentTermRequests().stream()
-                .collect(Collectors.toMap(TalentTermRequest::getId, Function.identity()));
+        TalentTermRequestEditDto newTermRequest = requestResponse.getNewTermRequest();
 
-        for (TalentTermRequestEditDto newTermRequest : requestResponse.getNewTermRequests()) {
-            validateTalentTermRequestStatus(currentTermRequestMap.get(newTermRequest.getId()), requiredStatus);
-            updateTalentTermRequest(currentTermRequestMap.get(newTermRequest.getId()), newTermRequest, user);
-        }
+        TalentTermRequest foundRequest = request.getTalentTermRequests()
+                .stream()
+                .filter(e -> e.getId().equals(newTermRequest.getId()))
+                .findFirst()
+                .orElseThrow(() -> ApiEntityNotFoundException
+                        .builder()
+                        .entity(TalentTermRequest.class.getSimpleName())
+                        .id(newTermRequest.getId().toString())
+                        .build());
+
+
+        validateTalentTermRequestStatus(foundRequest, requiredStatus);
+        updateTalentTermRequest(foundRequest, newTermRequest, user);
 
         request.setStatus(requiredStatus == TalentTermRequestStatus.COUNTER_OFFER_TALENT
                 ? RequestStatus.COUNTER_OFFER_COMPANY : RequestStatus.COUNTER_OFFER_TALENT);
@@ -112,7 +118,13 @@ public class TalentTermRequestServiceImpl implements TalentTermRequestService {
     }
 
     private void validateRequestIsUpToDate(Instant expected, Instant actual) {
-        ApiBadRequestException.message("Request state has changed").throwIf(() -> !actual.equals(expected));
+        expected = expected.truncatedTo(ChronoUnit.MILLIS);
+        actual = actual.truncatedTo(ChronoUnit.MILLIS);
+
+        if (!actual.equals(expected)) {
+            throw new ApiBadRequestException("Request state has changed");
+        }
+
     }
 
     private void validateTalentTermRequestStatus(TalentTermRequest talentTermRequest,
