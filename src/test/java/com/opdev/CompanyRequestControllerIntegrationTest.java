@@ -67,22 +67,20 @@ public class CompanyRequestControllerIntegrationTest extends AbstractIntegration
 
         RequestViewDto createdRequest = createRequestWithDependencies(googleToken);
 
-        getPendingRequests(COMPANY_GOOGLE, googleToken, 1);
+        getActiveRequests(COMPANY_GOOGLE, googleToken, 1);
 
         Request request = requestRepository.findById(createdRequest.getId()).get();
         request.setStatus(RequestStatus.COUNTER_OFFER_TALENT);
         request = requestRepository.save(request);
-
-        getCounterOffer(COMPANY_GOOGLE, googleToken, 1);
 
         request.setStatus(RequestStatus.ACCEPTED);
         requestRepository.save(request);
 
         getAccepted(COMPANY_GOOGLE, googleToken, 1);
 
-        removeRequest(COMPANY_GOOGLE, googleToken, createdRequest.getId());
+        getActiveRequests(COMPANY_GOOGLE, googleToken, 0);
 
-        getPendingRequests(COMPANY_GOOGLE, googleToken, 0);
+        removeRequest(COMPANY_GOOGLE, googleToken, createdRequest.getId());
     }
 
     @Test
@@ -145,24 +143,10 @@ public class CompanyRequestControllerIntegrationTest extends AbstractIntegration
         assertThat(deleteResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
     }
 
-    private List<RequestViewDto> getPendingRequests(String companyUsername, String token, int expectedRequests) {
+    private List<RequestViewDto> getActiveRequests(String companyUsername, String token, int expectedRequests) {
         HttpHeaders headers = createAuthHeaders(token);
         HttpEntity<RequestCreateDto> httpEntityGet = new HttpEntity<>(headers);
-        ResponseEntity<SimplePageImpl<RequestViewDto>> getResponse = restTemplate.exchange("/v1/companies/" + companyUsername + "/requests/pending", HttpMethod.GET, httpEntityGet,
-                new ParameterizedTypeReference<>() {
-                });
-
-        assertThat(getResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertThat(getResponse.getBody(), is(notNullValue()));
-        assertThat(getResponse.getBody().getContent().size(), is(equalTo(expectedRequests)));
-
-        return getResponse.getBody().getContent();
-    }
-
-    private List<RequestViewDto> getCounterOffer(String companyUsername, String token, int expectedRequests) {
-        HttpHeaders headers = createAuthHeaders(token);
-        HttpEntity<RequestCreateDto> httpEntityGet = new HttpEntity<>(headers);
-        ResponseEntity<SimplePageImpl<RequestViewDto>> getResponse = restTemplate.exchange("/v1/companies/" + companyUsername + "/requests/counter-offers", HttpMethod.GET, httpEntityGet,
+        ResponseEntity<SimplePageImpl<RequestViewDto>> getResponse = restTemplate.exchange("/v1/companies/" + companyUsername + "/requests/active", HttpMethod.GET, httpEntityGet,
                 new ParameterizedTypeReference<>() {
                 });
 

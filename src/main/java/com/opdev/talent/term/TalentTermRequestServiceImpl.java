@@ -38,20 +38,19 @@ public class TalentTermRequestServiceImpl implements TalentTermRequestService {
     @Override
     public Request editByCompany(@NonNull RequestResponseDto requestResponse, @NonNull String username) {
         Request foundRequest = requestService.getByIdAndCompany(requestResponse.getRequestId(), username);
-        return edit(requestResponse, username, foundRequest, TalentTermRequestStatus.COUNTER_OFFER_TALENT);
+        return edit(requestResponse, username, foundRequest);
     }
 
     @Transactional
     @Override
     public Request editByTalent(@NonNull RequestResponseDto requestResponse, @NonNull String username) {
         Request foundRequest = requestService.getByIdAndTalent(requestResponse.getRequestId(), username);
-        return edit(requestResponse, username, foundRequest, TalentTermRequestStatus.COUNTER_OFFER_COMPANY);
+        return edit(requestResponse, username, foundRequest);
     }
 
     private Request edit(RequestResponseDto requestResponse,
                          String username,
-                         Request request,
-                         TalentTermRequestStatus requiredStatus) {
+                         Request request) {
         ApiBadRequestException.message("Invalid request status").throwIf(request::isFinal);
         validateRequestIsUpToDate(request.getModifiedOn(), requestResponse.getModifiedOn());
         User user = userService.getByUsername(username);
@@ -68,11 +67,10 @@ public class TalentTermRequestServiceImpl implements TalentTermRequestService {
                         .id(newTermRequest.getId().toString())
                         .build());
 
-
-        validateTalentTermRequestStatus(foundRequest, requiredStatus);
+        validateTalentTermRequestStatus(foundRequest);
         updateTalentTermRequest(foundRequest, newTermRequest, user);
 
-        request.setStatus(requiredStatus == TalentTermRequestStatus.COUNTER_OFFER_TALENT
+        request.setStatus(user.getType() == UserType.COMPANY
                 ? RequestStatus.COUNTER_OFFER_COMPANY : RequestStatus.COUNTER_OFFER_TALENT);
 
         LOGGER.info("{} {} responded to {}", user.getType(), user.getUsername(), request);
@@ -127,10 +125,9 @@ public class TalentTermRequestServiceImpl implements TalentTermRequestService {
 
     }
 
-    private void validateTalentTermRequestStatus(TalentTermRequest talentTermRequest,
-                                                 TalentTermRequestStatus requiredStatus) {
+    private void validateTalentTermRequestStatus(TalentTermRequest talentTermRequest) {
         ApiBadRequestException.message("Invalid term request status")
-                .throwIf(() -> talentTermRequest.getStatus() != requiredStatus);
+                .throwIf(() -> talentTermRequest.getStatus() == TalentTermRequestStatus.ACCEPTED);
     }
 
 }

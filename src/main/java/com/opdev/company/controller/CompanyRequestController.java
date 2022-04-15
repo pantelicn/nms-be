@@ -1,5 +1,7 @@
 package com.opdev.company.controller;
 
+import java.util.List;
+
 import com.opdev.company.dto.RequestCreateDto;
 import com.opdev.company.dto.RequestViewDto;
 import com.opdev.config.security.Roles;
@@ -45,23 +47,14 @@ public class CompanyRequestController {
         return new RequestViewDto(created);
     }
 
-    @GetMapping("pending")
+    @GetMapping("active")
     @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.COMPANY + "'))")
     @ResponseStatus(HttpStatus.OK)
     public Page<RequestViewDto> findWithStatusPending(@PathVariable String username,
                                                       @RequestParam(defaultValue = "0") Integer page) {
         Pageable pageable = PageRequest.of(page, MAX_REQUESTS_PER_PAGE);
-        final Page<Request> found = service.findByStatusForCompany(username, RequestStatus.PENDING, pageable);
-        return found.map(RequestViewDto::new);
-    }
-
-    @GetMapping("counter-offers")
-    @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.COMPANY + "'))")
-    @ResponseStatus(HttpStatus.OK)
-    public Page<RequestViewDto> findWithStatusCounterOfferTalent(@PathVariable String username,
-                                                                 @RequestParam(defaultValue = "0") Integer page) {
-        Pageable pageable = PageRequest.of(page, MAX_REQUESTS_PER_PAGE);
-        final Page<Request> found = service.findByStatusForCompany(username, RequestStatus.COUNTER_OFFER_TALENT, pageable);
+        List<RequestStatus> requiredStatuses = List.of(RequestStatus.PENDING, RequestStatus.COUNTER_OFFER_TALENT, RequestStatus.COUNTER_OFFER_COMPANY);
+        final Page<Request> found = service.findByStatusForCompany(username, requiredStatuses, pageable);
         return found.map(RequestViewDto::new);
     }
 
@@ -71,7 +64,8 @@ public class CompanyRequestController {
     public Page<RequestViewDto> findWithStatusAccepted(@PathVariable String username,
                                                        @RequestParam(defaultValue = "0") Integer page) {
         Pageable pageable = PageRequest.of(page, MAX_REQUESTS_PER_PAGE);
-        final Page<Request> found = service.findByStatusForCompany(username, RequestStatus.ACCEPTED, pageable);
+        List<RequestStatus> requiredStatuses = List.of(RequestStatus.ACCEPTED);
+        final Page<Request> found = service.findByStatusForCompany(username, requiredStatuses, pageable);
         return found.map(RequestViewDto::new);
     }
 

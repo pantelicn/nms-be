@@ -1,5 +1,7 @@
 package com.opdev.request;
 
+import java.util.List;
+
 import com.opdev.company.dto.RequestCreateDto;
 import com.opdev.model.request.Request;
 import com.opdev.model.request.RequestStatus;
@@ -11,7 +13,7 @@ public interface RequestService {
 
     Request create(RequestCreateDto newRequest, String username);
 
-    Page<Request> findByStatusForCompany(String username, RequestStatus status, Pageable pageable);
+    Page<Request> findByStatusForCompany(String username, List<RequestStatus> statuses, Pageable pageable);
 
     Page<Request> findByStatusForTalent(String username, RequestStatus status, Pageable pageable);
 

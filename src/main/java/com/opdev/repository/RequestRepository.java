@@ -1,5 +1,6 @@
 package com.opdev.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -13,7 +14,7 @@ import com.opdev.model.talent.Talent;
 
 public interface RequestRepository extends JpaRepository<Request, Long> {
 
-    Page<Request> findByCompanyAndStatus(Company company, RequestStatus status, Pageable pageable);
+    Page<Request> findByCompanyAndStatusIn(Company company, List<RequestStatus> statuses, Pageable pageable);
 
     Page<Request> findByTalentAndStatus(Talent talent, RequestStatus status, Pageable pageable);
 
