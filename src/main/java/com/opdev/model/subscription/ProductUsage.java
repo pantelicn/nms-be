@@ -1,7 +1,8 @@
-package com.opdev.model.post;
+package com.opdev.model.subscription;
 
 import com.opdev.model.Audit;
 import com.opdev.model.company.Company;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,17 +18,20 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.time.LocalDate;
+import java.time.Period;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-@ToString(callSuper = true, exclude = {"company"})
+@ToString(callSuper = true)
+@Builder
 @Entity
-@Table(name = "post")
-public class Post extends Audit {
+@Table(name = "product_usage")
+public class ProductUsage extends Audit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,47 +39,30 @@ public class Post extends Audit {
     private Long id;
 
     @NonNull
-    @Column(nullable = false)
-    private String content;
+    private Integer remaining;
 
     @NonNull
     @Column(nullable = false)
-    private String title;
+    private Boolean limited;
 
-    @NonNull
+    @Column(name = "start_date", nullable = false)
+    private LocalDate startDate;
+
+    @Column(name = "end_date", nullable = false)
+    private LocalDate endDate;
+
     @Column(nullable = false)
-    @Builder.Default
-    private Integer likes = 0;
+    private Period period;
 
-    private String url;
-
-    @Column(nullable = false)
-    private String country;
-
+    @ToString.Exclude
     @NonNull
     @ManyToOne
     @JoinColumn(name = "company_id", referencedColumnName = "id", nullable = false)
     private Company company;
 
-    public void addReaction(ReactionType reaction) {
-        if (reaction == ReactionType.LIKE) {
-            addLike();
-        }
-    }
-
-    public void removeReaction(ReactionType reaction) {
-        if (reaction == ReactionType.LIKE) {
-            removeLike();
-        }
-    }
-
-    private void addLike() {
-        this.likes++;
-    }
-
-    private void removeLike() {
-        this.likes--;
-    }
-
+    @NonNull
+    @OneToOne
+    @JoinColumn(name = "product", referencedColumnName = "id", nullable = false)
+    private Product product;
 
 }

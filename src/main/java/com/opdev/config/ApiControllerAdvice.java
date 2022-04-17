@@ -1,11 +1,7 @@
 package com.opdev.config;
 
-import java.net.URI;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
-
 import com.opdev.exception.ApiBadRequestException;
+import com.opdev.exception.ApiCompanyAlreadySubscribedException;
 import com.opdev.exception.ApiContactEditValidationException;
 import com.opdev.exception.ApiEmailExistsException;
 import com.opdev.exception.ApiEntityDisabledException;
@@ -16,7 +12,8 @@ import com.opdev.exception.ApiUnauthorizedException;
 import com.opdev.exception.ApiVerificationTokenExpiredException;
 import com.opdev.exception.ApiVerificationTokenInvalidException;
 import com.opdev.exception.dto.ApiErrorDto;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -31,8 +28,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.net.URI;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @RestControllerAdvice
@@ -52,6 +51,15 @@ class ApiControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ApiBadRequestException.class)
     ResponseEntity<?> handleApiBadRequestException(final ApiBadRequestException e) {
+        final String message = resolveMessage(e.getMessage());
+        final HttpStatus responseStatus = HttpStatus.BAD_REQUEST;
+        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).build();
+
+        return logAndSendResponse(new ResponseEntity<>(apiError, responseStatus), e);
+    }
+
+    @ExceptionHandler(ApiCompanyAlreadySubscribedException.class)
+    ResponseEntity<?> handleApiCompanyAlreadySubscribedException(final ApiCompanyAlreadySubscribedException e) {
         final String message = resolveMessage(e.getMessage());
         final HttpStatus responseStatus = HttpStatus.BAD_REQUEST;
         final ApiErrorDto apiError = ApiErrorDto.builder().message(message).build();
@@ -154,7 +162,7 @@ class ApiControllerAdvice extends ResponseEntityExceptionHandler {
         Objects.requireNonNull(response);
 
         LOGGER.error("Handling exception:", t);
-        LOGGER.error("Responding with: {}", response.toString());
+        LOGGER.error("Responding with: {}", response);
         return response;
     }
 

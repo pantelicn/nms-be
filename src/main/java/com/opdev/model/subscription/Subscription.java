@@ -1,4 +1,4 @@
-package com.opdev.model.post;
+package com.opdev.model.subscription;
 
 import com.opdev.model.Audit;
 import com.opdev.model.company.Company;
@@ -12,70 +12,60 @@ import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.time.LocalDate;
+import java.time.Period;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Getter
-@ToString(callSuper = true, exclude = {"company"})
+@Builder
+@ToString(callSuper = true)
 @Entity
-@Table(name = "post")
-public class Post extends Audit {
+@Table(name = "subscription")
+public class Subscription extends Audit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Long id;
 
+    @Column(name = "start_date", nullable = false)
+    private LocalDate startDate;
+
+    @Column(name = "end_date", nullable = false)
+    private LocalDate endDate;
+
+    @Column(nullable = false)
+    private Period period;
+
     @NonNull
-    @Column(nullable = false)
-    private String content;
+    @Column(name = "auto_renewal", nullable = false)
+    private Boolean autoRenewal;
 
     @NonNull
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String title;
+    private SubscriptionStatus subscriptionStatus;
 
-    @NonNull
-    @Column(nullable = false)
-    @Builder.Default
-    private Integer likes = 0;
-
-    private String url;
-
-    @Column(nullable = false)
-    private String country;
-
+    @ToString.Exclude
     @NonNull
     @ManyToOne
     @JoinColumn(name = "company_id", referencedColumnName = "id", nullable = false)
     private Company company;
 
-    public void addReaction(ReactionType reaction) {
-        if (reaction == ReactionType.LIKE) {
-            addLike();
-        }
-    }
-
-    public void removeReaction(ReactionType reaction) {
-        if (reaction == ReactionType.LIKE) {
-            removeLike();
-        }
-    }
-
-    private void addLike() {
-        this.likes++;
-    }
-
-    private void removeLike() {
-        this.likes--;
-    }
-
+    @NonNull
+    @OneToOne
+    @JoinColumn(name = "plan", referencedColumnName = "id", nullable = false)
+    private Plan plan;
 
 }
