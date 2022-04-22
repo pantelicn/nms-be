@@ -25,6 +25,10 @@ public interface RequestService {
 
     Request getByIdAndTalent(Long id, String username);
 
+    void updateAsSeenByCompany(Long id);
+
+    void updateAsSeenByTalent(Long id);
+
     Request edit(Request request, User user);
 
     Request editRequestNote(Long id, String username, String note);

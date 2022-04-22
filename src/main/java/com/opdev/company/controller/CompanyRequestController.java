@@ -3,6 +3,8 @@ package com.opdev.company.controller;
 import java.util.List;
 
 import com.opdev.company.dto.RequestCreateDto;
+import com.opdev.company.dto.RequestDetailViewDto;
+import com.opdev.company.dto.RequestNoteEditDto;
 import com.opdev.company.dto.RequestViewDto;
 import com.opdev.config.security.Roles;
 import com.opdev.model.request.Request;
@@ -27,7 +29,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 
 @RestController
 @RequestMapping("/v1/companies/{username}/requests")
@@ -41,10 +42,10 @@ public class CompanyRequestController {
     @PostMapping
     @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.COMPANY + "'))")
     @ResponseStatus(HttpStatus.CREATED)
-    public RequestViewDto create(@RequestBody @Valid RequestCreateDto newRequest,
+    public RequestDetailViewDto create(@RequestBody @Valid RequestCreateDto newRequest,
                                  @PathVariable String username) {
         final Request created = service.create(newRequest, username);
-        return new RequestViewDto(created);
+        return new RequestDetailViewDto(created);
     }
 
     @GetMapping("active")
@@ -69,6 +70,14 @@ public class CompanyRequestController {
         return found.map(RequestViewDto::new);
     }
 
+    @GetMapping("{id}")
+    @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.COMPANY + "'))")
+    public RequestDetailViewDto find(@PathVariable String username, @PathVariable Long id) {
+        final Request found = service.getByIdAndCompany(id, username);
+        service.updateAsSeenByCompany(id);
+        return new RequestDetailViewDto(found);
+    }
+
     @DeleteMapping("{id}")
     @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.COMPANY + "'))")
     public void remove(@PathVariable Long id, @PathVariable String username) {
@@ -79,9 +88,8 @@ public class CompanyRequestController {
     @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.COMPANY + "'))")
     public ResponseEntity<RequestViewDto> editNote(@PathVariable Long id,
                                                    @PathVariable String username,
-                                                   @RequestBody @NotEmpty String note) {
-        Request updatedRequest = service.editRequestNote(id, username, note);
-
+                                                   @RequestBody @Valid RequestNoteEditDto note) {
+        Request updatedRequest = service.editRequestNote(id, username, note.getNote());
         return ResponseEntity.ok(new RequestViewDto(updatedRequest));
     }
 

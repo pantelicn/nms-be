@@ -71,6 +71,12 @@ public class Request extends Audit {
     @Setter
     private List<TalentTermRequest> talentTermRequests = new ArrayList<>();
 
+    @Setter
+    private boolean seenByCompany;
+
+    @Setter
+    private boolean seenByTalent;
+
     public boolean isFinal() {
         return status == RequestStatus.ACCEPTED || status == RequestStatus.REJECTED;
     }

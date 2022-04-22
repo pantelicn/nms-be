@@ -2,6 +2,7 @@ package com.opdev;
 
 import com.opdev.common.services.Profiles;
 import com.opdev.company.dto.RequestCreateDto;
+import com.opdev.company.dto.RequestNoteEditDto;
 import com.opdev.company.dto.RequestViewDto;
 import com.opdev.company.dto.TermCreateDto;
 import com.opdev.model.request.Request;
@@ -40,7 +41,7 @@ import static org.hamcrest.Matchers.notNullValue;
 
 @ActiveProfiles(Profiles.TEST_PROFILE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CompanyRequestControllerIntegrationTest extends AbstractIntegrationTest {
+class CompanyRequestControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
     private TermRepository termRepository;
@@ -62,7 +63,7 @@ public class CompanyRequestControllerIntegrationTest extends AbstractIntegration
 
     @Test
     @DirtiesContext
-    public void createFindPendingAndRemoveRequest() {
+    void createFindPendingAndRemoveRequest() {
         String googleToken = getTokenForCompanyGoogle();
 
         RequestViewDto createdRequest = createRequestWithDependencies(googleToken);
@@ -85,14 +86,14 @@ public class CompanyRequestControllerIntegrationTest extends AbstractIntegration
 
     @Test
     @DirtiesContext
-    public void updateRequestNote() {
+    void updateRequestNote() {
         String googleToken = getTokenForCompanyGoogle();
 
         RequestViewDto createdRequest = createRequestWithDependencies(googleToken);
-        String updatedNote = "Updated note";
+        RequestNoteEditDto updatedNote = RequestNoteEditDto.builder().note("Updated note").build();
 
         HttpHeaders headers = createAuthHeaders(googleToken);
-        HttpEntity<String> httpEntityPatch = new HttpEntity<>(updatedNote, headers);
+        HttpEntity<RequestNoteEditDto> httpEntityPatch = new HttpEntity<>(updatedNote, headers);
         ResponseEntity<RequestViewDto> patchResponse = restTemplate.exchange(
                 "/v1/companies/" + COMPANY_GOOGLE + "/requests/" + createdRequest.getId() + "/note",
                 HttpMethod.PATCH,
@@ -103,7 +104,7 @@ public class CompanyRequestControllerIntegrationTest extends AbstractIntegration
         assertThat(patchResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(patchResponse.getBody(), is(notNullValue()));
         assertThat(patchResponse.getBody().getId(), is(equalTo(createdRequest.getId())));
-        assertThat(patchResponse.getBody().getNote(), is(equalTo(updatedNote)));
+        assertThat(patchResponse.getBody().getNote(), is(equalTo(updatedNote.getNote())));
     }
 
     private RequestViewDto createRequestWithDependencies(String googleToken) {

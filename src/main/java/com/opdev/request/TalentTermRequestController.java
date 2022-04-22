@@ -1,6 +1,6 @@
 package com.opdev.request;
 
-import com.opdev.company.dto.RequestViewDto;
+import com.opdev.company.dto.RequestDetailViewDto;
 import com.opdev.config.security.Roles;
 import com.opdev.model.request.Request;
 import com.opdev.request.dto.RequestResponseDto;
@@ -24,18 +24,18 @@ public class TalentTermRequestController {
 
     @PutMapping("companies/{username}/talent-term-requests")
     @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.COMPANY + "'))")
-    public RequestViewDto editByCompany(@Valid @RequestBody RequestResponseDto requestResponse,
-                                        @PathVariable String username) {
+    public RequestDetailViewDto editByCompany(@Valid @RequestBody RequestResponseDto requestResponse,
+                                              @PathVariable String username) {
         Request modified = service.editByCompany(requestResponse, username);
-        return new RequestViewDto(modified);
+        return new RequestDetailViewDto(modified);
     }
 
     @PutMapping("talents/{username}/talent-term-requests")
     @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.TALENT + "'))")
-    public RequestViewDto editByTalent(@Valid @RequestBody RequestResponseDto requestResponse,
+    public RequestDetailViewDto editByTalent(@Valid @RequestBody RequestResponseDto requestResponse,
                                        @PathVariable String username) {
         Request modified = service.editByTalent(requestResponse, username);
-        return new RequestViewDto(modified);
+        return new RequestDetailViewDto(modified);
     }
 
 }

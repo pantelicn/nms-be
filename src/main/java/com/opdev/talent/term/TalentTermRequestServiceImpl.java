@@ -2,6 +2,7 @@ package com.opdev.talent.term;
 
 import com.opdev.company.dto.TalentTermRequestEditDto;
 import com.opdev.exception.ApiBadRequestException;
+import com.opdev.exception.ApiConflictException;
 import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.exception.ApiValidationException;
 import com.opdev.model.request.Request;
@@ -38,6 +39,7 @@ public class TalentTermRequestServiceImpl implements TalentTermRequestService {
     @Override
     public Request editByCompany(@NonNull RequestResponseDto requestResponse, @NonNull String username) {
         Request foundRequest = requestService.getByIdAndCompany(requestResponse.getRequestId(), username);
+        foundRequest.setSeenByTalent(false);
         return edit(requestResponse, username, foundRequest);
     }
 
@@ -45,6 +47,7 @@ public class TalentTermRequestServiceImpl implements TalentTermRequestService {
     @Override
     public Request editByTalent(@NonNull RequestResponseDto requestResponse, @NonNull String username) {
         Request foundRequest = requestService.getByIdAndTalent(requestResponse.getRequestId(), username);
+        foundRequest.setSeenByCompany(false);
         return edit(requestResponse, username, foundRequest);
     }
 
@@ -120,9 +123,8 @@ public class TalentTermRequestServiceImpl implements TalentTermRequestService {
         actual = actual.truncatedTo(ChronoUnit.MILLIS);
 
         if (!actual.equals(expected)) {
-            throw new ApiBadRequestException("Request state has changed");
+            throw ApiConflictException.message("Request state has changed");
         }
-
     }
 
     private void validateTalentTermRequestStatus(TalentTermRequest talentTermRequest) {

@@ -59,6 +59,7 @@ public class RequestServiceImpl implements RequestService {
                 .status(RequestStatus.PENDING)
                 .company(foundCompany)
                 .note(newRequestDto.getNote())
+                .seenByCompany(true)
                 .build();
 
         Map<Long, TalentTerm> talentTermsMap = talentTerms.stream()
@@ -137,6 +138,18 @@ public class RequestServiceImpl implements RequestService {
         Talent foundTalent = talentService.getByUsername(username);
         return repository.findByIdAndTalent(id, foundTalent).orElseThrow(() -> ApiEntityNotFoundException.builder()
                 .entity(Request.class.getSimpleName()).id(id + "_" + username).build());
+    }
+
+    @Override
+    @Transactional
+    public void updateAsSeenByCompany(@NonNull Long id) {
+        repository.updateSeenByCompany(id, true);
+    }
+
+    @Override
+    @Transactional
+    public void updateAsSeenByTalent(@NonNull Long id) {
+        repository.updateSeenByTalent(id, true);
     }
 
     @Override

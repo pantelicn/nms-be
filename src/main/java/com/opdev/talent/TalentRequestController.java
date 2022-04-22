@@ -1,5 +1,6 @@
 package com.opdev.talent;
 
+import com.opdev.company.dto.RequestDetailViewDto;
 import com.opdev.company.dto.RequestViewDto;
 import com.opdev.config.security.Roles;
 import com.opdev.model.request.Request;
@@ -51,6 +52,14 @@ public class TalentRequestController {
         Pageable pageable = PageRequest.of(page, MAX_REQUESTS_PER_PAGE);
         final Page<Request> found = service.findByStatusForTalent(username, RequestStatus.ACCEPTED, pageable);
         return found.map(RequestViewDto::new);
+    }
+
+    @GetMapping("{id}")
+    @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.TALENT + "'))")
+    public RequestDetailViewDto find(@PathVariable String username, @PathVariable Long id) {
+        final Request found = service.getByIdAndTalent(id, username);
+        service.updateAsSeenByTalent(id);
+        return new RequestDetailViewDto(found);
     }
 
     @PutMapping("{id}")

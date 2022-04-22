@@ -249,24 +249,24 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     private void initializeGooglePosts(Company company) {
         postRepository.saveAll(Arrays.asList(
                 Post.builder()
-                        .content("Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa.")
+                        .content("https://hybrid-it.rs/ f blandit o eu massa. https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg")
                         .title("Duis title")
                         .url("http://dummyimage.com/136x100.png/ff4444/ffffff")
-                        .country("Ghana")
+                        .country("Serbia")
                         .company(company)
                         .build(),
                 Post.builder()
                         .content("Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl.")
                         .title("Duis title")
                         .url("http://dummyimage.com/163x100.png/ff4444/ffffff")
-                        .country("Indonesia")
+                        .country("Serbia")
                         .company(company)
                         .build(),
                 Post.builder()
                         .content("Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis.")
                         .title("Duis title")
                         .url("http://dummyimage.com/207x100.png/cc0000/ffffff")
-                        .country("Argentina")
+                        .country("Serbia")
                         .company(company)
                         .build()));
     }

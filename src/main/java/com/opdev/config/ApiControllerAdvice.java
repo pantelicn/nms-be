@@ -1,6 +1,7 @@
 package com.opdev.config;
 
 import com.opdev.exception.ApiBadRequestException;
+import com.opdev.exception.ApiConflictException;
 import com.opdev.exception.ApiCompanyAlreadySubscribedException;
 import com.opdev.exception.ApiContactEditValidationException;
 import com.opdev.exception.ApiEmailExistsException;
@@ -22,10 +23,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -36,9 +37,17 @@ import java.util.Optional;
 @Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
-class ApiControllerAdvice extends ResponseEntityExceptionHandler {
+class ApiControllerAdvice {
 
     private final MessageSource messageSource;
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    ResponseEntity<?> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
+        final String message = resolveMessage(e.getMessage());
+        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).build();
+
+        return logAndSendResponse(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError), e);
+    }
 
     @ExceptionHandler(ApiContactEditValidationException.class)
     ResponseEntity<?> handleApiContactEditValidationException(final ApiContactEditValidationException e) {
@@ -62,6 +71,15 @@ class ApiControllerAdvice extends ResponseEntityExceptionHandler {
     ResponseEntity<?> handleApiCompanyAlreadySubscribedException(final ApiCompanyAlreadySubscribedException e) {
         final String message = resolveMessage(e.getMessage());
         final HttpStatus responseStatus = HttpStatus.BAD_REQUEST;
+        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).build();
+
+        return logAndSendResponse(new ResponseEntity<>(apiError, responseStatus), e);
+    }
+
+    @ExceptionHandler(ApiConflictException.class)
+    ResponseEntity<?> handleApiConflictException(final ApiConflictException e) {
+        final String message = resolveMessage(e.getMessage());
+        final HttpStatus responseStatus = HttpStatus.CONFLICT;
         final ApiErrorDto apiError = ApiErrorDto.builder().message(message).build();
 
         return logAndSendResponse(new ResponseEntity<>(apiError, responseStatus), e);
@@ -117,6 +135,14 @@ class ApiControllerAdvice extends ResponseEntityExceptionHandler {
         return logAndSendResponse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError), e);
     }
 
+    @ExceptionHandler(ApiSkillBadStatusException.class)
+    ResponseEntity<?> handleBadSkillStatusException(final ApiSkillBadStatusException e) {
+        final String message = resolveMessage(e.getMessage());
+        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).build();
+
+        return logAndSendResponse(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError), e);
+    }
+
     @ExceptionHandler(Exception.class)
     ResponseEntity<?> handleException(final Exception e) {
         final String message = resolveMessage(ApiErrorCodes.INTERNAL_SERVER_ERROR);
@@ -124,14 +150,6 @@ class ApiControllerAdvice extends ResponseEntityExceptionHandler {
         final ApiErrorDto apiError = ApiErrorDto.builder().message(message).build();
 
         return logAndSendResponse(new ResponseEntity<>(apiError, responseStatus), e);
-    }
-
-    @ExceptionHandler(ApiSkillBadStatusException.class)
-    ResponseEntity<?> handleBadSkillStatusException(final ApiSkillBadStatusException e) {
-        final String message = resolveMessage(e.getMessage());
-        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).build();
-
-        return logAndSendResponse(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError), e);
     }
 
     protected <E extends Exception> ResponseEntity<?> handleVerificationTokenExceptions(final E e, final String token) {

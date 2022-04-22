@@ -2,7 +2,7 @@ package com.opdev;
 
 import com.opdev.common.services.Profiles;
 import com.opdev.company.dto.RequestCreateDto;
-import com.opdev.company.dto.RequestViewDto;
+import com.opdev.company.dto.RequestDetailViewDto;
 import com.opdev.company.dto.TalentTermRequestEditDto;
 import com.opdev.company.dto.TermCreateDto;
 import com.opdev.exception.ApiEntityNotFoundException;
@@ -82,7 +82,7 @@ class TalentTermRequestIntegrationTest extends AbstractIntegrationTest {
                 .talentId(getEncodedId(TALENT_GORAN, COMPANY_GOOGLE))
                 .note("Note")
                 .terms(List.of(newTerm)).build();
-        final RequestViewDto request = addRequest(newRequest, prikolicaHeaders);
+        final RequestDetailViewDto request = addRequest(newRequest, prikolicaHeaders);
 
         final TalentTermRequestEditDto newTermRequestByTalent = TalentTermRequestEditDto.builder()
                 .id(request.getTalentTermRequests().get(0).getId())
@@ -93,7 +93,7 @@ class TalentTermRequestIntegrationTest extends AbstractIntegrationTest {
                 .requestId(request.getId())
                 .newTermRequest(newTermRequestByTalent)
                 .modifiedOn(request.getModifiedOn()).build();
-        RequestViewDto updatedRequest = editByTalent(requestResponseByTalent, nikolicaHeaders);
+        RequestDetailViewDto updatedRequest = editByTalent(requestResponseByTalent, nikolicaHeaders);
 
         final TalentTermRequestEditDto newTermRequestByCompany = TalentTermRequestEditDto.builder()
                 .id(request.getTalentTermRequests().get(0).getId())
@@ -107,17 +107,17 @@ class TalentTermRequestIntegrationTest extends AbstractIntegrationTest {
         editByCompany(requestResponseByCompany, prikolicaHeaders);
     }
 
-    RequestViewDto editByTalent(RequestResponseDto requestResponse, HttpHeaders headers) {
+    RequestDetailViewDto editByTalent(RequestResponseDto requestResponse, HttpHeaders headers) {
         final HttpEntity<RequestResponseDto> httpEntityPUT = new HttpEntity<>(requestResponse, headers);
-        final ResponseEntity<RequestViewDto> editByTalentResponse = restTemplate
+        final ResponseEntity<RequestDetailViewDto> editByTalentResponse = restTemplate
                 .exchange("/v1/talents/" + TALENT_GORAN + "/talent-term-requests",
                         HttpMethod.PUT,
                         httpEntityPUT,
-                        RequestViewDto.class);
+                        RequestDetailViewDto.class);
 
         assertThat(editByTalentResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
 
-        final RequestViewDto updatedRequest = editByTalentResponse.getBody();
+        final RequestDetailViewDto updatedRequest = editByTalentResponse.getBody();
 
         assertThat(updatedRequest, is(notNullValue()));
         assertThat(updatedRequest.getStatus(), is(equalTo(RequestStatus.COUNTER_OFFER_TALENT)));
@@ -128,17 +128,17 @@ class TalentTermRequestIntegrationTest extends AbstractIntegrationTest {
         return updatedRequest;
     }
 
-    RequestViewDto editByCompany(RequestResponseDto requestResponse, HttpHeaders headers) {
+    RequestDetailViewDto editByCompany(RequestResponseDto requestResponse, HttpHeaders headers) {
         final HttpEntity<RequestResponseDto> httpEntityPUT = new HttpEntity<>(requestResponse, headers);
-        final ResponseEntity<RequestViewDto> editByTalentResponse = restTemplate
+        final ResponseEntity<RequestDetailViewDto> editByTalentResponse = restTemplate
                 .exchange("/v1/companies/" + COMPANY_GOOGLE + "/talent-term-requests",
                         HttpMethod.PUT,
                         httpEntityPUT,
-                        RequestViewDto.class);
+                        RequestDetailViewDto.class);
 
         assertThat(editByTalentResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
 
-        final RequestViewDto updatedRequest = editByTalentResponse.getBody();
+        final RequestDetailViewDto updatedRequest = editByTalentResponse.getBody();
 
         assertThat(updatedRequest, is(notNullValue()));
         assertThat(updatedRequest.getStatus(), is(equalTo(RequestStatus.COUNTER_OFFER_COMPANY)));
@@ -178,16 +178,16 @@ class TalentTermRequestIntegrationTest extends AbstractIntegrationTest {
         return createdTalentTerms;
     }
 
-    private RequestViewDto addRequest(RequestCreateDto newRequest, HttpHeaders companyHeaders) {
+    private RequestDetailViewDto addRequest(RequestCreateDto newRequest, HttpHeaders companyHeaders) {
         final HttpEntity<RequestCreateDto> httpEntityPOST = new HttpEntity<>(newRequest, companyHeaders);
-        final ResponseEntity<RequestViewDto> addRequestResponse = restTemplate
+        final ResponseEntity<RequestDetailViewDto> addRequestResponse = restTemplate
                 .exchange("/v1/companies/" + COMPANY_GOOGLE + "/requests",
                         HttpMethod.POST,
                         httpEntityPOST,
-                        RequestViewDto.class);
+                        RequestDetailViewDto.class);
         assertThat(addRequestResponse.getStatusCode(), is(equalTo(HttpStatus.CREATED)));
 
-        final RequestViewDto createdRequest = addRequestResponse.getBody();
+        final RequestDetailViewDto createdRequest = addRequestResponse.getBody();
 
         assertThat(createdRequest, is(notNullValue()));
         assertThat(createdRequest.getNote(), is(equalTo(newRequest.getNote())));

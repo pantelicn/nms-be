@@ -11,6 +11,9 @@ import com.opdev.model.company.Company;
 import com.opdev.model.request.Request;
 import com.opdev.model.request.RequestStatus;
 import com.opdev.model.talent.Talent;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface RequestRepository extends JpaRepository<Request, Long> {
 
@@ -21,5 +24,13 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
     Optional<Request> findByIdAndTalent(Long id, Talent talent);
 
     Optional<Request> findByIdAndCompany(Long id, Company company);
+
+    @Modifying
+    @Query("update Request r set r.seenByCompany = :seen where r.id = :id")
+    void updateSeenByCompany(@Param("id") Long id, @Param("seen") boolean seen);
+
+    @Modifying
+    @Query("update Request r set r.seenByTalent = :seen where r.id = :id")
+    void updateSeenByTalent(@Param("id") Long id, @Param("seen") boolean seen);
 
 }
