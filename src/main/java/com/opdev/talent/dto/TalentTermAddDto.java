@@ -3,8 +3,8 @@ package com.opdev.talent.dto;
 import com.opdev.model.term.TalentTerm;
 import com.opdev.model.term.Term;
 import com.opdev.model.term.UnitOfMeasure;
-
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -14,6 +14,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public class TalentTermAddDto {

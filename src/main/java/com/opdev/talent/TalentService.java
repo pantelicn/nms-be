@@ -1,6 +1,9 @@
 package com.opdev.talent;
 
 import com.opdev.model.talent.Talent;
+import com.opdev.talent.search.TalentSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,5 +30,7 @@ public interface TalentService {
     Talent getById(Long id);
 
     List<Talent> findLatest10ByCountry(final String country);
+
+    Page<Talent> find(final TalentSpecification specification, final Pageable pageable);
 
 }

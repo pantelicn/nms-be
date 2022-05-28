@@ -1,8 +1,7 @@
-package com.opdev.search;
+package com.opdev.talent.search;
 
 import com.opdev.exception.ApiBadRequestException;
 import com.opdev.model.search.Facet;
-import com.opdev.model.search.SearchTemplate;
 import com.opdev.model.search.TableName;
 import com.opdev.model.talent.Talent;
 import lombok.NonNull;
@@ -22,8 +21,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TalentSpecification implements Specification<Talent> {
 
-    private final transient SearchTemplate searchTemplate;
-
     private static final String VALUE_ATTRIBUTE = "value";
     private static final String CODE_ATTRIBUTE = "code";
     private static final Map<TableName, String> joinTableNames = Map.of(
@@ -31,6 +28,8 @@ public class TalentSpecification implements Specification<Talent> {
             TableName.TERM, "talentTerms",
             TableName.POSITION, "talentPositions"
     );
+
+    private final transient List<Facet> facets;
 
     @Override
     public Predicate toPredicate(@NonNull Root<Talent> root,
@@ -43,7 +42,7 @@ public class TalentSpecification implements Specification<Talent> {
 
     private List<Predicate> getPredicates(Root<Talent> root, CriteriaBuilder criteriaBuilder) {
         List<Predicate> predicates = new ArrayList<>();
-        for (Facet facet : searchTemplate.getFacets()) {
+        for (Facet facet : facets) {
             Join<Talent, ?> joinEntity = root.join(joinTableNames.get(facet.getTableName()), JoinType.INNER);
             Join<?, ?> entity = joinEntity.join(facet.getTableName().toString(), JoinType.INNER);
 
