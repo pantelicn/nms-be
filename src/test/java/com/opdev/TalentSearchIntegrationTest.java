@@ -17,12 +17,16 @@ import com.opdev.talent.dto.TalentSkillsViewDto;
 import com.opdev.talent.dto.TalentTermAddDto;
 import com.opdev.talent.dto.TalentTermViewDto;
 import com.opdev.talent.dto.TalentViewDto;
+import com.opdev.talent.dto.TalentViewSearchDto;
 import com.opdev.term.dto.TermAddDto;
 import com.opdev.term.dto.TermViewDto;
+import com.opdev.util.SimplePageImpl;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -80,14 +84,14 @@ public class TalentSearchIntegrationTest extends AbstractIntegrationTest {
 
         final HttpEntity<List<FacetSpecifierDto>> httpEntityPOST = new HttpEntity<>(specifiers, createAuthHeaders(getTokenForAdmin()));
 
-        final ResponseEntity<List<TalentViewDto>> findTalentResponse = restTemplate
+        final ResponseEntity<SimplePageImpl<TalentViewSearchDto>> findTalentResponse = restTemplate
                 .exchange("/v1/talents/find",
                         HttpMethod.POST,
                         httpEntityPOST,
                         new ParameterizedTypeReference<>() {
                         });
 
-        assertThat(findTalentResponse.getBody().size(), is(equalTo(1)));
+        assertThat(findTalentResponse.getBody().getTotalElements(), is(equalTo(1L)));
     }
 
     @Test
@@ -101,14 +105,14 @@ public class TalentSearchIntegrationTest extends AbstractIntegrationTest {
 
         final HttpEntity<List<FacetSpecifierDto>> httpEntityPOST = new HttpEntity<>(specifiers, createAuthHeaders(getTokenForAdmin()));
 
-        final ResponseEntity<List<TalentViewDto>> findTalentResponse = restTemplate
+        final ResponseEntity<SimplePageImpl<TalentViewDto>> findTalentResponse = restTemplate
                 .exchange("/v1/talents/find",
                         HttpMethod.POST,
                         httpEntityPOST,
                         new ParameterizedTypeReference<>() {
                         });
 
-        assertThat(findTalentResponse.getBody().size(), is(equalTo(0)));
+        assertThat(findTalentResponse.getBody().getTotalElements(), is(equalTo(0L)));
     }
 
     private List<SkillViewDto> createSkills(HttpHeaders headers) {

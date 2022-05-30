@@ -7,6 +7,7 @@ import com.opdev.repository.LocationRepository;
 import com.opdev.repository.PositionRepository;
 import com.opdev.repository.PositionSkillRepository;
 import com.opdev.repository.PostRepository;
+import com.opdev.repository.RequestRepository;
 import com.opdev.repository.SkillRepository;
 import com.opdev.repository.TalentPositionRepository;
 import com.opdev.repository.TalentRepository;
@@ -60,5 +61,7 @@ public abstract class RepositoryBundler {
     @Autowired
     protected TalentTermRepository talentTermRepository;
 
+    @Autowired
+    protected RequestRepository requestRepository;
 
 }

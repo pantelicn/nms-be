@@ -107,18 +107,13 @@ public class Talent extends Audit {
     @Builder.Default
     private List<TalentSkill> talentSkills = new ArrayList<>();
 
-    @ToString.Exclude
-    @OneToMany(mappedBy = "talent")
-    @Builder.Default
-    private List<TalentTerm> talentTerms = new ArrayList<>();
-
     @OneToMany(mappedBy = "talent")
     @Builder.Default
     private List<Request> requests = new ArrayList<>();
 
     @OneToMany(mappedBy = "talent")
     @Builder.Default
-    private List<TalentTerm> terms = new ArrayList<>();
+    private List<TalentTerm> talentTerms = new ArrayList<>();
 
     @ToString.Exclude
     @Type(type = "json")

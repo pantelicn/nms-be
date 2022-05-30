@@ -49,7 +49,7 @@ public class RequestServiceImpl implements RequestService {
         Company foundCompany = companyService.getByUsername(username);
         Long talentId = talentIdEncoder.decode(newRequestDto.getTalentId());
         Talent foundTalent = talentService.getById(talentId);
-        List<TalentTerm> talentTerms = foundTalent.getTerms();
+        List<TalentTerm> talentTerms = foundTalent.getTalentTerms();
 
         validateTerms(talentTerms.stream().map(TalentTerm::getId).collect(Collectors.toList()),
                 newRequestDto.getTerms().stream().map(TermCreateDto::getTermId).collect(Collectors.toList()));
