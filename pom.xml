@@ -167,7 +167,7 @@
     <repositories>
         <repository>
             <id>kaczmarzyk.net</id>
-            <url>http://repo.kaczmarzyk.net</url>
+            <url>https://repo.kaczmarzyk.net</url>
         </repository>
     </repositories>
 
