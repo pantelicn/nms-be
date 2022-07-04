@@ -26,8 +26,9 @@ class SecurityConfig {
     @Bean
     public CorsFilter corsFilter() {
         final CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("*"); // this allows all origin
+        config.addAllowedOrigin("http://localhost:4200");
         config.addAllowedHeader("*"); // this allows all headers
+        config.setAllowCredentials(true);
 
         final List<String> allowedHttpMethods = Stream.of( //
                 HttpMethod.OPTIONS, //

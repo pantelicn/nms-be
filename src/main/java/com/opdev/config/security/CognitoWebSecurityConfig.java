@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -15,9 +15,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
@@ -26,12 +25,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtIss
 @Configuration
 @EnableGlobalMethodSecurity(jsr250Enabled = true, prePostEnabled = true)
 public class CognitoWebSecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Value("${cognito.userpool.nms.fullPoolId}")
     private String cognitoUrl;
@@ -44,9 +37,9 @@ public class CognitoWebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .oauth2ResourceServer(oauth2ResourceServer -> {
-                    oauth2ResourceServer.authenticationManagerResolver(getAuthenticationManagerResolver());
-                });
+                .oauth2ResourceServer(oauth2ResourceServer ->
+                    oauth2ResourceServer.authenticationManagerResolver(getAuthenticationManagerResolver())
+                );
     }
 
     private JwtIssuerAuthenticationManagerResolver getAuthenticationManagerResolver() {
@@ -58,12 +51,18 @@ public class CognitoWebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     public void addManager(Map<String, AuthenticationManager> authenticationManagers, String issuer) {
-        JwtAuthenticationProvider authenticationProvider = new JwtAuthenticationProvider(JwtDecoders.fromOidcIssuerLocation(issuer));
-        authenticationProvider.setJwtAuthenticationConverter(getJwtAuthenticationConverter());
+        JwtAuthenticationProvider authenticationProvider = new JwtAuthenticationProvider(jwtDecoder());
+        authenticationProvider.setJwtAuthenticationConverter(jwtAuthenticationConverter());
         authenticationManagers.put(issuer, authenticationProvider::authenticate);
     }
 
-    private JwtAuthenticationConverter getJwtAuthenticationConverter() {
+    @Bean
+    JwtDecoder jwtDecoder() {
+        return JwtDecoders.fromOidcIssuerLocation(cognitoUrl);
+    }
+
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter conv = new JwtAuthenticationConverter();
         conv.setJwtGrantedAuthoritiesConverter(jwt -> {
 

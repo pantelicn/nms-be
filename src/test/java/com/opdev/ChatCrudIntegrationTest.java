@@ -7,10 +7,18 @@ import static org.hamcrest.Matchers.notNullValue;
 
 import java.util.List;
 
+import com.opdev.company.message.dto.LastMessageViewDto;
+import com.opdev.model.chat.AvailableChat;
+import com.opdev.model.company.Company;
+import com.opdev.model.talent.Talent;
 import com.opdev.model.user.UserType;
+import com.opdev.repository.AvailableChatRepository;
+import com.opdev.util.SimplePageImpl;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -27,34 +35,40 @@ import com.opdev.company.message.dto.MessageViewDto;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ChatCrudIntegrationTest extends AbstractIntegrationTest {
 
+    @Autowired
+    private AvailableChatRepository availableChatRepository;
+
     @Test
     @DirtiesContext
     void messageCrud() {
-        createCompany(COMPANY_GOOGLE);
+        Company companyGoogle = createCompany(COMPANY_GOOGLE);
         String googleToken = getTokenForCompanyGoogle();
         HttpHeaders headers = createAuthHeaders(googleToken);
 
-        createTalent(TALENT_GORAN);
+        Talent talentGoran = createTalent(TALENT_GORAN);
+
+        addAvailableChat(companyGoogle, talentGoran);
 
         MessageViewDto sentMessage = companySendMessage(COMPANY_GOOGLE, "job offer", TALENT_GORAN, headers);
 
         String goranToken = getTokenForTalentGoran();
         headers = createAuthHeaders(goranToken);
 
-        List<com.opdev.talent.message.dto.MessageViewDto> talentChats = talentGetAllChats(TALENT_GORAN, headers, 1);
+        List<com.opdev.talent.message.dto.LastMessageViewDto> talentChats = talentGetAllChats(TALENT_GORAN, headers, 1);
 
-        talentGetChatContent(TALENT_GORAN, talentChats.get(0).getId(), headers, 1);
+        talentGetChatContent(TALENT_GORAN, talentChats.get(0).getMessage().getCompanyUsername(), headers, 1);
 
         talentSendMessage(TALENT_GORAN, "not interested", COMPANY_GOOGLE, headers);
 
         headers = createAuthHeaders(googleToken);
 
-        List<MessageViewDto> companyChats = companyGetAllChats(COMPANY_GOOGLE, headers, 1);
+        List<LastMessageViewDto> companyChats = companyGetAllChats(COMPANY_GOOGLE, headers, 1);
 
-        companyGetChatContent(COMPANY_GOOGLE, companyChats.get(0).getId(), headers, 2);
+        companyGetChatContent(COMPANY_GOOGLE, companyChats.get(0).getMessage().getTalentUsername(), headers, 2);
 
+        Talent talentNikola = createTalent(TALENT_NIKOLA);
 
-        createTalent(TALENT_NIKOLA);
+        addAvailableChat(companyGoogle, talentNikola);
 
         sentMessage = companySendMessage(COMPANY_GOOGLE, "job offer", TALENT_NIKOLA, headers);
 
@@ -63,7 +77,7 @@ class ChatCrudIntegrationTest extends AbstractIntegrationTest {
 
         talentChats = talentGetAllChats(TALENT_NIKOLA, headers, 1);
 
-        talentGetChatContent(TALENT_NIKOLA, talentChats.get(0).getId(), headers, 1);
+        talentGetChatContent(TALENT_NIKOLA, talentChats.get(0).getMessage().getCompanyUsername(), headers, 1);
 
         talentSendMessage(TALENT_NIKOLA, "not interested", COMPANY_GOOGLE, headers);
 
@@ -71,9 +85,12 @@ class ChatCrudIntegrationTest extends AbstractIntegrationTest {
 
         companyChats = companyGetAllChats(COMPANY_GOOGLE, headers, 2);
 
-        companyGetChatContent(COMPANY_GOOGLE, companyChats.get(1).getId(), headers, 2);
+        companyGetChatContent(COMPANY_GOOGLE, companyChats.get(1).getMessage().getTalentUsername(), headers, 2);
 
-        createCompany(COMPANY_FACEBOOK);
+        Company facebookCompany = createCompany(COMPANY_FACEBOOK);
+
+        addAvailableChat(facebookCompany, talentGoran);
+        addAvailableChat(facebookCompany, talentNikola);
 
         String facebookToken = getTokenForCompanyFacebook();
         headers = createAuthHeaders(facebookToken);
@@ -84,7 +101,7 @@ class ChatCrudIntegrationTest extends AbstractIntegrationTest {
 
         talentChats = talentGetAllChats(TALENT_GORAN, headers, 2);
 
-        talentGetChatContent(TALENT_GORAN, talentChats.get(0).getId(), headers, 1);
+        talentGetChatContent(TALENT_GORAN, talentChats.get(0).getMessage().getCompanyUsername(), headers, 1);
 
         talentSendMessage(TALENT_GORAN, "not interested", COMPANY_FACEBOOK, headers);
 
@@ -92,7 +109,7 @@ class ChatCrudIntegrationTest extends AbstractIntegrationTest {
 
         companyChats = companyGetAllChats(COMPANY_FACEBOOK, headers, 1);
 
-        companyGetChatContent(COMPANY_FACEBOOK, companyChats.get(0).getId(), headers, 2);
+        companyGetChatContent(COMPANY_FACEBOOK, companyChats.get(0).getMessage().getTalentUsername(), headers, 2);
 
         sentMessage = companySendMessage(COMPANY_FACEBOOK, "job offer", TALENT_NIKOLA, headers);
 
@@ -100,7 +117,7 @@ class ChatCrudIntegrationTest extends AbstractIntegrationTest {
 
         talentChats = talentGetAllChats(TALENT_NIKOLA, headers, 2);
 
-        talentGetChatContent(TALENT_NIKOLA, talentChats.get(0).getId(), headers, 1);
+        talentGetChatContent(TALENT_NIKOLA, talentChats.get(0).getMessage().getCompanyUsername(), headers, 1);
 
         talentSendMessage(TALENT_NIKOLA, "not interested", COMPANY_FACEBOOK, headers);
 
@@ -108,7 +125,19 @@ class ChatCrudIntegrationTest extends AbstractIntegrationTest {
 
         companyChats = companyGetAllChats(COMPANY_FACEBOOK, headers, 2);
 
-        companyGetChatContent(COMPANY_FACEBOOK, companyChats.get(1).getId(), headers, 2);
+        companyGetChatContent(COMPANY_FACEBOOK, companyChats.get(1).getMessage().getTalentUsername(), headers, 2);
+    }
+
+    private void addAvailableChat(Company company, Talent talent) {
+        AvailableChat availableChat = AvailableChat.builder()
+                .talent(talent.getUser())
+                .talentName(talent.getFullName())
+                .talentUsername(talent.getUser().getUsername())
+                .company(company.getUser())
+                .companyName(company.getName())
+                .companyUsername(company.getUser().getUsername())
+                .build();
+        availableChatRepository.save(availableChat);
     }
 
     private MessageViewDto companySendMessage(String companyUsername, String messageContent, String talentUsername, HttpHeaders headers) {
@@ -144,11 +173,11 @@ class ChatCrudIntegrationTest extends AbstractIntegrationTest {
         return talentSentMessageBody;
     }
 
-    private List<com.opdev.talent.message.dto.MessageViewDto> talentGetAllChats(String talentUsername, HttpHeaders headers, int expectedChats) {
+    private List<com.opdev.talent.message.dto.LastMessageViewDto> talentGetAllChats(String talentUsername, HttpHeaders headers, int expectedChats) {
         HttpEntity<Void> talentGetChats = new HttpEntity<>(headers);
-        ResponseEntity<List<com.opdev.talent.message.dto.MessageViewDto>> talentMessagesResponse = restTemplate.exchange("/v1/talents/" + talentUsername + "/chats", HttpMethod.GET, talentGetChats, new ParameterizedTypeReference<List<com.opdev.talent.message.dto.MessageViewDto>>() {});
+        ResponseEntity<List<com.opdev.talent.message.dto.LastMessageViewDto>> talentMessagesResponse = restTemplate.exchange("/v1/talents/" + talentUsername + "/chats", HttpMethod.GET, talentGetChats, new ParameterizedTypeReference<>() {});
 
-        List<com.opdev.talent.message.dto.MessageViewDto> talentChats = talentMessagesResponse.getBody();
+        List<com.opdev.talent.message.dto.LastMessageViewDto> talentChats = talentMessagesResponse.getBody();
         assertThat(talentMessagesResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(talentChats, is(notNullValue()));
         assertThat(talentChats.size(), is(equalTo(expectedChats)));
@@ -156,11 +185,11 @@ class ChatCrudIntegrationTest extends AbstractIntegrationTest {
         return talentChats;
     }
 
-    private List<MessageViewDto> companyGetAllChats(String companyUsername, HttpHeaders headers, int expectedNumberOfChats) {
+    private List<LastMessageViewDto> companyGetAllChats(String companyUsername, HttpHeaders headers, int expectedNumberOfChats) {
         HttpEntity<Void> companyGetChats = new HttpEntity<>(headers);
-        ResponseEntity<List<MessageViewDto>> companyMessagesResponse = restTemplate.exchange("/v1/companies/" + companyUsername + "/chats", HttpMethod.GET, companyGetChats, new ParameterizedTypeReference<List<MessageViewDto>>() {});
+        ResponseEntity<List<LastMessageViewDto>> companyMessagesResponse = restTemplate.exchange("/v1/companies/" + companyUsername + "/chats", HttpMethod.GET, companyGetChats, new ParameterizedTypeReference<>() {});
 
-        List<MessageViewDto> companyChats = companyMessagesResponse.getBody();
+        List<LastMessageViewDto> companyChats = companyMessagesResponse.getBody();
         assertThat(companyMessagesResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(companyChats, is(notNullValue()));
         assertThat(companyChats.size(), is(equalTo(expectedNumberOfChats)));
@@ -168,28 +197,28 @@ class ChatCrudIntegrationTest extends AbstractIntegrationTest {
         return companyChats;
     }
 
-    private List<com.opdev.talent.message.dto.MessageViewDto> talentGetChatContent(String talentUsername, Long lastMessageId, HttpHeaders headers, int expectedNumberOfMessages) {
+    private Page<com.opdev.talent.message.dto.MessageViewDto> talentGetChatContent(String talentUsername, String companyUsername, HttpHeaders headers, int expectedNumberOfMessages) {
         HttpEntity<Void> talentGetChatContent = new HttpEntity<>(headers);
-        ResponseEntity<List<com.opdev.talent.message.dto.MessageViewDto>> talentChatContentResponse = restTemplate.exchange("/v1/talents/" + talentUsername + "/chats/" + lastMessageId, HttpMethod.GET, talentGetChatContent, new ParameterizedTypeReference<List<com.opdev.talent.message.dto.MessageViewDto>>() {});
+        ResponseEntity<SimplePageImpl<com.opdev.talent.message.dto.MessageViewDto>> talentChatContentResponse = restTemplate.exchange("/v1/talents/" + talentUsername + "/chats/" + companyUsername, HttpMethod.GET, talentGetChatContent, new ParameterizedTypeReference<>() {});
 
         assertThat(talentChatContentResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        List<com.opdev.talent.message.dto.MessageViewDto> talentChatContent = talentChatContentResponse.getBody();
+        Page<com.opdev.talent.message.dto.MessageViewDto> talentChatContent = talentChatContentResponse.getBody();
         assertThat(talentChatContent, is(notNullValue()));
-        assertThat(talentChatContent.size(), is(expectedNumberOfMessages));
-        assertThat(talentChatContent.get(0).isSeen(), is(true));
+        assertThat((int) talentChatContent.getTotalElements(), is(expectedNumberOfMessages));
+        assertThat(talentChatContent.getContent().get(0).isSeen(), is(true));
 
         return talentChatContent;
     }
 
-    private List<MessageViewDto> companyGetChatContent(String companyUsername, Long lastMessageId, HttpHeaders headers, int expectedNumberOfMessages) {
+    private Page<MessageViewDto> companyGetChatContent(String companyUsername, String talentUsername, HttpHeaders headers, int expectedNumberOfMessages) {
         HttpEntity<Void> companyGetChatContent = new HttpEntity<>(headers);
-        ResponseEntity<List<MessageViewDto>> companyChatContentResponse = restTemplate.exchange("/v1/companies/" + companyUsername + "/chats/" + lastMessageId, HttpMethod.GET, companyGetChatContent, new ParameterizedTypeReference<List<MessageViewDto>>() {});
+        ResponseEntity<SimplePageImpl<MessageViewDto>> companyChatContentResponse = restTemplate.exchange("/v1/companies/" + companyUsername + "/chats/" + talentUsername, HttpMethod.GET, companyGetChatContent, new ParameterizedTypeReference<>() {});
 
         assertThat(companyChatContentResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        List<MessageViewDto> companyChatContent = companyChatContentResponse.getBody();
+        Page<MessageViewDto> companyChatContent = companyChatContentResponse.getBody();
         assertThat(companyChatContent, is(notNullValue()));
-        assertThat(companyChatContent.size(), is(expectedNumberOfMessages));
-        assertThat(companyChatContent.get(0).isSeen(), is(true));
+        assertThat((int) companyChatContent.getTotalElements(), is(expectedNumberOfMessages));
+        assertThat(companyChatContent.getContent().get(0).isSeen(), is(true));
 
         return companyChatContent;
     }

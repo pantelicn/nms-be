@@ -1,5 +1,6 @@
 package com.opdev.util;
 
+import com.opdev.repository.AvailableChatRepository;
 import com.opdev.repository.BenefitRepository;
 import com.opdev.repository.CompanyRepository;
 import com.opdev.repository.ContactRepository;
@@ -63,5 +64,8 @@ public abstract class RepositoryBundler {
 
     @Autowired
     protected RequestRepository requestRepository;
+    @Autowired
+    protected AvailableChatRepository availableChatRepository;
+
 
 }

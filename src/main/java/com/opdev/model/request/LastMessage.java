@@ -59,4 +59,10 @@ public class LastMessage {
     @NonNull
     private Instant modifiedOn;
 
+    @Column(nullable = false)
+    private String companyName;
+
+    @Column(nullable = false)
+    private String talentName;
+
 }

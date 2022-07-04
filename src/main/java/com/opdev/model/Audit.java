@@ -21,20 +21,20 @@ import lombok.Setter;
 public abstract class Audit {
 
     @OneToOne
-    @JoinColumn(name = "created_by", referencedColumnName = "id")
+    @JoinColumn(referencedColumnName = "id")
     private User createdBy;
 
-    @Column(name = "created_on", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     @PastOrPresent
     private Instant createdOn;
 
     @Setter
     @OneToOne
-    @JoinColumn(name = "modified_by", referencedColumnName = "id")
+    @JoinColumn(referencedColumnName = "id")
     private User modifiedBy;
 
     @Setter
-    @Column(name = "modified_on")
+    @Column
     private Instant modifiedOn;
 
     public void setCreatedBy(User createdBy) {

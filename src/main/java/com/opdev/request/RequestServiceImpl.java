@@ -6,6 +6,7 @@ import com.opdev.company.service.CompanyService;
 import com.opdev.exception.ApiBadRequestException;
 import com.opdev.exception.ApiBadRequestStatusException;
 import com.opdev.exception.ApiEntityNotFoundException;
+import com.opdev.message.AvailableChatService;
 import com.opdev.model.company.Company;
 import com.opdev.model.request.Request;
 import com.opdev.model.request.RequestStatus;
@@ -39,6 +40,7 @@ public class RequestServiceImpl implements RequestService {
 
     private final RequestRepository repository;
     private final CompanyService companyService;
+    private final AvailableChatService availableChatService;
     private final TalentService talentService;
     private final TalentIdEncoder talentIdEncoder;
 
@@ -113,6 +115,9 @@ public class RequestServiceImpl implements RequestService {
         Talent foundTalent = talentService.getByUsername(username);
         Request found = getByIdAndTalent(id, foundTalent);
         found.setStatus(newStatus);
+        if (newStatus == RequestStatus.ACCEPTED) {
+            availableChatService.create(found.getCompany(), foundTalent);
+        }
         return edit(found, foundTalent.getUser());
     }
 

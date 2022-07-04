@@ -1,5 +1,6 @@
 package com.opdev.util;
 
+import com.opdev.model.chat.AvailableChat;
 import com.opdev.model.company.Benefit;
 import com.opdev.model.company.Company;
 import com.opdev.model.contact.Contact;
@@ -38,6 +39,11 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
         initializeData();
     }
 
+    private Company companyGoogle;
+    private Company companyFacebook;
+    private Talent talentGoran;
+    private Talent talentNikola;
+
     private void initializeData() {
         initializeAdmin();
         initializeCompanies();
@@ -46,6 +52,7 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
         initializeSkillPositions();
         initializeTerms();
         initializeTalents();
+        initializeAvailableChats();
     }
 
     private void initializeAdmin() {
@@ -216,10 +223,10 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     }
 
     private void initializeGoogle() {
-        Company company = initializeGoogleData();
-        initializeGooglePosts(company);
-        initializeGoogleContacts(company);
-        initializeGoogleBenefits(company);
+        companyGoogle = initializeGoogleData();
+        initializeGooglePosts(companyGoogle);
+        initializeGoogleContacts(companyGoogle);
+        initializeGoogleBenefits(companyGoogle);
     }
 
     private Company initializeGoogleData() {
@@ -315,10 +322,10 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     }
 
     private void initializeFacebook() {
-        Company company = initializeFacebookData();
-        initializeFacebookPosts(company);
-        initializeFacebookContacts(company);
-        initializeFacebookBenefits(company);
+        companyFacebook = initializeFacebookData();
+        initializeFacebookPosts(companyFacebook);
+        initializeFacebookContacts(companyFacebook);
+        initializeFacebookBenefits(companyFacebook);
     }
 
     private Company initializeFacebookData() {
@@ -423,11 +430,11 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
 
 
     private void initializeNikola() {
-        Talent talent = initializeNikolaData();
-        initializeNikolaContacts(talent);
-        initializeNikolaAvailableLocations(talent);
-        initializeNikolaPositions(talent);
-        initializeNikolaTalentTerms(talent);
+        talentNikola = initializeNikolaData();
+        initializeNikolaContacts(talentNikola);
+        initializeNikolaAvailableLocations(talentNikola);
+        initializeNikolaPositions(talentNikola);
+        initializeNikolaTalentTerms(talentNikola);
     }
 
     private Talent initializeNikolaData() {
@@ -545,11 +552,11 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     }
 
     private void initializeGoran() {
-        Talent talent = initializeGoranData();
-        initializeGoranContacts(talent);
-        initializeGoranAvailableLocations(talent);
-        initializeGoranPositions(talent);
-        initializeGoranTalentTerms(talent);
+        talentGoran = initializeGoranData();
+        initializeGoranContacts(talentGoran);
+        initializeGoranAvailableLocations(talentGoran);
+        initializeGoranPositions(talentGoran);
+        initializeGoranTalentTerms(talentGoran);
     }
 
     private Talent initializeGoranData() {
@@ -656,6 +663,29 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                                 .term(termRepository.getByCode("PARKING"))
                                 .build()
                 ));
+    }
+
+    private void initializeAvailableChats() {
+        availableChatRepository.saveAll(
+                List.of(
+                        AvailableChat.builder()
+                            .company(companyGoogle.getUser())
+                            .companyName(companyGoogle.getName())
+                            .companyUsername(companyGoogle.getUser().getUsername())
+                            .talent(talentNikola.getUser())
+                            .talentName(talentNikola.getFullName())
+                            .talentUsername(talentNikola.getUser().getUsername())
+                            .build(),
+                        AvailableChat.builder()
+                                .company(companyGoogle.getUser())
+                                .companyName(companyGoogle.getName())
+                                .companyUsername(companyGoogle.getUser().getUsername())
+                                .talent(talentGoran.getUser())
+                                .talentName(talentGoran.getFullName())
+                                .talentUsername(talentGoran.getUser().getUsername())
+                                .build()
+                )
+        );
     }
 
 }
