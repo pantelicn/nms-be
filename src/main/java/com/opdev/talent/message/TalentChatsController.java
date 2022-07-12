@@ -1,10 +1,17 @@
 package com.opdev.talent.message;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.opdev.model.request.LastMessage;
+import com.opdev.talent.message.dto.LastMessageViewDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -50,32 +58,23 @@ public class TalentChatsController {
                 .build();
     }
 
-    @GetMapping("{lastMessageId}")
+    @GetMapping("{companyUsername}")
     @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.TALENT + "'))")
     @ResponseStatus(HttpStatus.OK)
-    public List<MessageViewDto> get(@PathVariable String username, @PathVariable Long lastMessageId) {
-        List<Message> found = service.getPreviousMessages(lastMessageId, UserType.TALENT);
-        return found.stream().map(message -> MessageViewDto.builder()
-                .id(message.getId())
-                .content(message.getContent())
-                .companyUsername(message.getCreatedBy().getType() == UserType.TALENT ? message.getTo().getUsername() : message.getCreatedBy().getUsername())
-                .createdBy(message.getCreatedBy().getType())
-                .seen(message.getSeen())
-                .build()).collect(Collectors.toList());
+    public Page<MessageViewDto> get(@PathVariable String username,
+                                    @PathVariable String companyUsername,
+                                    @RequestParam(required = false) Instant timestamp,
+                                    @PageableDefault(sort = "createdOn", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<Message> found = service.getPreviousMessages(username, companyUsername, timestamp, pageable);
+        return found.map(MessageViewDto::new);
     }
 
     @GetMapping
     @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.TALENT + "'))")
     @ResponseStatus(HttpStatus.OK)
-    public List<MessageViewDto> findAll(@PathVariable String username) {
-        List<Message> found = lastMessageService.getLastMessages(UserType.TALENT);
-        return found.stream().map(message -> MessageViewDto.builder()
-                .id(message.getId())
-                .content(message.getContent())
-                .companyUsername(message.getCreatedBy().getType() == UserType.TALENT ? message.getTo().getUsername() : message.getCreatedBy().getUsername())
-                .createdBy(message.getCreatedBy().getType())
-                .seen(message.getSeen())
-                .build()).collect(Collectors.toList());
+    public List<LastMessageViewDto> findAll(@PathVariable String username) {
+        List<LastMessage> found = lastMessageService.getLastMessages(UserType.TALENT);
+        return found.stream().map(LastMessageViewDto::new).collect(Collectors.toList());
     }
 
 }

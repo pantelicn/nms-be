@@ -3,12 +3,11 @@ package com.opdev.message;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import com.opdev.model.chat.AvailableChat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.request.LastMessage;
 import com.opdev.model.request.Message;
 import com.opdev.model.user.User;
@@ -24,20 +23,18 @@ import lombok.RequiredArgsConstructor;
 public class LastMessageServiceImpl implements LastMessageService {
 
     private final LastMessageRepository repository;
-
     private final UserService userService;
+    private final AvailableChatService availableChatService;
 
     @Override
     @Transactional
-    public List<Message> getLastMessages(@NonNull UserType type) {
+    public List<LastMessage> getLastMessages(@NonNull UserType type) {
         User loggedUser = userService.getLoggedInUser();
-        List<LastMessage> found;
         if (type == UserType.TALENT) {
-            found = repository.findByTalentOrderByModifiedOnDesc(loggedUser);
+            return repository.findByTalentOrderByModifiedOnDesc(loggedUser);
         } else {
-            found = repository.findByCompanyOrderByModifiedOnDesc(loggedUser);
+            return repository.findByCompanyOrderByModifiedOnDesc(loggedUser);
         }
-        return found.stream().map(LastMessage::getLast).collect(Collectors.toList());
     }
 
     @Override
@@ -49,25 +46,17 @@ public class LastMessageServiceImpl implements LastMessageService {
             found.get().setModifiedOn(Instant.now());
             return repository.save(found.get());
         } else {
+            AvailableChat availableChat = availableChatService.get(talent.getUsername(), company.getUsername());
             LastMessage lastMessage = LastMessage.builder()
                     .last(message)
                     .company(company)
                     .talent(talent)
                     .modifiedOn(Instant.now())
+                    .companyName(availableChat.getCompanyName())
+                    .talentName(availableChat.getTalentName())
                     .build();
             return repository.save(lastMessage);
         }
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public LastMessage findByMessageAndUser(@NonNull final Long lastMessageId, @NonNull final User user, @NonNull final UserType type) {
-        Optional<LastMessage> found;
-        if (type == UserType.COMPANY) {
-            found = repository.findByLastIdAndCompany(lastMessageId, user);
-        } else {
-            found = repository.findByLastIdAndTalent(lastMessageId, user);
-        }
-        return found.orElseThrow(() -> ApiEntityNotFoundException.builder().message("Entity.not.found").entity("LastMessage").id(lastMessageId.toString()).build());
-    }
 }

@@ -139,4 +139,8 @@ public class Talent extends Audit {
     public ReactionType getReactionForPost(Long postId) {
         return postReactions.get(postId);
     }
+
+    public String getFullName() {
+        return String.join(" ", firstName, middleName, lastName);
+    }
 }
