@@ -8,6 +8,10 @@ import com.opdev.model.contact.ContactType;
 import com.opdev.model.location.CompanyLocation;
 import com.opdev.model.location.Location;
 import com.opdev.model.post.Post;
+import com.opdev.model.request.Request;
+import com.opdev.model.request.RequestStatus;
+import com.opdev.model.request.TalentTermRequest;
+import com.opdev.model.request.TalentTermRequestStatus;
 import com.opdev.model.talent.Position;
 import com.opdev.model.talent.PositionSkill;
 import com.opdev.model.talent.Skill;
@@ -18,6 +22,7 @@ import com.opdev.model.talent.TalentSkill;
 import com.opdev.model.term.TalentTerm;
 import com.opdev.model.term.Term;
 import com.opdev.model.term.TermType;
+import com.opdev.model.term.UnitOfMeasure;
 import com.opdev.model.user.User;
 import com.opdev.model.user.UserType;
 import org.springframework.boot.ApplicationArguments;
@@ -27,6 +32,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,24 +40,27 @@ import java.util.List;
 @ConditionalOnProperty(name="import.local.data", havingValue="true")
 public class DataLoader extends RepositoryBundler implements ApplicationRunner {
 
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
-        initializeData();
-    }
-
+    private List<TalentTerm> goranTalentTerms;
     private Company companyGoogle;
     private Company companyFacebook;
     private Talent talentGoran;
     private Talent talentNikola;
 
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        initializeData();
+    }
+
+
+
     private void initializeData() {
         initializeAdmin();
-        initializeCompanies();
         initializeSkills();
         initializePositions();
         initializeSkillPositions();
         initializeTerms();
         initializeTalents();
+        initializeCompanies();
         initializeAvailableChats();
     }
 
@@ -213,6 +222,12 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                                 .code("HOLIDAYS")
                                 .description("Phasellus fermentum vel sem et tempor. Nulla ac turpis finibus augue dapibus ornare.")
                                 .type(TermType.INT)
+                                .build(),
+                        Term.builder()
+                                .name("Education budget")
+                                .code("EDUCATION-BUDGET")
+                                .description("Budget for education")
+                                .type(TermType.INT)
                                 .build()
                 ));
     }
@@ -227,6 +242,7 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
         initializeGooglePosts(companyGoogle);
         initializeGoogleContacts(companyGoogle);
         initializeGoogleBenefits(companyGoogle);
+        initializeGoogleRequests(companyGoogle);
     }
 
     private Company initializeGoogleData() {
@@ -319,6 +335,51 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                         .company(company)
                         .build()
         ));
+    }
+
+    private void initializeGoogleRequests(Company company) {
+        Request request = Request.builder()
+                .company(company)
+                .note("Java dev senior project NMS")
+                .status(RequestStatus.PENDING)
+                .talent(talentGoran)
+                .build();
+        List<TalentTermRequest> talentTermRequests = new ArrayList<>();
+        goranTalentTerms.forEach(goranTalentTerm -> {
+            TalentTermRequest talentTermRequest;
+            if (!goranTalentTerm.getNegotiable()) {
+                talentTermRequest = TalentTermRequest.builder()
+                        .request(request)
+                        .talentTerm(goranTalentTerm)
+                        .status(TalentTermRequestStatus.ACCEPTED)
+                        .build();
+            } else {
+                if (goranTalentTerm.getUnitOfMeasure() == UnitOfMeasure.DAYS) {
+                    talentTermRequest = TalentTermRequest.builder()
+                            .request(request)
+                            .talentTerm(goranTalentTerm)
+                            .counterOffer("15")
+                            .status(TalentTermRequestStatus.COUNTER_OFFER_COMPANY)
+                            .build();
+                } else if(goranTalentTerm.getTerm().getCode().equals("EDUCATION-BUDGET")) {
+                    talentTermRequest = TalentTermRequest.builder()
+                            .request(request)
+                            .talentTerm(goranTalentTerm)
+                            .counterOffer("2000")
+                            .status(TalentTermRequestStatus.COUNTER_OFFER_TALENT)
+                            .build();
+                } else {
+                    talentTermRequest = TalentTermRequest.builder()
+                            .request(request)
+                            .talentTerm(goranTalentTerm)
+                            .status(TalentTermRequestStatus.ACCEPTED)
+                            .build();
+                }
+            }
+            talentTermRequests.add(talentTermRequest);
+        });
+        request.setTalentTermRequests(talentTermRequests);
+        requestRepository.save(request);
     }
 
     private void initializeFacebook() {
@@ -573,8 +634,7 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .province("Turrialba")
                 .countryCode("CR")
                 .build();
-
-        return talentRepository.save(Talent.builder()
+        Talent goran = Talent.builder()
                 .firstName("Goran")
                 .lastName("Sasic")
                 .dateOfBirth(LocalDate.of(1995, 1, 8))
@@ -582,7 +642,10 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .available(true)
                 .availabilityChangeDate(Instant.now())
                 .currentLocation(currentLocation)
-                .build());
+                .build();
+        currentLocation.setTalent(goran);
+
+        return talentRepository.save(goran);
     }
 
     private void initializeGoranContacts(Talent talent) {
@@ -642,18 +705,20 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     }
 
     private void initializeGoranTalentTerms(Talent talent) {
-        talentTermRepository.saveAll(
+        goranTalentTerms = talentTermRepository.saveAll(
                 Arrays.asList(
                         TalentTerm.builder()
                                 .value("5000")
-                                .negotiable(true)
+                                .negotiable(false)
                                 .talent(talent)
+                                .unitOfMeasure(UnitOfMeasure.EURO)
                                 .term(termRepository.getByCode("SALARY"))
                                 .build(),
                         TalentTerm.builder()
                                 .value("20")
                                 .negotiable(true)
                                 .talent(talent)
+                                .unitOfMeasure(UnitOfMeasure.DAYS)
                                 .term(termRepository.getByCode("HOLIDAYS"))
                                 .build(),
                         TalentTerm.builder()
@@ -661,6 +726,13 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                                 .negotiable(true)
                                 .talent(talent)
                                 .term(termRepository.getByCode("PARKING"))
+                                .build(),
+                        TalentTerm.builder()
+                                .value("3000")
+                                .negotiable(true)
+                                .talent(talent)
+                                .term(termRepository.getByCode("EDUCATION-BUDGET"))
+                                .unitOfMeasure(UnitOfMeasure.EURO)
                                 .build()
                 ));
     }
