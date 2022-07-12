@@ -4,6 +4,7 @@ public enum TalentTermRequestStatus {
 
     ACCEPTED,
     COUNTER_OFFER_COMPANY,
-    COUNTER_OFFER_TALENT
+    COUNTER_OFFER_TALENT,
+    REJECTED
 
 }
