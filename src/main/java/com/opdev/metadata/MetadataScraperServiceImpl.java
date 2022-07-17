@@ -54,7 +54,7 @@ public class MetadataScraperServiceImpl implements MetadataScraperService {
                 .builder()
                 .title("")
                 .description("")
-                .imageUrl("")
+                .image("")
                 .url(url)
                 .build();
     }
@@ -64,7 +64,7 @@ public class MetadataScraperServiceImpl implements MetadataScraperService {
                 .builder()
                 .title("")
                 .description("")
-                .imageUrl(url)
+                .image(url)
                 .url(url)
                 .build();
     }
@@ -96,7 +96,7 @@ public class MetadataScraperServiceImpl implements MetadataScraperService {
                 .title(document.title())
                 .url(document.location())
                 .description(findDescription(document))
-                .imageUrl(findImageUrl(document))
+                .image(findImageUrl(document))
                 .build();
     }
 

@@ -15,7 +15,7 @@ public class LinkMetadata {
 
     String title;
     String description;
-    String imageUrl;
+    String image;
     String url;
 
 }
