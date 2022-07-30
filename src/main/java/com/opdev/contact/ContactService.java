@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface ContactService {
 
-    Contact add(Contact newContact, String username);
+    List<Contact> add(List<Contact> newContacts, String username);
 
-    Contact edit(Contact modified, String username);
+    List<Contact> edit(List<Contact> modified, String username);
 
     void remove(Long id, String username);
 

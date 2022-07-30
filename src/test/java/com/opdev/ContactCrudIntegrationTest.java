@@ -23,6 +23,7 @@ import com.opdev.contact.dto.ContactAddDto;
 import com.opdev.contact.dto.ContactEditDto;
 import com.opdev.contact.dto.ContactViewDto;
 import com.opdev.model.contact.ContactType;
+import com.opdev.skill.dto.SkillViewDto;
 
 @ActiveProfiles(Profiles.TEST_PROFILE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -40,39 +41,30 @@ class ContactCrudIntegrationTest extends AbstractIntegrationTest {
                 .type(ContactType.MOBILE_PHONE)
                 .value("00381631758749").build();
 
-        HttpEntity<ContactAddDto> httpEntityPOST = new HttpEntity<>(contactMobileMarko, headers);
-        ResponseEntity<ContactViewDto> addResponse = restTemplate.exchange("/v1/contacts", HttpMethod.POST,
-                                                                                 httpEntityPOST, ContactViewDto.class);
+        HttpEntity<List<ContactAddDto>> httpEntityPOST = new HttpEntity<>(List.of(contactMobileMarko), headers);
+        ResponseEntity<List<ContactViewDto>> addResponse = restTemplate.exchange("/v1/contacts", HttpMethod.POST,
+                                                                                 httpEntityPOST, new ParameterizedTypeReference<List<ContactViewDto>>() {});
 
         assertThat(addResponse.getStatusCode(), is(equalTo(HttpStatus.CREATED)));
         assertThat(addResponse.getBody(), is(notNullValue()));
-        assertThat(addResponse.getBody().getId(), is(notNullValue()));
-        assertThat(addResponse.getBody().getType(), is(equalTo(contactMobileMarko.getType())));
-        assertThat(addResponse.getBody().getValue(), is(equalTo(contactMobileMarko.getValue())));
+        assertThat(addResponse.getBody().get(0).getId(), is(notNullValue()));
+        assertThat(addResponse.getBody().get(0).getType(), is(equalTo(contactMobileMarko.getType())));
+        assertThat(addResponse.getBody().get(0).getValue(), is(equalTo(contactMobileMarko.getValue())));
 
-        ContactEditDto contactMarkoEditDto = ContactEditDto.builder().id(addResponse.getBody().getId())
+        ContactEditDto contactMarkoEditDto = ContactEditDto.builder()
                 .type(ContactType.MOBILE_PHONE)
                 .value("00381631758733").build();
 
-        HttpEntity<ContactEditDto> httpEntityPUT = new HttpEntity<>(contactMarkoEditDto, headers);
-        ResponseEntity<ContactViewDto> editResponse = restTemplate.exchange("/v1/contacts", HttpMethod.PUT,
-                                                                                 httpEntityPUT, ContactViewDto.class);
+        HttpEntity<List<ContactEditDto>> httpEntityPUT = new HttpEntity<>(List.of(contactMarkoEditDto), headers);
+        ResponseEntity<List<ContactViewDto>> editResponse = restTemplate.exchange("/v1/contacts", HttpMethod.PUT,
+                                                                                 httpEntityPUT, new ParameterizedTypeReference<List<ContactViewDto>>() {});
 
         assertThat(editResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(editResponse.getBody(), is(notNullValue()));
-        assertThat(editResponse.getBody().getId(), is(equalTo(contactMarkoEditDto.getId())));
-        assertThat(editResponse.getBody().getType(), is(equalTo(contactMarkoEditDto.getType())));
-        assertThat(editResponse.getBody().getValue(), is(equalTo(contactMarkoEditDto.getValue())));
+        assertThat(editResponse.getBody().get(0).getType(), is(equalTo(contactMarkoEditDto.getType())));
+        assertThat(editResponse.getBody().get(0).getValue(), is(equalTo(contactMarkoEditDto.getValue())));
 
         createTalent(TALENT_NIKOLA);
-        String nikolaToken = getTokenForTalentNikola();
-
-        headers = createAuthHeaders(nikolaToken);
-
-        httpEntityPUT = new HttpEntity<>(contactMarkoEditDto, headers);
-        editResponse = restTemplate.exchange("/v1/contacts", HttpMethod.PUT, httpEntityPUT, ContactViewDto.class);
-
-        assertThat(editResponse.getStatusCode(), is(equalTo(HttpStatus.BAD_REQUEST)));
 
         headers = createAuthHeaders(goranToken);
         HttpEntity<List<ContactViewDto>> httpEntityGet = new HttpEntity<>(headers);
@@ -110,38 +102,30 @@ class ContactCrudIntegrationTest extends AbstractIntegrationTest {
                 .type(ContactType.MOBILE_PHONE)
                 .value("00381631758749").build();
 
-        HttpEntity<ContactAddDto> httpEntityPOST = new HttpEntity<>(contactHybridMobilePhone, headers);
-        ResponseEntity<ContactViewDto> addResponse = restTemplate.exchange("/v1/contacts", HttpMethod.POST,
-                                                                           httpEntityPOST, ContactViewDto.class);
+        HttpEntity<List<ContactAddDto>> httpEntityPOST = new HttpEntity<>(List.of(contactHybridMobilePhone), headers);
+        ResponseEntity<List<ContactViewDto>> addResponse = restTemplate.exchange("/v1/contacts", HttpMethod.POST,
+                                                                           httpEntityPOST, new ParameterizedTypeReference<List<ContactViewDto>>() {});
 
         assertThat(addResponse.getStatusCode(), is(equalTo(HttpStatus.CREATED)));
         assertThat(addResponse.getBody(), is(notNullValue()));
-        assertThat(addResponse.getBody().getId(), is(notNullValue()));
-        assertThat(addResponse.getBody().getType(), is(equalTo(contactHybridMobilePhone.getType())));
-        assertThat(addResponse.getBody().getValue(), is(equalTo(contactHybridMobilePhone.getValue())));
+        assertThat(addResponse.getBody().get(0).getId(), is(notNullValue()));
+        assertThat(addResponse.getBody().get(0).getType(), is(equalTo(contactHybridMobilePhone.getType())));
+        assertThat(addResponse.getBody().get(0).getValue(), is(equalTo(contactHybridMobilePhone.getValue())));
 
-        ContactEditDto hybridEditcontactDto = ContactEditDto.builder().id(addResponse.getBody().getId())
+        ContactEditDto hybridEditcontactDto = ContactEditDto.builder()
                 .type(ContactType.MOBILE_PHONE)
                 .value("00381631758733").build();
 
-        HttpEntity<ContactEditDto> httpEntityPUT = new HttpEntity<>(hybridEditcontactDto, headers);
-        ResponseEntity<ContactViewDto> editResponse = restTemplate.exchange("/v1/contacts", HttpMethod.PUT,
-                                                                            httpEntityPUT, ContactViewDto.class);
+        HttpEntity<List<ContactEditDto>> httpEntityPUT = new HttpEntity<>(List.of(hybridEditcontactDto), headers);
+        ResponseEntity<List<ContactViewDto>> editResponse = restTemplate.exchange("/v1/contacts", HttpMethod.PUT,
+                                                                            httpEntityPUT, new ParameterizedTypeReference<List<ContactViewDto>>() {});
 
         assertThat(editResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(editResponse.getBody(), is(notNullValue()));
-        assertThat(editResponse.getBody().getId(), is(equalTo(hybridEditcontactDto.getId())));
-        assertThat(editResponse.getBody().getType(), is(equalTo(hybridEditcontactDto.getType())));
-        assertThat(editResponse.getBody().getValue(), is(equalTo(hybridEditcontactDto.getValue())));
+        assertThat(editResponse.getBody().get(0).getType(), is(equalTo(hybridEditcontactDto.getType())));
+        assertThat(editResponse.getBody().get(0).getValue(), is(equalTo(hybridEditcontactDto.getValue())));
 
         createTalent(TALENT_GORAN);
-
-        headers = createAuthHeaders(getTokenForTalentGoran());
-
-        httpEntityPUT = new HttpEntity<>(hybridEditcontactDto, headers);
-        editResponse = restTemplate.exchange("/v1/contacts", HttpMethod.PUT, httpEntityPUT, ContactViewDto.class);
-
-        assertThat(editResponse.getStatusCode(), is(equalTo(HttpStatus.BAD_REQUEST)));
 
         headers = createAuthHeaders(token);
         HttpEntity<List<ContactViewDto>> httpEntityGet = new HttpEntity<>(headers);

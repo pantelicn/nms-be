@@ -16,9 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -35,28 +37,19 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     @Transactional
-    public Contact add(final Contact newContact, final String username) {
-        Objects.requireNonNull(newContact);
-        setTalentOrCompany(username, newContact);
-        final User loggedUser = userService.getLoggedInUser();
-        loggedUser.setCreatedBy(loggedUser);
-        loggedUser.setModifiedBy(loggedUser);
-        final Contact created = repository.save(newContact);
-        LOGGER.info("New contact {} has been added.", created);
-        return created;
+    public List<Contact> add(final List<Contact> newContacts, final String username) {
+        return newContacts.stream().map(newContact -> add(newContact, username)).collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public Contact edit(final Contact modified, final String username) {
-        Objects.requireNonNull(modified);
-        Contact old = get(modified.getId());
-        setTalentOrCompany(username, modified);
-        validate(old, modified);
-        modified.setModifiedBy(userService.getLoggedInUser());
-        final Contact newContact = repository.save(modified);
-        LOGGER.info("Contact with id {} is modified {}", modified.getId(), modified);
-        return newContact;
+    public List<Contact> edit(final List<Contact> modified, final String username) {
+        modified.forEach(contact -> {
+            if (contact.getId() != null) {
+                remove(contact.getId(), username);
+            }
+        });
+        return repository.saveAll(modified);
     }
 
     @Override
@@ -79,6 +72,17 @@ public class ContactServiceImpl implements ContactService {
         }
         Company foundCompany = companyService.getByUsername(username);
         return repository.findByCompanyId(foundCompany.getId());
+    }
+
+    private Contact add(Contact newContact, String username) {
+        Objects.requireNonNull(newContact);
+        setTalentOrCompany(username, newContact);
+        final User loggedUser = userService.getLoggedInUser();
+        loggedUser.setCreatedBy(loggedUser);
+        loggedUser.setModifiedBy(loggedUser);
+        final Contact created = repository.save(newContact);
+        LOGGER.info("New contact {} has been added.", created);
+        return created;
     }
 
     private Contact get(Long id) {

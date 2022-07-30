@@ -4,6 +4,7 @@ import com.opdev.model.contact.Contact;
 import com.opdev.model.contact.ContactType;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,9 +18,6 @@ import lombok.RequiredArgsConstructor;
 public class ContactEditDto {
 
     @NonNull
-    private Long id;
-
-    @NonNull
     private ContactType type;
 
     @NonNull
@@ -27,7 +25,6 @@ public class ContactEditDto {
 
     public Contact asContact() {
         return Contact.builder()
-                .id(id)
                 .type(type)
                 .value(value)
                 .build();

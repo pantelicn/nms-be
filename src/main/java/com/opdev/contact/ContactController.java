@@ -35,16 +35,18 @@ public class ContactController {
 
     @PostMapping
     @PreAuthorize("(hasAnyRole('" + Roles.COMPANY + "', '" + Roles.TALENT + "'))")
-    public ResponseEntity<ContactViewDto> add(@Valid @RequestBody ContactAddDto newContact, Principal user) {
-        final Contact created = service.add(newContact.asContact(), user.getName());
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ContactViewDto(created));
+    public ResponseEntity<List<ContactViewDto>> add(@Valid @RequestBody List<ContactAddDto> newContactDtos, Principal user) {
+        final List<Contact> newContacts = newContactDtos.stream().map(ContactAddDto::asContact).collect(Collectors.toList());
+        final List<Contact> created = service.add(newContacts, user.getName());
+        return ResponseEntity.status(HttpStatus.CREATED).body(created.stream().map(ContactViewDto::new).collect(Collectors.toList()));
     }
 
     @PutMapping
     @PreAuthorize("(hasAnyRole('" + Roles.COMPANY + "', '" + Roles.TALENT + "'))")
-    public ResponseEntity<ContactViewDto> edit(@Valid @RequestBody ContactEditDto newContact, Principal user) {
-        final Contact updated = service.edit(newContact.asContact(), user.getName());
-        return ResponseEntity.ok(new ContactViewDto(updated));
+    public ResponseEntity<List<ContactViewDto>> edit(@Valid @RequestBody List<ContactEditDto> newContactDtos, Principal user) {
+        final List<Contact> newContacts = newContactDtos.stream().map(ContactEditDto::asContact).collect(Collectors.toList());
+        final List<Contact> updated = service.edit(newContacts, user.getName());
+        return ResponseEntity.ok(updated.stream().map(ContactViewDto::new).collect(Collectors.toList()));
     }
 
     @DeleteMapping("{id}")
