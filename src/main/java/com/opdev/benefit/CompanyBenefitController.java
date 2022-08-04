@@ -60,10 +60,10 @@ public class CompanyBenefitController {
 
     @PutMapping
     @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.COMPANY + "'))")
-    public BenefitViewDto edit(@PathVariable final String username, @Valid @RequestBody BenefitEditDto modified) {
-        authorizeCompany(username, modified.getId());
-        final Benefit updated = service.edit(modified.asBenefit());
-        return new BenefitViewDto(updated);
+    public List<BenefitViewDto> edit(@PathVariable final String username, @Valid @RequestBody List<BenefitEditDto> newBenefits) {
+        List<Benefit> benefits = newBenefits.stream().map(BenefitEditDto::asBenefit).collect(Collectors.toList());
+        final List<Benefit> updated = service.edit(username, benefits);
+        return updated.stream().map(BenefitViewDto::new).collect(Collectors.toList());
     }
 
     @DeleteMapping("/{id}")

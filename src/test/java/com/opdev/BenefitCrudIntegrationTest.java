@@ -4,6 +4,8 @@ import com.opdev.benefit.dto.BenefitAddDto;
 import com.opdev.benefit.dto.BenefitEditDto;
 import com.opdev.benefit.dto.BenefitViewDto;
 import com.opdev.common.services.Profiles;
+import com.opdev.contact.dto.ContactViewDto;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -61,18 +63,18 @@ class BenefitCrudIntegrationTest extends AbstractIntegrationTest {
         assertThat(findAllResponse.getBody().size(), is(1));
 
         final BenefitEditDto modifiedBenefitDto = new BenefitEditDto(benefitId, "Health insurance", "Insurance", true);
-        final HttpEntity<BenefitEditDto> httpEntityPUT = new HttpEntity<>(modifiedBenefitDto, headers);
-        final ResponseEntity<BenefitViewDto> updateResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/benefits", HttpMethod.PUT,
-                httpEntityPUT, BenefitViewDto.class);
+        final HttpEntity<List<BenefitEditDto>> httpEntityPUT = new HttpEntity<>(List.of(modifiedBenefitDto), headers);
+        final ResponseEntity<List<BenefitViewDto>> updateResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/benefits", HttpMethod.PUT,
+                httpEntityPUT, new ParameterizedTypeReference<List<BenefitViewDto>>() {});
 
         assertThat(updateResponse.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(updateResponse.getBody(), is(notNullValue()));
-        assertThat(updateResponse.getBody().getName(), is(equalTo(modifiedBenefitDto.getName())));
-        assertThat(updateResponse.getBody().getDescription(), is(equalTo(modifiedBenefitDto.getDescription())));
-        assertThat(updateResponse.getBody().getIsDefault(), is(equalTo(modifiedBenefitDto.getIsDefault())));
+        assertThat(updateResponse.getBody().get(0).getName(), is(equalTo(modifiedBenefitDto.getName())));
+        assertThat(updateResponse.getBody().get(0).getDescription(), is(equalTo(modifiedBenefitDto.getDescription())));
+        assertThat(updateResponse.getBody().get(0).getIsDefault(), is(equalTo(modifiedBenefitDto.getIsDefault())));
 
         final HttpEntity<Void> httpEntityDELETE = new HttpEntity<>(headers);
-        final ResponseEntity<Void> deleteResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/benefits/" + benefitId,
+        final ResponseEntity<Void> deleteResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/benefits/" + updateResponse.getBody().get(0).getId(),
                 HttpMethod.DELETE, httpEntityDELETE, Void.class);
 
         assertThat(deleteResponse.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));

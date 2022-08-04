@@ -57,13 +57,6 @@ public class BenefitController {
         return new BenefitViewDto(created);
     }
 
-    @PutMapping
-    @PreAuthorize("hasRole('" + Roles.ADMIN + "')")
-    public BenefitViewDto edit(@Valid @RequestBody final BenefitEditDto modified) {
-        final Benefit updated = service.edit(modified.asBenefit());
-        return new BenefitViewDto(updated);
-    }
-
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('" + Roles.ADMIN + "')")

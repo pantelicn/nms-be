@@ -68,15 +68,16 @@ public class BenefitServiceImpl implements BenefitService {
 
     @Override
     @Transactional
-    public Benefit edit(final Benefit modified) {
-        Objects.requireNonNull(modified);
-        final Benefit oldBenefit = get(modified.getId());
-        modified.setCompany(oldBenefit.getCompany());
+    public List<Benefit> edit(final String username, final List<Benefit> modified) {
         final User loggedUser = userService.getLoggedInUser();
-        modified.setModifiedBy(loggedUser);
-        Benefit newBenefit = repository.save(modified);
-        LOGGER.info("Benefit with id {} is modified {}", modified.getId(), modified);
-        return newBenefit;
+        final Company found = companyService.getByUsername(username);
+        modified.forEach(benefit -> {
+            benefit.setCompany(found);
+            benefit.setCreatedBy(loggedUser);
+            benefit.setModifiedBy(loggedUser);
+        });
+        repository.deleteByCompanyUser(loggedUser);
+        return repository.saveAll(modified);
     }
 
     @Override

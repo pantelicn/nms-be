@@ -17,7 +17,7 @@ public interface BenefitService {
 
     List<Benefit> getByCompany(final String username);
 
-    Benefit edit(final Benefit modified);
+    List<Benefit> edit(String username, final List<Benefit> newBenefits);
 
     void remove(final Long id);
 
