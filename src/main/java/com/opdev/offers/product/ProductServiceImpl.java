@@ -1,6 +1,7 @@
 package com.opdev.offers.product;
 
 import com.opdev.exception.ApiEntityNotFoundException;
+import com.opdev.exception.ProductNotFoundException;
 import com.opdev.model.subscription.Product;
 import com.opdev.model.user.User;
 import com.opdev.repository.ProductRepository;
@@ -72,6 +73,12 @@ public class ProductServiceImpl implements ProductService {
     public void delete(@NonNull Long productId) {
         final Product foundProduct = getById(productId);
         productRepository.delete(foundProduct);
+    }
+
+    @Override
+    @Transactional
+    public Product findByName(final String name) {
+        return productRepository.findByName(name).orElseThrow(() -> new ProductNotFoundException(name));
     }
 
 }

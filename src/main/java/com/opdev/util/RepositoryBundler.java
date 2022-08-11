@@ -5,9 +5,12 @@ import com.opdev.repository.BenefitRepository;
 import com.opdev.repository.CompanyRepository;
 import com.opdev.repository.ContactRepository;
 import com.opdev.repository.LocationRepository;
+import com.opdev.repository.PlanProductRepository;
+import com.opdev.repository.PlanRepository;
 import com.opdev.repository.PositionRepository;
 import com.opdev.repository.PositionSkillRepository;
 import com.opdev.repository.PostRepository;
+import com.opdev.repository.ProductRepository;
 import com.opdev.repository.RequestRepository;
 import com.opdev.repository.SkillRepository;
 import com.opdev.repository.TalentPositionRepository;
@@ -16,6 +19,8 @@ import com.opdev.repository.TalentSkillRepository;
 import com.opdev.repository.TalentTermRepository;
 import com.opdev.repository.TermRepository;
 import com.opdev.repository.UserRepository;
+import com.opdev.subscription.SubscriptionService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class RepositoryBundler {
@@ -64,8 +69,21 @@ public abstract class RepositoryBundler {
 
     @Autowired
     protected RequestRepository requestRepository;
+
     @Autowired
     protected AvailableChatRepository availableChatRepository;
+
+    @Autowired
+    protected ProductRepository productRepository;
+
+    @Autowired
+    protected PlanRepository planRepository;
+
+    @Autowired
+    protected PlanProductRepository planProductRepository;
+
+    @Autowired
+    protected SubscriptionService subscriptionService;
 
 
 }

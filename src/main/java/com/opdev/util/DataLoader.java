@@ -12,6 +12,12 @@ import com.opdev.model.request.Request;
 import com.opdev.model.request.RequestStatus;
 import com.opdev.model.request.TalentTermRequest;
 import com.opdev.model.request.TalentTermRequestStatus;
+import com.opdev.model.subscription.Plan;
+import com.opdev.model.subscription.PlanProduct;
+import com.opdev.model.subscription.PlanType;
+import com.opdev.model.subscription.Product;
+import com.opdev.model.subscription.Subscription;
+import com.opdev.model.subscription.SubscriptionStatus;
 import com.opdev.model.talent.Position;
 import com.opdev.model.talent.PositionSkill;
 import com.opdev.model.talent.Skill;
@@ -25,13 +31,18 @@ import com.opdev.model.term.TermType;
 import com.opdev.model.term.UnitOfMeasure;
 import com.opdev.model.user.User;
 import com.opdev.model.user.UserType;
+
+import org.joda.money.CurrencyUnit;
+import org.joda.money.Money;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,6 +56,7 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     private Company companyFacebook;
     private Talent talentGoran;
     private Talent talentNikola;
+    private Plan basicPlan;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -62,6 +74,48 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
         initializeTalents();
         initializeCompanies();
         initializeAvailableChats();
+        initializePlanAndProducts();
+        initializeSubscriptionForGoogle();
+    }
+
+    private void initializeSubscriptionForGoogle() {
+        Subscription subscription = Subscription.builder()
+                .autoRenewal(false)
+                .company(companyGoogle)
+                .subscriptionStatus(SubscriptionStatus.ACTIVE)
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now().plusMonths(12))
+                .period(Period.ofMonths(12))
+                .plan(basicPlan)
+                .build();
+
+        subscriptionService.subscribe(subscription);
+    }
+
+    private void initializePlanAndProducts() {
+        Product post = Product.builder()
+                .name("Post")
+                .description("Use Start a post to share posts.")
+                .build();
+        post = productRepository.save(post);
+        basicPlan = Plan.builder()
+                .name("Basic")
+                .description("Choose a basic subscription plan. You can upgrade your plan to PRO any time.")
+                .durationInMonths(12)
+                .price(Money.of(CurrencyUnit.EUR, BigDecimal.valueOf(70)))
+                .type(PlanType.BASIC)
+                .build();
+
+        basicPlan = planRepository.save(basicPlan);
+
+        PlanProduct postPlanProduct = PlanProduct.builder()
+                .plan(basicPlan)
+                .limited(true)
+                .product(post)
+                .quantity(120)
+                .build();
+
+        planProductRepository.save(postPlanProduct);
     }
 
     private void initializeAdmin() {
@@ -262,7 +316,7 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .build();
 
         return companyRepository.save(Company.builder()
-                .description("Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.")
+                .description("Google is an internet search engine. It uses a proprietary algorithm that's designed to retrieve and order search results to provide the most relevant and dependable sources of data possible.")
                 .name("Google")
                 .location(location)
                 .user(user)
@@ -297,7 +351,7 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     private void initializeGoogleContacts(Company company) {
         contactRepository.saveAll(Arrays.asList(
                 Contact.builder()
-                        .type(ContactType.MOBILE_PHONE)
+                        .type(ContactType.TELEPHONE)
                         .value("+7 (496) 649-2300")
                         .company(company)
                         .build(),
@@ -308,7 +362,7 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                         .build(),
                 Contact.builder()
                         .type(ContactType.URL)
-                        .value("http://ft.com/nibh/in/lectus/pellentesque/at.js?orci=tellus&pede=in&venenatis=sagittis")
+                        .value("http://www.google.com")
                         .company(company)
                         .build()
         ));

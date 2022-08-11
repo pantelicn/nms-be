@@ -14,4 +14,6 @@ public interface ProductUsageService {
     List<ProductUsage> findAllByCompany(String companyUsername);
 
     List<ProductUsage> createFromSubscription(Subscription subscription);
+
+    Integer findRemainingPosts(String companyUsername);
 }

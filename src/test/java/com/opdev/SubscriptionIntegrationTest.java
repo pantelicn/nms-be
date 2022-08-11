@@ -97,7 +97,6 @@ public class SubscriptionIntegrationTest extends AbstractIntegrationTest {
         assertThat(companyUsage.getEndDate(), is(equalTo(successfulResponseBody.getEndDate())));
         assertThat(companyUsage.getPeriod(), is(equalTo(Period.between(successfulResponseBody.getStartDate(),
                 successfulResponseBody.getEndDate()))));
-        assertThat(companyUsage.getCompany().getUser().getUsername(), is(equalTo(COMPANY_GOOGLE)));
         assertThat(companyUsage.getProduct().getId(), is(equalTo(planProductViewDto.getProduct().getId())));
 
         final ResponseEntity<SubscriptionViewDto> unsuccessfulResponse =

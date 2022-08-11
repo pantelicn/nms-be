@@ -31,5 +31,10 @@ public class ProductUsageController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("company/{companyUsername}/remaining-posts")
+    @PreAuthorize("hasRole('" + Roles.COMPANY + "') || hasRole('" + Roles.ADMIN + "')")
+    public Integer findRemainingPosts(@PathVariable final String companyUsername) {
+        return productUsageService.findRemainingPosts(companyUsername);
+    }
 
 }

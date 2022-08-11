@@ -25,8 +25,6 @@ public class ProductUsageViewDto {
 
     private Period period;
 
-    private CompanyViewDto company;
-
     private ProductViewDto product;
 
     public ProductUsageViewDto(ProductUsage productUsage) {
@@ -36,7 +34,6 @@ public class ProductUsageViewDto {
         startDate = productUsage.getStartDate();
         endDate = productUsage.getEndDate();
         period = productUsage.getPeriod();
-        company = new CompanyViewDto(productUsage.getCompany());
         product = new ProductViewDto(productUsage.getProduct());
     }
 }

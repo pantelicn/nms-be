@@ -11,6 +11,7 @@ import com.opdev.subscription.dto.SubscriptionViewDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,6 +43,14 @@ public class SubscriptionController {
                 subscriptionService.subscribe(subscriptionAddDto.asSubscription(foundPlan, foundCompany));
 
         return new SubscriptionViewDto(newSubscription);
+    }
+
+    @GetMapping("/{username}")
+    @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.COMPANY + "'))")
+    @ResponseStatus(HttpStatus.CREATED)
+    public SubscriptionViewDto get(@PathVariable final String username) {
+        Subscription found = subscriptionService.get(username);
+        return new SubscriptionViewDto(found);
     }
 
 }
