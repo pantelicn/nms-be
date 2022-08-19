@@ -1,11 +1,13 @@
 package com.opdev.talent;
 
-import com.opdev.company.dto.RequestDetailViewDto;
 import com.opdev.company.dto.RequestViewDto;
 import com.opdev.config.security.Roles;
 import com.opdev.model.request.Request;
 import com.opdev.model.request.RequestStatus;
 import com.opdev.request.RequestService;
+import com.opdev.talent.dto.TalentRequestDetailViewDto;
+import com.opdev.talent.dto.TalentRequestViewDto;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
@@ -27,13 +29,13 @@ public class TalentRequestController {
     private static final int MAX_REQUESTS_PER_PAGE = 30;
     private final RequestService service;
 
-    @GetMapping("pending")
+    @GetMapping("active")
     @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.TALENT + "'))")
-    public Page<RequestViewDto> findWithStatusPending(@PathVariable String username,
-                                                      @RequestParam(defaultValue = "0") Integer page) {
+    public Page<TalentRequestViewDto> findWithStatusPending(@PathVariable String username,
+                                                            @RequestParam(defaultValue = "0") Integer page) {
         Pageable pageable = PageRequest.of(page, MAX_REQUESTS_PER_PAGE);
         final Page<Request> found = service.findByStatusForTalent(username, RequestStatus.PENDING, pageable);
-        return found.map(RequestViewDto::new);
+        return found.map(TalentRequestViewDto::new);
     }
 
     @GetMapping("counter-offers")
@@ -56,10 +58,10 @@ public class TalentRequestController {
 
     @GetMapping("{id}")
     @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.TALENT + "'))")
-    public RequestDetailViewDto find(@PathVariable String username, @PathVariable Long id) {
+    public TalentRequestDetailViewDto find(@PathVariable String username, @PathVariable Long id) {
         final Request found = service.getByIdAndTalent(id, username);
         service.updateAsSeenByTalent(id);
-        return new RequestDetailViewDto(found);
+        return new TalentRequestDetailViewDto(found);
     }
 
     @PutMapping("{id}")

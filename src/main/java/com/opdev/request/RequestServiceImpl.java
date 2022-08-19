@@ -124,8 +124,14 @@ public class RequestServiceImpl implements RequestService {
     @Override
     @Transactional
     public void removeRequestForCompany(@NonNull final Long id, @NonNull final String username) {
-        Company foundCompany = companyService.getByUsername(username);
-        Request found = getByIdAndCompany(id, foundCompany);
+        Request found = getByIdAndCompany(id, username);
+        repository.delete(found);
+    }
+
+    @Override
+    @Transactional
+    public void removeRequestForTalent(final Long id, final String username) {
+        Request found = getByIdAndTalent(id, username);
         repository.delete(found);
     }
 

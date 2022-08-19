@@ -252,36 +252,32 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
         termRepository.saveAll(
                 Arrays.asList(
                         Term.builder()
-                                .name("Salary")
-                                .code("SALARY")
-                                .description("Cras sed lacinia metus, ut aliquet metus. Integer posuere nibh non dui imperdiet")
+                                .name("Monthly Salary(Euros)")
+                                .code("MONTHLY-SALARY-EUROS")
+                                .description("Monthly salary in euros.")
                                 .type(TermType.BIGINT)
                                 .availableForSearch(true)
                                 .build(),
                         Term.builder()
                                 .name("Vacation days")
                                 .code("VACATION-DAYS")
-                                .description("Cras sed lacinia metus, ut aliquet metus. Integer posuere nibh non dui imperdiet")
+                                .description("Number of vacation days per year.")
                                 .type(TermType.BIGINT)
                                 .availableForSearch(true)
                                 .build(),
                         Term.builder()
-                                .name("Parking")
-                                .code("PARKING")
-                                .description("Vivamus mi sem, pharetra a scelerisque a, tincidunt congue")
+                                .name("Remote")
+                                .code("REMOTE")
+                                .description("Remote work")
                                 .type(TermType.BOOLEAN)
-                                .build(),
-                        Term.builder()
-                                .name("Holidays")
-                                .code("HOLIDAYS")
-                                .description("Phasellus fermentum vel sem et tempor. Nulla ac turpis finibus augue dapibus ornare.")
-                                .type(TermType.INT)
+                                .availableForSearch(true)
                                 .build(),
                         Term.builder()
                                 .name("Education budget")
                                 .code("EDUCATION-BUDGET")
                                 .description("Budget for education")
                                 .type(TermType.INT)
+                                .availableForSearch(true)
                                 .build()
                 ));
     }
@@ -655,13 +651,15 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                                 .value("2000")
                                 .negotiable(true)
                                 .talent(talent)
-                                .term(termRepository.getByCode("SALARY"))
+                                .term(termRepository.getByCode("MONTHLY-SALARY-EUROS"))
+                                .unitOfMeasure(UnitOfMeasure.EURO)
                                 .build(),
                         TalentTerm.builder()
                                 .value("20")
                                 .negotiable(true)
                                 .talent(talent)
-                                .term(termRepository.getByCode("HOLIDAYS"))
+                                .term(termRepository.getByCode("VACATION-DAYS"))
+                                .unitOfMeasure(UnitOfMeasure.DAYS)
                                 .build()
                 ));
     }
@@ -766,20 +764,14 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                                 .negotiable(false)
                                 .talent(talent)
                                 .unitOfMeasure(UnitOfMeasure.EURO)
-                                .term(termRepository.getByCode("SALARY"))
+                                .term(termRepository.getByCode("MONTHLY-SALARY-EUROS"))
                                 .build(),
                         TalentTerm.builder()
                                 .value("20")
                                 .negotiable(true)
                                 .talent(talent)
                                 .unitOfMeasure(UnitOfMeasure.DAYS)
-                                .term(termRepository.getByCode("HOLIDAYS"))
-                                .build(),
-                        TalentTerm.builder()
-                                .value("true")
-                                .negotiable(true)
-                                .talent(talent)
-                                .term(termRepository.getByCode("PARKING"))
+                                .term(termRepository.getByCode("VACATION-DAYS"))
                                 .build(),
                         TalentTerm.builder()
                                 .value("3000")
@@ -787,6 +779,12 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                                 .talent(talent)
                                 .term(termRepository.getByCode("EDUCATION-BUDGET"))
                                 .unitOfMeasure(UnitOfMeasure.EURO)
+                                .build(),
+                        TalentTerm.builder()
+                                .value("REMOTE")
+                                .negotiable(true)
+                                .talent(talent)
+                                .term(termRepository.getByCode("REMOTE"))
                                 .build()
                 ));
     }

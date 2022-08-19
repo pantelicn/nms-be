@@ -21,6 +21,8 @@ public interface RequestService {
 
     void removeRequestForCompany(Long id, String username);
 
+    void removeRequestForTalent(Long id, String username);
+
     Request getByIdAndCompany(Long id, String username);
 
     Request getByIdAndTalent(Long id, String username);
