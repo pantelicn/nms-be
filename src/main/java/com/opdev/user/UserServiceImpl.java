@@ -13,11 +13,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,7 +31,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-class UserServiceImpl implements UserService {
+class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
     private final VerificationTokenRepository verificationTokenRepository;
@@ -112,6 +117,18 @@ class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public Optional<User> findUserByUsernameAndType(@NonNull final String talentUsername, @NonNull final UserType type) {
         return userRepository.findByUsernameAndType(talentUsername, type);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+        final Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        final User user = findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
+        user.getUserRoles()
+                .forEach(userRole -> authorities.add(new SimpleGrantedAuthority(userRole.getRole().getName())));
+
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
+                                                                      user.getEnabled(), true, true, true, authorities);
     }
 
 }
