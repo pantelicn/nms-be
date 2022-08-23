@@ -10,12 +10,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
-import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
-
 @Configuration
 public class NMSConfiguration implements WebMvcConfigurer {
 
@@ -27,14 +21,6 @@ public class NMSConfiguration implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(new SpecificationArgumentResolver());
-    }
-
-    @Bean
-    public AWSCognitoIdentityProvider cognitoClient() {
-        return AWSCognitoIdentityProviderClientBuilder.standard()
-                .withRegion(Regions.EU_CENTRAL_1)
-                .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(awsAccessKey, awsSecretKey)))
-                .build();
     }
 
 }

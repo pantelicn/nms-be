@@ -6,14 +6,6 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
-import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
-import com.amazonaws.services.cognitoidp.model.AdminInitiateAuthRequest;
-import com.amazonaws.services.cognitoidp.model.AdminInitiateAuthResult;
-import com.amazonaws.services.cognitoidp.model.AuthFlowType;
 import com.opdev.dto.TalentRegistrationDto;
 import com.opdev.model.company.Company;
 import com.opdev.model.location.CompanyLocation;
@@ -54,9 +46,6 @@ public abstract class AbstractIntegrationTest {
     protected static final String TALENT_GORAN = "goransasic@gmail.com";
     protected static final String TALENT_NIKOLA = "nikola@gmail.com";
     protected static final String ADMIN = "admin@gmail.com";
-    private final AWSCognitoIdentityProvider awsCognitoIDPClient  = AWSCognitoIdentityProviderClientBuilder.standard().withRegion(Regions.EU_CENTRAL_1)
-            .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(AWS_ACCESS_KEY, AWS_SECRET_KEY)))
-            .build();
 
     @LocalServerPort
     protected int port;
@@ -189,14 +178,7 @@ public abstract class AbstractIntegrationTest {
     }
 
     private String getTokenFromCognito(Map<String,String> params) {
-        AdminInitiateAuthRequest initialRequest = new AdminInitiateAuthRequest()
-                .withAuthFlow(AuthFlowType.ADMIN_USER_PASSWORD_AUTH)
-                .withAuthParameters(params)
-                .withClientId(USER_POOL_CLIENT_ID)
-                .withUserPoolId(USER_POOL_ID);
-
-        AdminInitiateAuthResult initialResponse = awsCognitoIDPClient.adminInitiateAuth(initialRequest);
-        return initialResponse.getAuthenticationResult().getIdToken();
+        return "";
     }
 
     private Map<String,String> getCognitoAuthParams(String username, String password) {

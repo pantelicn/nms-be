@@ -3,7 +3,6 @@ package com.opdev.company.service;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.opdev.aws.cognito.CognitoService;
 import com.opdev.exception.ApiEmailExistsException;
 import com.opdev.model.company.Company;
 import com.opdev.model.user.User;
@@ -23,7 +22,6 @@ class CompanyRegistrationServiceImpl implements CompanyRegistrationService {
 
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
-    private final CognitoService cognitoService;
 
     @Transactional
     @Override
@@ -32,7 +30,6 @@ class CompanyRegistrationServiceImpl implements CompanyRegistrationService {
 
         userRepository.save(company.getUser());
         Company created =  companyRepository.save(company);
-        cognitoService.createCompany(company.getUser().getUsername(), company.getUser().getPassword());
         return created;
     }
 

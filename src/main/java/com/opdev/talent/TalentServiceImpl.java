@@ -1,7 +1,6 @@
 package com.opdev.talent;
 
 
-import com.opdev.aws.cognito.CognitoService;
 import com.opdev.exception.ApiEmailExistsException;
 import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.talent.Talent;
@@ -28,7 +27,6 @@ class TalentServiceImpl implements TalentService {
 
     private final UserService userService;
     private final TalentRepository talentRepository;
-    private final CognitoService cognitoService;
 
     @Transactional
     @Override
@@ -37,7 +35,6 @@ class TalentServiceImpl implements TalentService {
         talent.getCurrentLocation().setTalent(talent);
         userService.save(talent.getUser());
         Talent created = talentRepository.save(talent);
-        cognitoService.createTalent(talent.getUser().getUsername(), talent.getUser().getPassword());
         return created;
     }
 

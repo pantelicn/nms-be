@@ -14,12 +14,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 @Configuration
-class SecurityConfig {
+public class SecurityConfig {
 
-    static final String SECRET = "SecretKeyToGenJWTs";
+    public static final String SECRET = "SecretKeyToGenJWTs";
     static final long EXPIRATION_TIME = 864_000_000; // 10 days
     // static final long EXPIRATION_TIME = 100; // very quick 😏
-    static final String TOKEN_PREFIX = "Bearer ";
+    public static final String TOKEN_PREFIX = "Bearer ";
 
     // TODO: @GoranNS90 this is a temp. configuration for development purposes.
     // TODO: @GoranNS90 Please make it production ready.
