@@ -2,6 +2,7 @@ package com.opdev.model.talent;
 
 import com.opdev.model.Audit;
 import com.opdev.model.contact.Contact;
+import com.opdev.model.location.AvailableLocation;
 import com.opdev.model.location.Location;
 import com.opdev.model.post.ReactionType;
 import com.opdev.model.request.Request;
@@ -15,6 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -89,9 +91,10 @@ public class Talent extends Audit {
     @JoinColumn(name = "location", referencedColumnName = "id")
     private Location currentLocation;
 
-    @OneToMany(mappedBy = "talent")
+    @Setter
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<Location> availableLocations = new ArrayList<>();
+    private List<AvailableLocation> availableLocations = new ArrayList<>();
 
     @OneToMany(mappedBy = "talent")
     @Builder.Default
