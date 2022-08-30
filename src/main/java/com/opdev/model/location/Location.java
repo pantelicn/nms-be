@@ -42,7 +42,6 @@ public class Location extends Audit {
     private String country;
 
     @Column
-    // TODO: add an enum for provinces / states
     private String province;
 
     @NonNull
@@ -50,7 +49,6 @@ public class Location extends Audit {
     private String city;
 
     @NonNull
-    // TODO: add an enum for country codes
     @Column(name = "country_code")
     private String countryCode;
 

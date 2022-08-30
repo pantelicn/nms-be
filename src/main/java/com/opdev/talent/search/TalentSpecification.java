@@ -1,6 +1,8 @@
 package com.opdev.talent.search;
 
 import com.opdev.exception.ApiBadRequestException;
+import com.opdev.model.location.AvailableLocation;
+import com.opdev.model.search.LocationFilter;
 import com.opdev.model.search.Facet;
 import com.opdev.model.search.TableName;
 import com.opdev.model.talent.Talent;
@@ -18,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+
 @RequiredArgsConstructor
 public class TalentSpecification implements Specification<Talent> {
 
@@ -28,8 +32,10 @@ public class TalentSpecification implements Specification<Talent> {
             TableName.TERM, "talentTerms",
             TableName.POSITION, "talentPositions"
     );
+    private static final String AVAILABLE_LOCATIONS_TABLE_NAME = "availableLocations";
 
     private final transient List<Facet> facets;
+    private final transient List<LocationFilter> locationFilters;
 
     @Override
     public Predicate toPredicate(@NonNull Root<Talent> root,
@@ -51,8 +57,36 @@ public class TalentSpecification implements Specification<Talent> {
                 predicates.add(getTermPredicate(joinEntity, criteriaBuilder, facet));
             }
         }
+
+        if (locationFilters != null) {
+            Join<Talent, AvailableLocation> joinEntity = root.join(AVAILABLE_LOCATIONS_TABLE_NAME, JoinType.LEFT);
+            List<Predicate> locationPredicateList = new ArrayList<>();
+            locationFilters.forEach(locationFilter ->
+                    locationPredicateList.add(getLocationPredicate(joinEntity, criteriaBuilder, locationFilter))
+            );
+            Predicate locationPredicate = criteriaBuilder.or(locationPredicateList.toArray(new Predicate[]{}));
+            predicates.add(locationPredicate);
+        }
+
         return predicates;
     }
+
+    private Predicate getLocationPredicate(Join<Talent, AvailableLocation> joinEntity, CriteriaBuilder criteriaBuilder, LocationFilter locationFilter) {
+        Predicate locationPredicate = criteriaBuilder.equal(joinEntity.get("country"), locationFilter.getCountry());
+        if (isNotEmpty(locationFilter.getCities())) {
+            List<Predicate> cityPredicateList = new ArrayList<>();
+            locationFilter.getCities()
+                    .forEach(city -> cityPredicateList.add(
+                            criteriaBuilder.isMember(city, joinEntity.get("cities"))
+                    ));
+            Predicate cityPredicate = criteriaBuilder.or(
+                    criteriaBuilder.or(cityPredicateList.toArray(new Predicate[]{})),
+                    criteriaBuilder.isEmpty(joinEntity.get("cities")));
+            locationPredicate = criteriaBuilder.and(locationPredicate, cityPredicate);
+        }
+        return locationPredicate;
+    }
+
 
     private Predicate getTermPredicate(Join<Talent, ?> joinEntity, CriteriaBuilder criteriaBuilder, Facet facet) {
         switch (facet.getOperatorType()) {

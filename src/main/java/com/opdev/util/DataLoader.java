@@ -5,6 +5,7 @@ import com.opdev.model.company.Benefit;
 import com.opdev.model.company.Company;
 import com.opdev.model.contact.Contact;
 import com.opdev.model.contact.ContactType;
+import com.opdev.model.location.AvailableLocation;
 import com.opdev.model.location.CompanyLocation;
 import com.opdev.model.location.Location;
 import com.opdev.model.post.Post;
@@ -50,6 +51,7 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @ConditionalOnProperty(name="import.local.data", havingValue="true")
@@ -572,7 +574,7 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     private void initializeNikola() {
         talentNikola = initializeNikolaData();
         initializeNikolaContacts(talentNikola);
-        initializeNikolaAvailableLocations(talentNikola);
+        //initializeNikolaAvailableLocations(talentNikola);
         initializeNikolaPositions(talentNikola);
         initializeNikolaTalentTerms(talentNikola);
     }
@@ -608,6 +610,14 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .available(true)
                 .availabilityChangeDate(Instant.now())
                 .currentLocation(currentLocation)
+                .availableLocations(List.of(
+                        AvailableLocation.builder()
+                                .country("United States")
+                                .cities(Set.of("Dallas")).build(),
+                        AvailableLocation.builder()
+                                .country("Bosnia and Herzegovina")
+                                .cities(Set.of("Vareš")).build()
+                ))
                 .build());
     }
 
@@ -634,22 +644,14 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     }
 
     private void initializeNikolaAvailableLocations(Talent talent) {
-        locationRepository.saveAll(
-                Arrays.asList(
-                        Location.builder()
+        availableLocationRepository.saveAll(
+                List.of(
+                        AvailableLocation.builder()
                                 .country("United States")
-                                .city("Dallas")
-                                .province("Texas")
-                                .countryCode("US")
-                                .talent(talent)
-                                .build(),
-                        Location.builder()
+                                .cities(Set.of("Dallas")).build(),
+                        AvailableLocation.builder()
                                 .country("Bosnia and Herzegovina")
-                                .city("Vareš")
-                                .countryCode("BA")
-                                .talent(talent)
-                                .build()
-
+                                .cities(Set.of("Vareš")).build()
                 )
         );
     }
@@ -759,22 +761,14 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     }
 
     private void initializeGoranAvailableLocations(Talent talent) {
-        locationRepository.saveAll(
-                Arrays.asList(
-                        Location.builder()
+        availableLocationRepository.saveAll(
+                List.of(
+                        AvailableLocation.builder()
                                 .country("Mexico")
-                                .city("Parque Industrial")
-                                .province("Chiapas")
-                                .countryCode("MX")
-                                .talent(talent)
-                                .build(),
-                        Location.builder()
+                                .cities(Set.of("Parque Industrial")).build(),
+                        AvailableLocation.builder()
                                 .country("Sweden")
-                                .city("Nol")
-                                .countryCode("SE")
-                                .talent(talent)
-                                .build()
-
+                                .cities(Set.of("Nol")).build()
                 )
         );
     }

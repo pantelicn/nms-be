@@ -13,6 +13,7 @@ import com.opdev.skill.dto.SkillAddDto;
 import com.opdev.skill.dto.SkillStatusDto;
 import com.opdev.skill.dto.SkillViewDto;
 import com.opdev.talent.dto.FacetSpecifierDto;
+import com.opdev.talent.dto.TalentSearchDto;
 import com.opdev.talent.dto.TalentSkillsViewDto;
 import com.opdev.talent.dto.TalentTermAddDto;
 import com.opdev.talent.dto.TalentTermViewDto;
@@ -26,7 +27,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -44,7 +44,7 @@ import static org.hamcrest.Matchers.is;
 
 @ActiveProfiles(Profiles.TEST_PROFILE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TalentSearchIntegrationTest extends AbstractIntegrationTest {
+class TalentSearchIntegrationTest extends AbstractIntegrationTest {
 
     @BeforeEach
     public void init() {
@@ -74,6 +74,7 @@ public class TalentSearchIntegrationTest extends AbstractIntegrationTest {
     @Test
     @DirtiesContext
     void testTalentsSearchWithResultsExpected() {
+        TalentSearchDto talentSearch = new TalentSearchDto();
         List<FacetSpecifierDto> specifiers = List.of(
                 new FacetSpecifierDto(TableName.SKILL, "HTML", "HTML", OperatorType.EQ),
                 new FacetSpecifierDto(TableName.SKILL, "CSS", "CSS", OperatorType.EQ),
@@ -81,8 +82,9 @@ public class TalentSearchIntegrationTest extends AbstractIntegrationTest {
                 new FacetSpecifierDto(TableName.TERM, "SALARY", "1500", OperatorType.GTE),
                 new FacetSpecifierDto(TableName.TERM, "VACATION", "15", OperatorType.GTE)
         );
+        talentSearch.setFacets(specifiers);
 
-        final HttpEntity<List<FacetSpecifierDto>> httpEntityPOST = new HttpEntity<>(specifiers, createAuthHeaders(getTokenForAdmin()));
+        final HttpEntity<TalentSearchDto> httpEntityPOST = new HttpEntity<>(talentSearch, createAuthHeaders(getTokenForAdmin()));
 
         final ResponseEntity<SimplePageImpl<TalentViewSearchDto>> findTalentResponse = restTemplate
                 .exchange("/v1/talents/find",
@@ -97,13 +99,15 @@ public class TalentSearchIntegrationTest extends AbstractIntegrationTest {
     @Test
     @DirtiesContext
     void testTalentsSearchWithoutResultsExpected() {
+        TalentSearchDto talentSearch = new TalentSearchDto();
         List<FacetSpecifierDto> specifiers = List.of(
                 new FacetSpecifierDto(TableName.POSITION, "FRONTEND_DEV", "FRONTEND_DEV", OperatorType.EQ),
                 new FacetSpecifierDto(TableName.TERM, "SALARY", "2000", OperatorType.GTE),
                 new FacetSpecifierDto(TableName.TERM, "VACATION", "30", OperatorType.GTE)
         );
+        talentSearch.setFacets(specifiers);
 
-        final HttpEntity<List<FacetSpecifierDto>> httpEntityPOST = new HttpEntity<>(specifiers, createAuthHeaders(getTokenForAdmin()));
+        final HttpEntity<TalentSearchDto> httpEntityPOST = new HttpEntity<>(talentSearch, createAuthHeaders(getTokenForAdmin()));
 
         final ResponseEntity<SimplePageImpl<TalentViewDto>> findTalentResponse = restTemplate
                 .exchange("/v1/talents/find",

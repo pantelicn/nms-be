@@ -1,14 +1,13 @@
 package com.opdev.talent;
 
-import com.opdev.company.service.CompanyService;
 import com.opdev.config.security.Roles;
 import com.opdev.dto.TalentRegistrationDto;
 import com.opdev.model.talent.Talent;
 import com.opdev.model.user.User;
+import com.opdev.talent.dto.AvailableLocationUpdateDto;
 import com.opdev.talent.dto.TalentBasicInfoUpdateDto;
 import com.opdev.talent.dto.TalentViewDto;
 import com.opdev.user.UserService;
-import com.opdev.util.encoding.TalentIdEncoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,6 +25,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,8 +36,6 @@ public class TalentController {
 
     private final TalentService talentService;
     private final UserService userService;
-    private final CompanyService companyService;
-    private final TalentIdEncoder encoder;
 
     @PostMapping
     @PreAuthorize("permitAll()")
@@ -89,6 +88,20 @@ public class TalentController {
 
         LOGGER.info("Deleting the talent: {}", username);
         talentService.delete(username);
+    }
+
+    @PutMapping("/{username}/available-locations")
+    @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.TALENT + "')) " + //
+            "|| hasRole('" + Roles.ADMIN + "')")
+    public Talent updateAvailableLocations(@PathVariable String username,
+                                         @Valid @RequestBody List<AvailableLocationUpdateDto> availableLocations) {
+        Talent oldTalent = talentService.getByUsername(username);
+        return talentService.updateAvailableLocations(
+                oldTalent,
+                availableLocations.stream()
+                        .map(AvailableLocationUpdateDto::asAvailableLocation)
+                        .collect(Collectors.toList())
+        );
     }
 
 }

@@ -1,5 +1,6 @@
 package com.opdev.talent;
 
+import com.opdev.model.location.AvailableLocation;
 import com.opdev.model.talent.Talent;
 import com.opdev.talent.search.TalentSpecification;
 import org.springframework.data.domain.Page;
@@ -32,5 +33,7 @@ public interface TalentService {
     List<Talent> findLatest10ByCountry(final String country);
 
     Page<Talent> find(final TalentSpecification specification, final Pageable pageable);
+
+    Talent updateAvailableLocations(Talent oldTalent, List<AvailableLocation> availableLocations);
 
 }
