@@ -1,6 +1,7 @@
 package com.opdev.message;
 
 import com.opdev.config.security.SpELAuthorizationExpressions;
+import com.opdev.dto.AvailableChatViewDto;
 import com.opdev.model.chat.AvailableChat;
 import com.opdev.model.user.User;
 import com.opdev.user.UserService;
@@ -24,16 +25,18 @@ public class AvailableChatController {
 
     @PreAuthorize(SpELAuthorizationExpressions.asMatchingTalentOrCompany)
     @GetMapping(params = "search")
-    public Page<AvailableChat> get(@PathVariable String username, @RequestParam String search, Pageable pageable) {
+    public Page<AvailableChatViewDto> get(@PathVariable String username, @RequestParam String search, Pageable pageable) {
         User currentUser = userService.getLoggedInUser();
-        return availableChatService.searchAvailableChats(username, search, currentUser.getType(), pageable);
+        Page<AvailableChat> availableChats = availableChatService.searchAvailableChats(username, search, currentUser.getType(), pageable);
+        return availableChats.map(AvailableChatViewDto::new);
     }
 
     @PreAuthorize(SpELAuthorizationExpressions.asMatchingTalentOrCompany)
     @GetMapping
-    public Page<AvailableChat> get(@PathVariable String username, Pageable pageable) {
+    public Page<AvailableChatViewDto> get(@PathVariable String username, Pageable pageable) {
         User currentUser = userService.getLoggedInUser();
-        return availableChatService.getAvailableChats(username, currentUser.getType(), pageable);
+        Page<AvailableChat> availableChats = availableChatService.getAvailableChats(username, currentUser.getType(), pageable);
+        return availableChats.map(AvailableChatViewDto::new);
     }
 
 }
