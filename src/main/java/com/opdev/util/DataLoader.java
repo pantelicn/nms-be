@@ -29,14 +29,18 @@ import com.opdev.model.term.TalentTerm;
 import com.opdev.model.term.Term;
 import com.opdev.model.term.TermType;
 import com.opdev.model.term.UnitOfMeasure;
+import com.opdev.model.user.Role;
 import com.opdev.model.user.User;
+import com.opdev.model.user.UserRole;
 import com.opdev.model.user.UserType;
 
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -57,6 +61,11 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     private Talent talentGoran;
     private Talent talentNikola;
     private Plan basicPlan;
+    private Role companyRole;
+    private Role talentRole;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -66,6 +75,7 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
 
 
     private void initializeData() {
+        initializeRoles();
         initializeAdmin();
         initializeSkills();
         initializePositions();
@@ -76,6 +86,18 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
         initializeAvailableChats();
         initializePlanAndProducts();
         initializeSubscriptionForGoogle();
+    }
+
+    private void initializeRoles() {
+        Role roleCompany = Role.builder()
+                .name("ROLE_COMPANY")
+                .build();
+        Role roleTalent = Role.builder()
+                .name("ROLE_TALENT")
+                .build();
+
+        companyRole = roleRepository.save(roleCompany);
+        talentRole = roleRepository.save(roleTalent);
     }
 
     private void initializeSubscriptionForGoogle() {
@@ -300,8 +322,15 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .enabled(true)
                 .type(UserType.COMPANY)
                 .username("google@gmail.com")
-                .password("Google12345!")
+                .password(passwordEncoder.encode("Google12345!"))
                 .build());
+
+        UserRole userRole = UserRole.builder()
+                .user(user)
+                .role(companyRole)
+                .build();
+
+        userRoleRepository.save(userRole);
 
         CompanyLocation location = CompanyLocation.builder()
                 .city("Novi Sad")
@@ -553,8 +582,15 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .enabled(true)
                 .type(UserType.TALENT)
                 .username("nikola@gmail.com")
-                .password("Nikola12345!")
+                .password(passwordEncoder.encode("Nikola12345!"))
                 .build());
+
+        UserRole userRole = UserRole.builder()
+                .user(user)
+                .role(talentRole)
+                .build();
+
+        userRoleRepository.save(userRole);
 
         Location currentLocation = Location.builder()
                 .country("United States")

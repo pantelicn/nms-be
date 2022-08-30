@@ -12,6 +12,7 @@ import com.opdev.repository.PositionSkillRepository;
 import com.opdev.repository.PostRepository;
 import com.opdev.repository.ProductRepository;
 import com.opdev.repository.RequestRepository;
+import com.opdev.repository.RoleRepository;
 import com.opdev.repository.SkillRepository;
 import com.opdev.repository.TalentPositionRepository;
 import com.opdev.repository.TalentRepository;
@@ -19,6 +20,7 @@ import com.opdev.repository.TalentSkillRepository;
 import com.opdev.repository.TalentTermRepository;
 import com.opdev.repository.TermRepository;
 import com.opdev.repository.UserRepository;
+import com.opdev.repository.UserRoleRepository;
 import com.opdev.subscription.SubscriptionService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,5 +87,10 @@ public abstract class RepositoryBundler {
     @Autowired
     protected SubscriptionService subscriptionService;
 
+    @Autowired
+    protected RoleRepository roleRepository;
+
+    @Autowired
+    protected UserRoleRepository userRoleRepository;
 
 }

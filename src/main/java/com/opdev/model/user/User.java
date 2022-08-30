@@ -45,7 +45,8 @@ public class User extends Audit {
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Transient
+    @NonNull
+    @Column(nullable = false)
     private String password;
 
     @NonNull
