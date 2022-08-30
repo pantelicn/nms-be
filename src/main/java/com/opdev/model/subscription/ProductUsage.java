@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.Column;
@@ -39,6 +40,7 @@ public class ProductUsage extends Audit {
     private Long id;
 
     @NonNull
+    @Setter
     private Integer remaining;
 
     @NonNull

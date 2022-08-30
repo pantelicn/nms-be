@@ -16,4 +16,7 @@ public interface ProductUsageService {
     List<ProductUsage> createFromSubscription(Subscription subscription);
 
     Integer findRemainingPosts(String companyUsername);
+
+    void decreaseNumberOfRemainingPosts(String companyUsername);
+
 }

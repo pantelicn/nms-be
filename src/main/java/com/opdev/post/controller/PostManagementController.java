@@ -39,7 +39,7 @@ public class PostManagementController {
         Post postToBeCreated = dto.asPostFromCompany(company);
         postToBeCreated.setCreatedBy(company.getUser());
 
-        final Post createdPost = postManagementService.add(postToBeCreated);
+        final Post createdPost = postManagementService.add(postToBeCreated, username);
         return new PostViewDto(createdPost);
     }
 

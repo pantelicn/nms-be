@@ -1,7 +1,7 @@
 package com.opdev.subscription.usage;
 
-import com.opdev.company.service.CompanyService;
-import com.opdev.model.company.Company;
+
+import com.opdev.exception.ApiBadRequestException;
 import com.opdev.model.subscription.PlanProduct;
 import com.opdev.model.subscription.Product;
 import com.opdev.model.subscription.ProductUsage;
@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -24,7 +23,6 @@ public class ProductUsageServiceImpl implements ProductUsageService {
     private final ProductUsageRepository productUsageRepository;
     private final PlanProductService planProductService;
     private final ProductService productService;
-    private final CompanyService companyService;
 
     @Override
     @Transactional
@@ -58,10 +56,24 @@ public class ProductUsageServiceImpl implements ProductUsageService {
     @Override
     @Transactional
     public Integer findRemainingPosts(String companyUsername) {
-        Product postProduct = productService.findByName("Post");
-        ProductUsage postProductUsage = productUsageRepository.findByCompanyUserUsernameAndProduct(companyUsername, postProduct);
-
+        ProductUsage postProductUsage = getPostProductUsage(companyUsername);
         return postProductUsage.getRemaining();
+    }
+
+    @Override
+    @Transactional
+    public void decreaseNumberOfRemainingPosts(final String companyUsername) {
+        ProductUsage postProductUsage = getPostProductUsage(companyUsername);
+        if (postProductUsage.getRemaining() == 0) {
+            throw new ApiBadRequestException("You are not able to publish new post because you have reached the limit from your package.");
+        }
+        postProductUsage.setRemaining(postProductUsage.getRemaining() - 1);
+        productUsageRepository.save(postProductUsage);
+    }
+
+    private ProductUsage getPostProductUsage(String companyUsername) {
+        Product postProduct = productService.findByName("Post");
+        return  productUsageRepository.findByCompanyUserUsernameAndProduct(companyUsername, postProduct);
     }
 
     private ProductUsage buildProductUsage(Subscription subscription, PlanProduct planProduct) {
