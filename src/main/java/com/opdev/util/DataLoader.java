@@ -316,7 +316,7 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
         initializeGooglePosts(companyGoogle);
         initializeGoogleContacts(companyGoogle);
         initializeGoogleBenefits(companyGoogle);
-        initializeGoogleRequests(companyGoogle);
+        //initializeGoogleRequests(companyGoogle);
     }
 
     private Company initializeGoogleData() {
@@ -715,8 +715,15 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .enabled(true)
                 .type(UserType.TALENT)
                 .username("goransasic@gmail.com")
-                .password("G0r@n123@1990")
+                .password(passwordEncoder.encode("Goran12345!"))
                 .build());
+
+        UserRole userRole = UserRole.builder()
+                .user(user)
+                .role(talentRole)
+                .build();
+
+        userRoleRepository.save(userRole);
 
         Location currentLocation = Location.builder()
                 .country("Costa Rica")
