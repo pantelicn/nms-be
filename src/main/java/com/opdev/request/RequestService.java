@@ -15,7 +15,7 @@ public interface RequestService {
 
     Page<Request> findByStatusForCompany(String username, List<RequestStatus> statuses, Pageable pageable);
 
-    Page<Request> findByStatusForTalent(String username, RequestStatus status, Pageable pageable);
+    Page<Request> findByStatusForTalent(String username, List<RequestStatus> statuses, Pageable pageable);
 
     Request editStatusForTalent(String username, Long id, RequestStatus newStatus);
 

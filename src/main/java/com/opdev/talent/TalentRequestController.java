@@ -1,5 +1,7 @@
 package com.opdev.talent;
 
+import java.util.List;
+
 import com.opdev.company.dto.RequestViewDto;
 import com.opdev.config.security.Roles;
 import com.opdev.model.request.Request;
@@ -34,7 +36,8 @@ public class TalentRequestController {
     public Page<TalentRequestViewDto> findWithStatusPending(@PathVariable String username,
                                                             @RequestParam(defaultValue = "0") Integer page) {
         Pageable pageable = PageRequest.of(page, MAX_REQUESTS_PER_PAGE);
-        final Page<Request> found = service.findByStatusForTalent(username, RequestStatus.PENDING, pageable);
+        List<RequestStatus> requiredStatuses = List.of(RequestStatus.PENDING, RequestStatus.COUNTER_OFFER_TALENT, RequestStatus.COUNTER_OFFER_COMPANY);
+        final Page<Request> found = service.findByStatusForTalent(username, requiredStatuses, pageable);
         return found.map(TalentRequestViewDto::new);
     }
 
@@ -43,7 +46,7 @@ public class TalentRequestController {
     public Page<RequestViewDto> findWithStatusCounterOfferCompany(@PathVariable String username,
                                                                   @RequestParam(defaultValue = "0") Integer page) {
         Pageable pageable = PageRequest.of(page, MAX_REQUESTS_PER_PAGE);
-        final Page<Request> found = service.findByStatusForTalent(username, RequestStatus.COUNTER_OFFER_COMPANY, pageable);
+        final Page<Request> found = service.findByStatusForTalent(username, List.of(RequestStatus.COUNTER_OFFER_COMPANY), pageable);
         return found.map(RequestViewDto::new);
     }
 
@@ -52,7 +55,7 @@ public class TalentRequestController {
     public Page<RequestViewDto> findWithStatusAccepted(@PathVariable String username,
                                                        @RequestParam(defaultValue = "0") Integer page) {
         Pageable pageable = PageRequest.of(page, MAX_REQUESTS_PER_PAGE);
-        final Page<Request> found = service.findByStatusForTalent(username, RequestStatus.ACCEPTED, pageable);
+        final Page<Request> found = service.findByStatusForTalent(username, List.of(RequestStatus.ACCEPTED), pageable);
         return found.map(RequestViewDto::new);
     }
 

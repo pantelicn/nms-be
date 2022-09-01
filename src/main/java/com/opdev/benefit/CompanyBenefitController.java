@@ -50,7 +50,6 @@ public class CompanyBenefitController {
     }
 
     @GetMapping
-    @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.COMPANY + "'))")
     public List<BenefitViewDto> find(@PathVariable final String username) {
         final List<Benefit> found = service.getByCompany(username);
         return found.stream()

@@ -19,7 +19,7 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     Page<Request> findByCompanyAndStatusIn(Company company, List<RequestStatus> statuses, Pageable pageable);
 
-    Page<Request> findByTalentAndStatus(Talent talent, RequestStatus status, Pageable pageable);
+    Page<Request> findByTalentAndStatusIn(Talent talent, List<RequestStatus> statuses, Pageable pageable);
 
     Optional<Request> findByIdAndTalent(Long id, Talent talent);
 

@@ -102,10 +102,10 @@ public class RequestServiceImpl implements RequestService {
     @Override
     @Transactional(readOnly = true)
     public Page<Request> findByStatusForTalent(@NonNull final String username,
-                                               @NonNull final RequestStatus status,
+                                               @NonNull final List<RequestStatus> statuses,
                                                @NonNull final Pageable pageable) {
         Talent foundTalent = talentService.getByUsername(username);
-        return repository.findByTalentAndStatus(foundTalent, status, pageable);
+        return repository.findByTalentAndStatusIn(foundTalent, statuses, pageable);
     }
 
     @Override
