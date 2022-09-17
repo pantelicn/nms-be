@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @RequiredArgsConstructor
@@ -43,6 +44,7 @@ public class Notification extends Audit {
 
     @NonNull
     @Column(nullable = false)
+    @Setter
     private Boolean seen;
 
     @NonNull
