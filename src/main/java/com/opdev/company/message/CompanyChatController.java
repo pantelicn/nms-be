@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import com.opdev.company.message.dto.LastMessageViewDto;
+import com.opdev.company.service.CompanyService;
+import com.opdev.model.company.Company;
 import com.opdev.model.request.LastMessage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +31,10 @@ import com.opdev.config.security.Roles;
 import com.opdev.message.LastMessageService;
 import com.opdev.message.MessageService;
 import com.opdev.model.request.Message;
+import com.opdev.model.user.Notification;
 import com.opdev.model.user.UserType;
+import com.opdev.notification.NotificationFactory;
+import com.opdev.notification.NotificationService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +47,8 @@ public class CompanyChatController {
 
     private final MessageService service;
     private final LastMessageService lastMessageService;
+    private final NotificationService notificationService;
+    private final CompanyService companyService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -49,6 +56,9 @@ public class CompanyChatController {
                           "|| hasRole('" + Roles.ADMIN + "')")
     public MessageViewDto send(@Valid @RequestBody MessageSendDto newMessage, @PathVariable String username) {
         Message created = service.send(newMessage.getContent(), newMessage.getTalentUsername(), UserType.TALENT);
+        Company sender = companyService.getByUsername(username);
+        Notification messageNotification = NotificationFactory.createMessageNotification(created.getId(), created.getTo(), sender.getName());
+        notificationService.createOrUpdate(messageNotification);
         return MessageViewDto.builder()
                 .id(created.getId())
                 .content(created.getContent())

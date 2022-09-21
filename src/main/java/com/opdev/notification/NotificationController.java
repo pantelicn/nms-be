@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.opdev.config.security.Roles;
 import com.opdev.model.user.Notification;
+import com.opdev.model.user.NotificationType;
 import com.opdev.notification.dto.NotificationResponseDto;
 import com.opdev.notification.dto.NotificationViewDto;
 
@@ -38,9 +39,9 @@ public class NotificationController {
         return service.findAll(user.getName(), pageable);
     }
 
-    @PutMapping("requests/seen")
+    @PutMapping("seen")
     @PreAuthorize("(hasAnyRole('" + Roles.COMPANY + "', '" + Roles.TALENT + "'))")
-    public void setSeenForRequests(@RequestParam Long lastVisibleRequestId, Principal user) {
-        service.setSeenForRequests(lastVisibleRequestId, user.getName());
+    public void setSeenForNotificationType(@RequestParam Long lastVisibleRequestId, @RequestParam NotificationType type, Principal user) {
+        service.setSeenForNotificationType(lastVisibleRequestId, user.getName(), type);
     }
 }

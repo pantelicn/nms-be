@@ -16,4 +16,8 @@ public class NotificationResponseDto {
 
     private Long lastRequestId;
 
+    private long unseenMessages;
+
+    private Long lastMessageId;
+
 }

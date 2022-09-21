@@ -16,4 +16,34 @@ public class NotificationFactory {
                 .build();
     }
 
+    public static Notification editRequestByCompany(Long referenceId, User notificationFor, String company) {
+        return Notification.builder()
+                .referenceId(referenceId)
+                .seen(false)
+                .description(String.format("Request has been updated by %s", company))
+                .type(NotificationType.REQUEST)
+                .user(notificationFor)
+                .build();
+    }
+
+    public static Notification editRequestByTalent(Long referenceId, User notificationFor, String companyNote) {
+        return Notification.builder()
+                .referenceId(referenceId)
+                .seen(false)
+                .description(String.format("%s - Request has been updated by talent", companyNote))
+                .type(NotificationType.REQUEST)
+                .user(notificationFor)
+                .build();
+    }
+
+    public static Notification createMessageNotification(Long referenceId, User notificationFor, String sender) {
+        return Notification.builder()
+                .referenceId(referenceId)
+                .seen(false)
+                .description(String.format("You have been received new message from %s", sender))
+                .type(NotificationType.MESSAGE)
+                .user(notificationFor)
+                .build();
+    }
+
 }

@@ -49,7 +49,7 @@ public class CompanyRequestController {
     public RequestDetailViewDto create(@RequestBody @Valid RequestCreateDto newRequest,
                                  @PathVariable String username) {
         final Request created = service.create(newRequest, username);
-        notificationService.create(NotificationFactory.createRequestNotification(created.getId(), created.getTalent().getUser(), created.getCompany().getName()));
+        notificationService.createOrUpdate(NotificationFactory.createRequestNotification(created.getId(), created.getTalent().getUser(), created.getCompany().getName()));
         return new RequestDetailViewDto(created);
     }
 

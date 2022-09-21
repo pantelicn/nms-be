@@ -16,8 +16,8 @@ import com.opdev.model.user.User;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-    @Query(value = "select * from notification where type = 'REQUEST' and user_id = :userId order by created_on desc limit 1", nativeQuery = true)
-    Notification findLastUnseenRequest(@Param("userId") Long userId);
+    @Query(value = "select * from notification where type = :type and user_id = :userId order by created_on desc limit 1", nativeQuery = true)
+    Notification findLastUnseen(@Param("userId") Long userId, @Param("type") String type);
 
     long countByUserAndTypeAndSeenIsFalse(User user, NotificationType type);
 
