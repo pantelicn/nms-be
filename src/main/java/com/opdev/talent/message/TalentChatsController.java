@@ -7,6 +7,11 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import com.opdev.model.request.LastMessage;
+import com.opdev.model.talent.Talent;
+import com.opdev.model.user.Notification;
+import com.opdev.notification.NotificationFactory;
+import com.opdev.notification.NotificationService;
+import com.opdev.talent.TalentService;
 import com.opdev.talent.message.dto.LastMessageViewDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,14 +46,18 @@ import lombok.extern.slf4j.Slf4j;
 public class TalentChatsController {
 
     private final MessageService service;
-
     private final LastMessageService lastMessageService;
+    private final NotificationService notificationService;
+    private final TalentService talentService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.TALENT + "'))")
     public MessageViewDto send(@Valid @RequestBody MessageSendDto newMessage, @PathVariable String username) {
         Message created = service.send(newMessage.getContent(), newMessage.getCompanyUsername(), UserType.COMPANY);
+        Talent sender = talentService.getByUsername(username);
+        Notification messageNotification = NotificationFactory.createMessageNotification(created.getId(), created.getTo(), sender.getFullName());
+        notificationService.createOrUpdate(messageNotification);
         return MessageViewDto.builder()
                 .id(created.getId())
                 .content(created.getContent())

@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.opdev.benefit.dto.BenefitViewDto;
 import com.opdev.model.request.Request;
 import com.opdev.model.request.RequestStatus;
 import com.opdev.request.dto.TalentTermRequestViewDto;
@@ -25,6 +26,8 @@ public class TalentRequestDetailViewDto {
 
     private Instant modifiedOn;
 
+    private List<BenefitViewDto> benefits;
+
     public TalentRequestDetailViewDto(Request request) {
         id = request.getId();
         status = request.getStatus();
@@ -33,6 +36,7 @@ public class TalentRequestDetailViewDto {
                 .map(TalentTermRequestViewDto::new)
                 .collect(Collectors.toList());
         modifiedOn = request.getModifiedOn();
+        benefits = request.getCompany().getBenefits().stream().map(BenefitViewDto::new).collect(Collectors.toList());
     }
 
 }

@@ -9,6 +9,8 @@ import com.opdev.company.dto.RequestViewDto;
 import com.opdev.config.security.Roles;
 import com.opdev.model.request.Request;
 import com.opdev.model.request.RequestStatus;
+import com.opdev.notification.NotificationFactory;
+import com.opdev.notification.NotificationService;
 import com.opdev.request.RequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -39,12 +41,15 @@ public class CompanyRequestController {
 
     private final RequestService service;
 
+    private final NotificationService notificationService;
+
     @PostMapping
     @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.COMPANY + "'))")
     @ResponseStatus(HttpStatus.CREATED)
     public RequestDetailViewDto create(@RequestBody @Valid RequestCreateDto newRequest,
                                  @PathVariable String username) {
         final Request created = service.create(newRequest, username);
+        notificationService.createOrUpdate(NotificationFactory.createRequestNotification(created.getId(), created.getTalent().getUser(), created.getCompany().getName()));
         return new RequestDetailViewDto(created);
     }
 

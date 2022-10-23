@@ -1,11 +1,18 @@
 package com.opdev.message;
 
+import com.opdev.company.service.CompanyService;
 import com.opdev.exception.ApiBadRequestException;
 import com.opdev.exception.ApiEntityNotFoundException;
+import com.opdev.model.company.Company;
 import com.opdev.model.request.Message;
+import com.opdev.model.talent.Talent;
+import com.opdev.model.user.Notification;
 import com.opdev.model.user.User;
 import com.opdev.model.user.UserType;
+import com.opdev.notification.NotificationFactory;
+import com.opdev.notification.NotificationService;
 import com.opdev.repository.MessageRepository;
+import com.opdev.talent.TalentService;
 import com.opdev.user.UserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +34,9 @@ public class MessageServiceImpl implements MessageService {
     private final UserService userService;
     private final LastMessageService lastMessageService;
     private final AvailableChatService availableChatService;
+    private final NotificationService notificationService;
+    private final TalentService talentService;
+    private final CompanyService companyService;
 
     @Override
     @Transactional
@@ -56,6 +66,16 @@ public class MessageServiceImpl implements MessageService {
         } else {
             lastMessageService.save(created, sender, to);
         }
+        String senderName;
+        if (sender.getType() == UserType.TALENT) {
+            Talent foundTalent = talentService.getByUsername(sender.getUsername());
+            senderName = foundTalent.getFullName();
+        } else {
+            Company foundCompany = companyService.getByUsername(sender.getUsername());
+            senderName = foundCompany.getName();
+        }
+        Notification messageNotification = NotificationFactory.createMessageNotification(created.getId(), created.getTo(), senderName);
+        notificationService.createOrUpdate(messageNotification);
         return created;
     }
 
