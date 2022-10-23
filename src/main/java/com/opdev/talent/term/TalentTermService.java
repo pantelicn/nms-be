@@ -10,7 +10,7 @@ public interface TalentTermService {
 
      TalentTerm get(final Long id);
 
-     TalentTerm edit(final TalentTerm modified, final String username);
+     List<TalentTerm> edit(final List<TalentTerm> modifiedList, final String username);
 
      List<TalentTerm> getByTalent(final String username);
 

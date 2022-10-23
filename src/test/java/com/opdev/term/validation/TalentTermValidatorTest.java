@@ -52,7 +52,7 @@ class TalentTermValidatorTest {
 
     @Test
     void validate_validBigInteger() {
-        final Term term = createTerm(TermType.BIGINT);
+        final Term term = createTerm(TermType.INT);
         TalentTerm talentTerm = TalentTerm.builder().value("21474836490").unitOfMeasure(UnitOfMeasure.DOLLAR).negotiable(true).term(term).build();
 
         validate(talentTerm);
@@ -60,7 +60,7 @@ class TalentTermValidatorTest {
 
     @Test
     void validate_invalidBigInteger() {
-        final Term term = createTerm(TermType.BIGINT);
+        final Term term = createTerm(TermType.INT);
         final TalentTerm talentTerm = TalentTerm.builder().value("123a").negotiable(true).term(term).build();
 
         assertThrows(ApiValidationException.class, () -> validate(talentTerm));

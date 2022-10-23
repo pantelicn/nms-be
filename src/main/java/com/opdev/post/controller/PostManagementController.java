@@ -31,7 +31,7 @@ public class PostManagementController {
     private final CompanyService companyService;
 
     @PostMapping
-    @PreAuthorize(SpELAuthorizationExpressions.asMatchingCompanyOrAdmin)
+    @PreAuthorize(SpELAuthorizationExpressions.AS_MATCHING_COMPANY_OR_ADMIN)
     @ResponseStatus(HttpStatus.CREATED)
     public PostViewDto add(@RequestBody @Valid final PostAddDto dto, @PathVariable final String username) {
         final Company company = companyService.getByUsername(username);
@@ -44,7 +44,7 @@ public class PostManagementController {
     }
 
     @DeleteMapping("{postId}")
-    @PreAuthorize(SpELAuthorizationExpressions.asMatchingCompanyOrAdmin)
+    @PreAuthorize(SpELAuthorizationExpressions.AS_MATCHING_COMPANY_OR_ADMIN)
     public void deleteById(@PathVariable @NotNull final Long postId, @PathVariable final String username) {
         final Long companyId = companyService.getByUsername(username).getId();
         postManagementService.delete(postId, companyId);

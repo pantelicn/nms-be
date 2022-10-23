@@ -23,7 +23,7 @@ public class AvailableChatController {
     private final AvailableChatService availableChatService;
     private final UserService userService;
 
-    @PreAuthorize(SpELAuthorizationExpressions.asMatchingTalentOrCompany)
+    @PreAuthorize(SpELAuthorizationExpressions.AS_MATCHING_TALENT_OR_COMPANY)
     @GetMapping(params = "search")
     public Page<AvailableChatViewDto> get(@PathVariable String username, @RequestParam String search, Pageable pageable) {
         User currentUser = userService.getLoggedInUser();
@@ -31,7 +31,7 @@ public class AvailableChatController {
         return availableChats.map(AvailableChatViewDto::new);
     }
 
-    @PreAuthorize(SpELAuthorizationExpressions.asMatchingTalentOrCompany)
+    @PreAuthorize(SpELAuthorizationExpressions.AS_MATCHING_TALENT_OR_COMPANY)
     @GetMapping
     public Page<AvailableChatViewDto> get(@PathVariable String username, Pageable pageable) {
         User currentUser = userService.getLoggedInUser();

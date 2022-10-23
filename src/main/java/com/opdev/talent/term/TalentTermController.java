@@ -54,9 +54,11 @@ public class TalentTermController {
 
     @PutMapping
     @PreAuthorize("#username == authentication.name && hasRole('" + Roles.TALENT + "')")
-    public TalentTermViewDto edit(@PathVariable String username, @Valid @RequestBody final TalentTermEditDto modified) {
-        final TalentTerm updated = service.edit(modified.asTalentTerm(), username);
-        return new TalentTermViewDto(updated);
+    public List<TalentTermViewDto> edit(@PathVariable String username, @Valid @RequestBody final List<TalentTermEditDto> modified) {
+        final List<TalentTerm> updated = service.edit(modified.stream()
+                .map(TalentTermEditDto::asTalentTerm)
+                .collect(Collectors.toList()), username);
+        return updated.stream().map(TalentTermViewDto::new).collect(Collectors.toList());
     }
 
     @DeleteMapping("{id}")

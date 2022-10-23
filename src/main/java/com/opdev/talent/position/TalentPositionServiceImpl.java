@@ -7,12 +7,14 @@ import com.opdev.repository.TalentPositionRepository;
 import com.opdev.talent.TalentService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TalentPositionServiceImpl implements TalentPositionService {
@@ -28,6 +30,12 @@ public class TalentPositionServiceImpl implements TalentPositionService {
                 .map(position -> TalentPosition.builder().position(position).talent(found).build())
                 .collect(Collectors.toList());
         repository.saveAll(talentPositions);
+    }
+
+    @Override
+    public void removePositionsFromTalent(String username, List<Position> positions) {
+        repository.removeByPositionIn(positions);
+        LOGGER.info("Removed {} positions from talent {}", positions.size(), username);
     }
 
     @Override

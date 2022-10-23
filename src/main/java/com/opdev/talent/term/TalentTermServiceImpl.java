@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -51,14 +53,17 @@ public class TalentTermServiceImpl implements TalentTermService {
 
     @Override
     @Transactional
-    public TalentTerm edit(@NonNull final TalentTerm modified, @NonNull final String username) {
-        final TalentTerm existing = getByIdAndTalent(modified.getId(), username);
-        modified.setModifiedBy(userService.getLoggedInUser());
-        modified.setTalent(existing.getTalent());
-        modified.setTerm(existing.getTerm());
-        TalentTerm updated = repository.save(modified);
-        LOGGER.info("TalentTerm with id {} is modified {}", modified.getId(), modified);
-        return updated;
+    public List<TalentTerm> edit(@NonNull final List<TalentTerm> modifiedList, @NonNull final String username) {
+        Map<Long, TalentTerm> existing = getByTalent(username).stream()
+                .collect(Collectors.toMap(TalentTerm::getId, Function.identity()));
+        for (TalentTerm modified: modifiedList) {
+            modified.setModifiedBy(userService.getLoggedInUser());
+            modified.setTalent(existing.get(modified.getId()).getTalent());
+            modified.setTerm(existing.get(modified.getId()).getTerm());
+        }
+        List<TalentTerm> updatedList = repository.saveAll(modifiedList);
+        LOGGER.info("TalentTerms modified: ", existing.keySet());
+        return updatedList;
     }
 
     @Override

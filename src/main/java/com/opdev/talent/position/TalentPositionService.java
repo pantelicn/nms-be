@@ -8,6 +8,8 @@ public interface TalentPositionService {
 
     void addPositionsToTalent(final String username, final List<Position> positions);
 
+    void removePositionsFromTalent(final String username, final List<Position> positions);
+
     List<Position> getByTalent(final String username);
 
 }
