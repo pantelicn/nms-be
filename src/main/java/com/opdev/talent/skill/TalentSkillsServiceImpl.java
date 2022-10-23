@@ -9,7 +9,6 @@ import com.opdev.repository.TalentSkillRepository;
 import com.opdev.skill.SkillService;
 import com.opdev.talent.TalentService;
 import com.opdev.talent.position.TalentPositionService;
-import com.opdev.user.UserService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,6 @@ import java.util.stream.Collectors;
 public class TalentSkillsServiceImpl implements TalentSkillsService {
 
     private final TalentSkillRepository repository;
-    private final UserService userService;
     private final TalentService talentService;
     private final SkillService skillService;
     private final TalentPositionService talentPositionService;
@@ -35,7 +33,7 @@ public class TalentSkillsServiceImpl implements TalentSkillsService {
     public List<TalentSkill> addSkillsToTalent(final String username, final List<String> skillCodes) {
         Objects.requireNonNull(skillCodes);
         Objects.requireNonNull(username);
-        final Talent foundTalent = getTalent(username);
+        final Talent foundTalent = talentService.getByUsername(username);
         final List<TalentSkill> result = new ArrayList<>();
         final List<PositionSkill> skillPositions = new ArrayList<>();
         skillCodes.forEach(skillCode -> {
@@ -71,7 +69,7 @@ public class TalentSkillsServiceImpl implements TalentSkillsService {
     public void removeSkillFromTalent(final String username, final String skillCode) {
         Objects.requireNonNull(username);
         Objects.requireNonNull(skillCode);
-        final Talent foundTalent = getTalent(username);
+        final Talent foundTalent = talentService.getByUsername(username);
         final Skill foundSkill = skillService.get(skillCode);
         removePositionsFromTalent(username, foundSkill.getSkillPositions());
         repository.deleteByTalentAndSkill(foundTalent, foundSkill);
@@ -82,7 +80,7 @@ public class TalentSkillsServiceImpl implements TalentSkillsService {
         List<Position> existingPositions = talentPositionService.getByTalent(username);
         List<TalentSkill> existingSkills = getSkillsByTalent(username);
         existingSkills.removeIf(existingSkill -> skillCode.equals(existingSkill.getSkill().getCode()));
-        skillPositionsToRemove.removeIf(skillPosition -> skillsHavePosition(existingSkills, skillPosition));
+        skillPositionsToRemove.removeIf(skillPosition -> skillsImplyPosition(existingSkills, skillPosition));
         List<Position> positionsToRemove = skillPositionsToRemove.stream()
                 .map(PositionSkill::getPosition)
                 .filter(position -> positionExists(existingPositions, position))
@@ -90,21 +88,13 @@ public class TalentSkillsServiceImpl implements TalentSkillsService {
         talentPositionService.removePositionsFromTalent(username, positionsToRemove);
     }
 
-    private static boolean skillsHavePosition(List<TalentSkill> existingSkills, PositionSkill skillPosition) {
+    private static boolean skillsImplyPosition(List<TalentSkill> existingSkills, PositionSkill skillPosition) {
         List<Position> existingPositions = existingSkills.stream()
                 .flatMap(existingSkill -> existingSkill.getSkill().getSkillPositions().stream())
                 .map(PositionSkill::getPosition)
                 .collect(Collectors.toList());
 
         return existingPositions.stream().anyMatch(position -> position.getCode().equals(skillPosition.getPosition().getCode()));
-    }
-
-    private Talent getTalent(final String username) {
-        if (userService.isAdminLoggedIn()) {
-            return talentService.getByUsername(username);
-        } else {
-            return talentService.getByUsername(userService.getLoggedInUser().getUsername());
-        }
     }
 
     private static boolean positionExists(List<Position> existingPositions, Position position) {
