@@ -1,13 +1,13 @@
 package com.opdev.talent.dto;
 
-import java.util.Objects;
-
+import com.opdev.dto.LocationDto;
 import com.opdev.dto.UserViewDto;
 import com.opdev.model.talent.Talent;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.ToString;
 
 @AllArgsConstructor
@@ -22,17 +22,17 @@ public class TalentViewDto {
 
     private UserViewDto user;
 
-    public TalentViewDto(final Talent talent) {
-        this.asView(talent);
+    private LocationDto location;
+
+    public TalentViewDto(Talent talent) {
+        asView(talent);
     }
 
-    private void asView(final Talent talent) {
-        Objects.requireNonNull(talent);
-
+    private void asView(@NonNull Talent talent) {
         this.firstName = talent.getFirstName();
         this.lastName = talent.getLastName();
-
         this.user = new UserViewDto(talent.getUser());
+        this.location = new LocationDto(talent.getCurrentLocation());
     }
 
 }
