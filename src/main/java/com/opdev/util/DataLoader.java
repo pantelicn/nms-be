@@ -282,14 +282,14 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                                 .name("Monthly Salary(Euros)")
                                 .code("MONTHLY-SALARY-EUROS")
                                 .description("Monthly salary in euros.")
-                                .type(TermType.BIGINT)
+                                .type(TermType.INT)
                                 .availableForSearch(true)
                                 .build(),
                         Term.builder()
                                 .name("Vacation days")
                                 .code("VACATION-DAYS")
                                 .description("Number of vacation days per year.")
-                                .type(TermType.BIGINT)
+                                .type(TermType.INT)
                                 .availableForSearch(true)
                                 .build(),
                         Term.builder()
@@ -703,7 +703,7 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                                 .build(),
                         TalentTerm.builder()
                                 .value("20")
-                                .negotiable(true)
+                                .negotiable(false)
                                 .talent(talent)
                                 .term(termRepository.getByCode("VACATION-DAYS"))
                                 .unitOfMeasure(UnitOfMeasure.DAYS)

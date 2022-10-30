@@ -35,14 +35,14 @@ class TermCrudIntegrationTest extends AbstractIntegrationTest {
         final String token = getTokenForAdmin();
         final HttpHeaders headers = createAuthHeaders(token);
         final TermAddDto vacationDays = new TermAddDto("Vacation days", "Total number of vacation days.", TermType.STRING);
-        final TermAddDto salary = new TermAddDto("Salary", "Monthly salary", TermType.BIGINT);
+        final TermAddDto salary = new TermAddDto("Salary", "Monthly salary", TermType.INT);
 
         TermViewDto createdVacationDaysTerm = addTerm(vacationDays, headers);
         TermViewDto createSalaryTerm = addTerm(salary, headers);
 
         findAll(List.of(createdVacationDaysTerm, createSalaryTerm), headers);
 
-        final TermEditDto modifiedSalaryTerm = new TermEditDto(createSalaryTerm.getCode(), "Salary", "Monthly salary", TermType.BIGINT);
+        final TermEditDto modifiedSalaryTerm = new TermEditDto(createSalaryTerm.getCode(), "Salary", "Monthly salary", TermType.INT);
 
         TermViewDto newSalaryTerm = edit(modifiedSalaryTerm, headers);
 

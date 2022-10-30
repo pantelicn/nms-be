@@ -32,7 +32,7 @@ public class PostViewController {
     // TODO @nikolagudelj Find user feed
 
     @GetMapping
-    @PreAuthorize(SpELAuthorizationExpressions.isAuthenticated)
+    @PreAuthorize(SpELAuthorizationExpressions.IS_AUTHENTICATED)
     public Page<PostViewDto> find(
             @RequestParam(value = "company", required = false) final Long companyId,
             @RequestParam(value = "country", required = false) final String country,

@@ -31,9 +31,6 @@ public class TalentTermValidator {
                 case DATE:
                     parse(value);
                     break;
-                case BIGINT:
-                    parseLong(value);
-                    break;
                 case BOOLEAN:
                     parseBoolean(value);
                     break;
@@ -41,9 +38,6 @@ public class TalentTermValidator {
                     break;
             }
         } catch (DateTimeParseException | IllegalArgumentException e) {
-            throw new ApiValidationException("Invalid value");
-        }
-        if ((type == TermType.BIGINT || type == TermType.INT) && unitOfMeasure == null) {
             throw new ApiValidationException("Invalid value");
         }
     }

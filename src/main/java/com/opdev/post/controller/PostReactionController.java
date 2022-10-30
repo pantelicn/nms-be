@@ -24,7 +24,7 @@ public class PostReactionController {
     private final PostReactionService postReactionService;
 
     @PutMapping
-    @PreAuthorize(SpELAuthorizationExpressions.isTalent)
+    @PreAuthorize(SpELAuthorizationExpressions.IS_TALENT)
     public PostReactionViewDto addReaction(@Valid @RequestBody final PostReactionDto postReactionDto,
                                            @PathVariable final Long postId,
                                            Principal principal) {
@@ -33,7 +33,7 @@ public class PostReactionController {
     }
 
     @DeleteMapping
-    @PreAuthorize(SpELAuthorizationExpressions.isTalent)
+    @PreAuthorize(SpELAuthorizationExpressions.IS_TALENT)
     public void removeReaction(@Valid @RequestBody final PostReactionDto postReactionDto,
                                @PathVariable final Long postId,
                                Principal principal) {

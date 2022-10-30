@@ -12,4 +12,6 @@ public interface TalentTermRepository extends JpaRepository<TalentTerm, Long> {
 
     Optional<TalentTerm> findByIdAndTalentUserUsername(Long id, String username);
 
+    boolean existsByTalentUserUsernameAndTermCode(String username, String code);
+
 }
