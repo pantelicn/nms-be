@@ -1,6 +1,7 @@
 package com.opdev.user;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import com.opdev.exception.ApiEntityDisabledException;
 import com.opdev.model.user.User;
@@ -41,5 +42,7 @@ public interface UserService {
     void ensureIsEnabled(User user) throws ApiEntityDisabledException;
 
     Optional<User> findUserByUsernameAndType(String username, UserType type);
+
+    void activateUser(UUID activationCode);
 
 }

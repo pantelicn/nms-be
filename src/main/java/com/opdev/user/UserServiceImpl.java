@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -117,6 +118,17 @@ class UserServiceImpl implements UserService, UserDetailsService {
     @Transactional(readOnly = true)
     public Optional<User> findUserByUsernameAndType(@NonNull final String talentUsername, @NonNull final UserType type) {
         return userRepository.findByUsernameAndType(talentUsername, type);
+    }
+
+    @Override
+    @Transactional
+    public void activateUser(final UUID activationCode) {
+        Optional<User> found = userRepository.findByActivationCode(activationCode);
+        if (found.isEmpty()) {
+            throw new RuntimeException("User with activation code does not exist");
+        }
+        found.get().setEnabled(true);
+        userRepository.save(found.get());
     }
 
     @Transactional(readOnly = true)

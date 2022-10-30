@@ -1,6 +1,7 @@
 package com.opdev.offers.plan;
 
 import com.opdev.model.subscription.Plan;
+import com.opdev.model.subscription.PlanType;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,5 +19,7 @@ public interface PlanService {
     Plan update(Plan modified);
 
     void delete(Long planId);
+
+    Plan findByType(PlanType type);
 
 }

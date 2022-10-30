@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <style>
+            .nh-cyan {
+                color: #17a2b8;
+            }
+            .nh-button {
+                color: #fff;
+                background-color: #17a2b8;
+                border-color: #17a2b8;
+                text-decoration: none;
+                padding: 10px 10px 10px 10px;
+                border-radius: 20px 20px 20px 20px;
+                font-family: sans-serif;
+            }
+            .nh-button:hover {
+                color: #fff;
+                background-color: #52bebe;
+                border-color: #8ad3d3
+            }
+            .btn-primary:hover {
+                color: #fff;
+                background-color: #52bebe;
+                border-color: #8ad3d3
+            }
+            .nh-container {
+                background-color: #FFFFFF !important;
+                width: 30%;
+                padding: 10px 10px 10px 10px;
+            }
+            .btn-div {
+                margin-top: 30px;
+                margin-bottom: 30px;
+                text-align: center;
+            }
+            /* For Mobile */
+            @media screen and (max-width: 540px) {
+                .view {
+                    width: 100%;
+                }
+            }
+
+            /* For Tablets */
+            @media screen and (min-width: 540px) and (max-width: 780px) {
+                .view {
+                    width: 100%;
+                }
+            }
+
+            @media screen and (min-width: 780px) {
+                .view {
+                    width: 50%;
+                }
+            }
+
+        </style>
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse; padding:0; margin:0px;">
+    <tr valign="top">
+        <td align="center">
+            <img src="https://iili.io/ZrRuCx.png" class="view" />
+            <div class="btn-div">
+                <a class="nh-button" href="${baseUrl}/api/v1/users/activate?activationCode=${activationCode}" target="_blank" role="button">
+                    <span style="padding-left: 20px;padding-right: 20px;">ACTIVATE ACCOUNT</span>
+                </a>
+            </div>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

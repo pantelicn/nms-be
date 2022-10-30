@@ -1,13 +1,24 @@
 package com.opdev.company.service;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.Objects;
 import java.util.Optional;
 
 import com.opdev.exception.ApiEmailExistsException;
 import com.opdev.model.company.Company;
+import com.opdev.model.subscription.Plan;
+import com.opdev.model.subscription.PlanType;
+import com.opdev.model.subscription.Subscription;
+import com.opdev.model.subscription.SubscriptionStatus;
 import com.opdev.model.user.User;
+import com.opdev.model.user.UserRole;
+import com.opdev.offers.plan.PlanService;
 import com.opdev.repository.CompanyRepository;
 import com.opdev.repository.UserRepository;
+import com.opdev.subscription.SubscriptionService;
+import com.opdev.user.role.RoleService;
+import com.opdev.user.userole.UserRoleService;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,14 +33,23 @@ class CompanyRegistrationServiceImpl implements CompanyRegistrationService {
 
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
+    private final RoleService roleService;
+    private final UserRoleService userRoleService;
+    private final SubscriptionService subscriptionService;
+    private final PlanService planService;
 
     @Transactional
     @Override
     public Company register(Company company) {
         validateCompany(company);
-
-        userRepository.save(company.getUser());
-        Company created =  companyRepository.save(company);
+        User companyUser = userRepository.save(company.getUser());
+        UserRole companyUserRole = UserRole.builder()
+                .role(roleService.getCompanyRole())
+                .user(companyUser)
+                .build();
+        userRoleService.create(companyUserRole);
+        Company created = companyRepository.save(company);
+        createTrialSubscription(created);
         return created;
     }
 
@@ -43,6 +63,23 @@ class CompanyRegistrationServiceImpl implements CompanyRegistrationService {
             throw ApiEmailExistsException.builder().message("User.already.exists").entity("Company")
                     .id(company.getUser().getUsername()).build();
         }
+    }
+
+    private void createTrialSubscription(Company company) {
+        Plan trialPlan = planService.findByType(PlanType.TRIAL);
+        LocalDate firstJuly = LocalDate.of(2023, 7, 1);
+        Period period = Period.between(LocalDate.now(), firstJuly);
+        Subscription subscription = Subscription.builder()
+                .autoRenewal(false)
+                .company(company)
+                .subscriptionStatus(SubscriptionStatus.ACTIVE)
+                .startDate(LocalDate.now())
+                .endDate(firstJuly)
+                .period(period)
+                .plan(trialPlan)
+                .build();
+
+        subscriptionService.subscribe(subscription);
     }
 
 }

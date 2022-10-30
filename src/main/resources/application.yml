@@ -41,8 +41,8 @@ spring:
             ddl-auto: update
 
     mail:
-        host: smtp.gmail.com
-        password: island-ostrvo
+        host: mail.privateemail.com
+        password: E$pRZ2H*rd3f5$
         port: 587
         properties:
             mail:
@@ -50,7 +50,7 @@ spring:
                     auth: true
                     starttls:
                         enable: true
-        username: anonymous.ln.app@gmail.com
+        username: noreply@nullhire.com
 
     messages:
         basename: i18n/messages
@@ -81,3 +81,4 @@ aws:
 import:
     local:
         data: true
+

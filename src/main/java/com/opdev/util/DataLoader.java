@@ -52,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Component
 @ConditionalOnProperty(name="import.local.data", havingValue="true")
@@ -62,7 +63,7 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     private Company companyFacebook;
     private Talent talentGoran;
     private Talent talentNikola;
-    private Plan basicPlan;
+    private Plan trialPlan;
     private Role companyRole;
     private Role talentRole;
 
@@ -110,7 +111,7 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusMonths(12))
                 .period(Period.ofMonths(12))
-                .plan(basicPlan)
+                .plan(trialPlan)
                 .build();
 
         subscriptionService.subscribe(subscription);
@@ -122,18 +123,18 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .description("Use Start a post to share posts.")
                 .build();
         post = productRepository.save(post);
-        basicPlan = Plan.builder()
-                .name("Basic")
-                .description("Choose a basic subscription plan. You can upgrade your plan to PRO any time.")
+        trialPlan = Plan.builder()
+                .name("Trial")
+                .description("Trial period.")
                 .durationInMonths(12)
-                .price(Money.of(CurrencyUnit.EUR, BigDecimal.valueOf(70)))
-                .type(PlanType.BASIC)
+                .price(Money.of(CurrencyUnit.EUR, BigDecimal.valueOf(0)))
+                .type(PlanType.TRIAL)
                 .build();
 
-        basicPlan = planRepository.save(basicPlan);
+        trialPlan = planRepository.save(trialPlan);
 
         PlanProduct postPlanProduct = PlanProduct.builder()
-                .plan(basicPlan)
+                .plan(trialPlan)
                 .limited(true)
                 .product(post)
                 .quantity(120)
@@ -148,6 +149,8 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .type(UserType.ADMIN)
                 .username("admin@gmail.com")
                 .password("Admin12345!")
+                                    .activationCode(UUID.randomUUID())
+                                    .enabled(true)
                 .build());
     }
 
@@ -325,6 +328,8 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .type(UserType.COMPANY)
                 .username("google@gmail.com")
                 .password(passwordEncoder.encode("Google12345!"))
+                                                .activationCode(UUID.randomUUID())
+                                                .enabled(true)
                 .build());
 
         UserRole userRole = UserRole.builder()
@@ -476,6 +481,8 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .type(UserType.COMPANY)
                 .username("facebook@facebook.com")
                 .password("Facebook12345!")
+                                                .activationCode(UUID.randomUUID())
+                                                .enabled(true)
                 .build());
 
         CompanyLocation location = CompanyLocation.builder()
@@ -567,7 +574,7 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
 
     private void initializeTalents() {
         initializeNikola();
-        initializeGoran();
+        //initializeGoran();
     }
 
 
@@ -585,6 +592,8 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .type(UserType.TALENT)
                 .username("nikola@gmail.com")
                 .password(passwordEncoder.encode("Nikola12345!"))
+                                                .activationCode(UUID.randomUUID())
+                                                .enabled(true)
                 .build());
 
         UserRole userRole = UserRole.builder()
@@ -716,6 +725,8 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .type(UserType.TALENT)
                 .username("goransasic@gmail.com")
                 .password(passwordEncoder.encode("Goran12345!"))
+                                                .activationCode(UUID.randomUUID())
+                                                .enabled(true)
                 .build());
 
         UserRole userRole = UserRole.builder()
@@ -836,15 +847,7 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                             .talent(talentNikola.getUser())
                             .talentName(talentNikola.getFullName())
                             .talentUsername(talentNikola.getUser().getUsername())
-                            .build(),
-                        AvailableChat.builder()
-                                .company(companyGoogle.getUser())
-                                .companyName(companyGoogle.getName())
-                                .companyUsername(companyGoogle.getUser().getUsername())
-                                .talent(talentGoran.getUser())
-                                .talentName(talentGoran.getFullName())
-                                .talentUsername(talentGoran.getUser().getUsername())
-                                .build()
+                            .build()
                 )
         );
     }

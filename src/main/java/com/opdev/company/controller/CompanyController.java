@@ -12,17 +12,19 @@ import com.opdev.company.dto.CompanyUpdateDto;
 import com.opdev.config.security.Roles;
 import com.opdev.dto.CompanyViewDto;
 import com.opdev.dto.paging.PageDto;
+import com.opdev.mail.NullHireMailSender;
 import com.opdev.model.company.Company;
 import com.opdev.model.user.User;
 import com.opdev.user.UserService;
 
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,10 +45,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 class CompanyController {
 
-    private final ApplicationEventPublisher eventPublisher;
     private final CompanyRegistrationService companyRegistrationService;
     private final CompanyService companyService;
     private final UserService userService;
+    private final NullHireMailSender nullHireMailSender;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping
     @PreAuthorize("permitAll()")
@@ -54,9 +57,9 @@ class CompanyController {
     public CompanyViewDto add(@Valid @RequestBody final CompanyRegistrationDto companyRegistrationDto) {
         LOGGER.info("Registering a new company: {}", companyRegistrationDto.getUsername());
 
-        final Company company = companyRegistrationDto.asCompany();
+        final Company company = companyRegistrationDto.asCompany(passwordEncoder);
         final Company registeredCompany = companyRegistrationService.register(company);
-
+        nullHireMailSender.sendRegistrationEmail(companyRegistrationDto.getUsername(), company.getUser().getActivationCode());
         return new CompanyViewDto(registeredCompany);
     }
 

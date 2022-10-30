@@ -1,11 +1,14 @@
 package com.opdev.company.dto;
 
+import java.util.UUID;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import com.opdev.dto.paging.RegistrationDto;
 import com.opdev.model.company.Company;
-import com.opdev.model.location.CompanyLocation;
 import com.opdev.model.user.User;
 import com.opdev.model.user.UserType;
 import com.opdev.validation.Password;
@@ -50,12 +53,13 @@ public class CompanyRegistrationDto implements RegistrationDto {
     @NonNull
     private CompanyLocationDto location;
 
-    public Company asCompany() {
+    public Company asCompany(PasswordEncoder passwordEncoder) {
 
         final User user = User.builder()
                 .username(username)
-                .password(password)
+                .password(passwordEncoder.encode(password))
                 .type(UserType.COMPANY)
+                .activationCode(UUID.randomUUID())
                 .build();
         final Company company = Company.builder()
                 .user(user)

@@ -3,6 +3,7 @@ package com.opdev.offers.plan;
 
 import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.subscription.Plan;
+import com.opdev.model.subscription.PlanType;
 import com.opdev.model.user.User;
 import com.opdev.repository.PlanRepository;
 import com.opdev.user.UserService;
@@ -71,5 +72,11 @@ public class PlanServiceImpl implements PlanService {
     public void delete(Long planId) {
         final Plan foundPlan = getById(planId);
         planRepository.delete(foundPlan);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Plan findByType(final PlanType type) {
+        return planRepository.findByType(type);
     }
 }

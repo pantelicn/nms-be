@@ -2,9 +2,9 @@ package com.opdev.model.user;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -25,6 +25,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -52,6 +53,7 @@ public class User extends Audit {
     @NonNull
     @Column(nullable = false)
     @Builder.Default
+    @Setter
     private Boolean enabled = Boolean.FALSE;
 
     @NonNull
@@ -70,5 +72,9 @@ public class User extends Audit {
     @OneToMany(mappedBy = "user")
     @Builder.Default
     private List<UserRole> userRoles = new ArrayList<>();
+
+    @NonNull
+    @Column(nullable = false)
+    private UUID activationCode;
 
 }
