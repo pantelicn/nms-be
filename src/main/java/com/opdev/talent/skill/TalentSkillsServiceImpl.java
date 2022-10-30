@@ -1,5 +1,6 @@
 package com.opdev.talent.skill;
 
+import com.opdev.exception.ApiBadRequestException;
 import com.opdev.model.talent.Position;
 import com.opdev.model.talent.PositionSkill;
 import com.opdev.model.talent.Skill;
@@ -37,6 +38,9 @@ public class TalentSkillsServiceImpl implements TalentSkillsService {
         final List<TalentSkill> result = new ArrayList<>();
         final List<PositionSkill> skillPositions = new ArrayList<>();
         skillCodes.forEach(skillCode -> {
+            if (skillExists(username, skillCode)) {
+                throw new ApiBadRequestException("Skill already exists");
+            }
             final Skill foundSkill = skillService.get(skillCode);
             final TalentSkill created = repository.save(TalentSkill.builder().skill(foundSkill).talent(foundTalent).build());
             skillPositions.addAll(foundSkill.getSkillPositions());
@@ -99,6 +103,10 @@ public class TalentSkillsServiceImpl implements TalentSkillsService {
 
     private static boolean positionExists(List<Position> existingPositions, Position position) {
         return existingPositions.stream().anyMatch(existingPosition -> existingPosition.getCode().equals(position.getCode()));
+    }
+
+    private boolean skillExists(String talentUsername, String code) {
+        return repository.existsByTalentUserUsernameAndSkillCode(talentUsername, code);
     }
 
 }

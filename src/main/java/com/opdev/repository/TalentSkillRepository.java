@@ -11,5 +11,6 @@ public interface TalentSkillRepository extends JpaRepository<TalentSkill, Long> 
 
     List<TalentSkill> findByTalent(Talent talent);
     Long deleteByTalentAndSkill(Talent talent, Skill skill);
+    boolean existsByTalentUserUsernameAndSkillCode(String talentUsername, String code);
 
 }

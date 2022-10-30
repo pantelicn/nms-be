@@ -1,5 +1,6 @@
 package com.opdev.talent.term;
 
+import com.opdev.exception.ApiBadRequestException;
 import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.talent.Talent;
 import com.opdev.model.term.TalentTerm;
@@ -91,6 +92,9 @@ public class TalentTermServiceImpl implements TalentTermService {
     }
 
     private TalentTerm create(TalentTerm talentTerm, Talent talent) {
+        if (termExists(talent.getUser().getUsername(), talentTerm.getTerm().getCode())) {
+            throw new ApiBadRequestException("Term already exists");
+        }
         final Term foundTerm = termService.get(talentTerm.getTerm().getCode());
         final TalentTerm newTalentTerm = TalentTerm.builder()
                 .value(talentTerm.getValue())
@@ -106,6 +110,10 @@ public class TalentTermServiceImpl implements TalentTermService {
 
     private void validate(TalentTerm talentTerm) {
         TalentTermValidator.validate(talentTerm);
+    }
+
+    private boolean termExists(String talentUsername, String code) {
+        return repository.existsByTalentUserUsernameAndTermCode(talentUsername, code);
     }
 
 }
