@@ -1,18 +1,28 @@
 package com.opdev.company.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
+import com.opdev.exception.ApiBadRequestException;
 import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.company.Company;
 import com.opdev.model.user.User;
 import com.opdev.repository.CompanyRepository;
 import com.opdev.user.UserService;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +32,9 @@ class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
     private final UserService userService;
+    private static final List<String> VALID_PROFILE_IMAGE_EXTENSIONS = List.of("png", "jpg", "jpeg");
+
+    private String profileImagesDir = "/Users/goransasic/work/workspace/images/";
 
     @Transactional(readOnly = true)
     @Override
@@ -96,4 +109,38 @@ class CompanyServiceImpl implements CompanyService {
         companyRepository.delete(company);
         userService.delete(username);
     }
+
+    @Override
+    @Transactional
+    public void uploadProfileImage(final String companyUsername, final MultipartFile image) {
+        validateProfileImageExtension(image.getOriginalFilename());
+        Company found = getByUsername(companyUsername);
+        String fullPath = generateFullPath(image.getOriginalFilename(), found.getName());
+        found.setProfileImage(fullPath);
+        Path fileNameAndPath = Paths.get(profileImagesDir, fullPath);
+        try {
+            Files.write(fileNameAndPath, image.getBytes());
+            companyRepository.save(found);
+        } catch (IOException e) {
+            throw ApiBadRequestException.message("Unable to upload profile image.");
+        }
+    }
+
+    private String generateFullPath(String originalFileName, String companyName) {
+        String fileExtension = FilenameUtils.getExtension(originalFileName);
+        StringBuilder sb = new StringBuilder();
+        return sb.append(UUID.randomUUID())
+                .append('-')
+                .append(companyName.replaceAll(" ", "-").toLowerCase(Locale.ROOT))
+                .append('.')
+                .append(fileExtension.toLowerCase(Locale.ROOT)).toString();
+    }
+
+    private void validateProfileImageExtension(String originalFileName) {
+        String fileExtension = FilenameUtils.getExtension(originalFileName);
+        if (!VALID_PROFILE_IMAGE_EXTENSIONS.contains(fileExtension.toLowerCase(Locale.ROOT))) {
+            throw ApiBadRequestException.message("Invalid profile image extension.");
+        }
+    }
+
 }

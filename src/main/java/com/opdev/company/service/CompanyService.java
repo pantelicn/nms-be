@@ -4,6 +4,7 @@ import com.opdev.model.company.Company;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -22,5 +23,7 @@ public interface CompanyService {
     void disable(final String username);
 
     void delete(final String username);
+
+    void uploadProfileImage(String companyUsername, MultipartFile image);
 
 }

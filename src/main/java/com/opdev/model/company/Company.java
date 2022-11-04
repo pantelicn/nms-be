@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.CascadeType;
@@ -55,6 +56,8 @@ public class Company extends Audit {
     @Column(nullable = false)
     private String description;
 
+    @Setter
+    private String profileImage;
 
     @NonNull
     @OneToOne(cascade = CascadeType.ALL)

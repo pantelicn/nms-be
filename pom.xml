@@ -25,6 +25,7 @@
         <hibernate-types-52.version>2.14.0</hibernate-types-52.version>
         <jsoup.version>1.14.3</jsoup.version>
         <commons-validator.version>1.7</commons-validator.version>
+        <commons-io>2.11.0</commons-io>
     </properties>
 
     <groupId>com.opdev</groupId>
@@ -169,6 +170,12 @@
             <artifactId>commons-validator</artifactId>
             <version>${commons-validator.version}</version>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io}</version>
+        </dependency>
+
     </dependencies>
 
     <repositories>
