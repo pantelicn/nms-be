@@ -18,6 +18,7 @@ import com.opdev.repository.CompanyRepository;
 import com.opdev.user.UserService;
 
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,8 @@ class CompanyServiceImpl implements CompanyService {
     private final UserService userService;
     private static final List<String> VALID_PROFILE_IMAGE_EXTENSIONS = List.of("png", "jpg", "jpeg");
 
-    private String profileImagesDir = "/Users/goransasic/work/workspace/images/";
+    @Value("${nullhire.profile-images-dir}")
+    private String profileImagesDir;
 
     @Transactional(readOnly = true)
     @Override
@@ -112,7 +114,7 @@ class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public void uploadProfileImage(final String companyUsername, final MultipartFile image) {
+    public String uploadProfileImage(final String companyUsername, final MultipartFile image) {
         validateProfileImageExtension(image.getOriginalFilename());
         Company found = getByUsername(companyUsername);
         String fullPath = generateFullPath(image.getOriginalFilename(), found.getName());
@@ -121,6 +123,7 @@ class CompanyServiceImpl implements CompanyService {
         try {
             Files.write(fileNameAndPath, image.getBytes());
             companyRepository.save(found);
+            return fileNameAndPath.toString();
         } catch (IOException e) {
             throw ApiBadRequestException.message("Unable to upload profile image.");
         }

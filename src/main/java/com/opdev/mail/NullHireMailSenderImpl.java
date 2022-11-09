@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import freemarker.template.Configuration;
@@ -15,13 +16,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class NullHireMailSenderImpl implements NullHireMailSender {
 
     private final JavaMailSender javaMailSender;
     private final Configuration nullHireFreeMarkerConfiguration;
+    @Value("${nullhire.base-url}")
+    private String baseUrl;
 
     @Override
     public void sendRegistrationEmail(final String emailTo, final UUID activationCode) {
@@ -34,7 +38,7 @@ public class NullHireMailSenderImpl implements NullHireMailSender {
             mimeMessageHelper.setFrom("noreply@nullhire.com");
             mimeMessageHelper.setTo(emailTo);
             Map<String, Object> model = new HashMap<>();
-            model.put("baseUrl", "http://localhost:8080");
+            model.put("baseUrl", baseUrl);
             model.put("activationCode", activationCode.toString());
 
             String content = geContentFromTemplate(model);

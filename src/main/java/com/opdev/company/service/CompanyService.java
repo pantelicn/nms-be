@@ -24,6 +24,6 @@ public interface CompanyService {
 
     void delete(final String username);
 
-    void uploadProfileImage(String companyUsername, MultipartFile image);
+    String uploadProfileImage(String companyUsername, MultipartFile image);
 
 }

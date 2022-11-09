@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.opdev.company.dto.ImageUploadedDto;
 import com.opdev.company.service.CompanyRegistrationService;
 import com.opdev.company.service.CompanyService;
 import com.opdev.company.dto.CompanyRegistrationDto;
@@ -115,9 +116,10 @@ class CompanyController {
         companyService.delete(username);
     }
 
-    @PostMapping("{username}/profile-image")
-    public void uploadProfileImage(@PathVariable String username, @RequestParam("image") MultipartFile file) {
-        companyService.uploadProfileImage(username, file);
+    @PutMapping("{username}/profile-image")
+    public ImageUploadedDto uploadProfileImage(@PathVariable String username, @RequestParam("image") MultipartFile file) {
+        String path = companyService.uploadProfileImage(username, file);
+        return ImageUploadedDto.builder().path(path).build();
     }
 
 }

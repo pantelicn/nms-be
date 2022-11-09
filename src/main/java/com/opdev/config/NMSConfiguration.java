@@ -14,11 +14,6 @@ import java.util.List;
 @Configuration
 public class NMSConfiguration implements WebMvcConfigurer {
 
-    @Value("${aws.accessKey}")
-    private String awsAccessKey;
-    @Value("${aws.secretKey}")
-    private String awsSecretKey;
-
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(new SpecificationArgumentResolver());
