@@ -18,15 +18,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserController {
 
-    @Value("${nullhire.base-url}")
-    private String baseUrl;
+    @Value("${nullhire.domain}")
+    private String domain;
 
     private final UserService userService;
 
     @GetMapping("/activate")
     public ResponseEntity<Void> accountActivation(@RequestParam UUID activationCode) {
         userService.activateUser(activationCode);
-        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(baseUrl + "/activation")).build();
+        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(domain + "/activation")).build();
     }
 
 }

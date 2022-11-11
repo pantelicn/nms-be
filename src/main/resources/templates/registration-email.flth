@@ -63,7 +63,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse; padding:0; margin:0px;">
     <tr valign="top">
         <td align="center">
-            <img src="https://iili.io/ZrRuCx.png" class="view" />
+            <img src="https://api.nullhire.com/images/confirmation.png" class="view" />
             <div class="btn-div">
                 <a class="nh-button" href="${baseUrl}/api/v1/users/activate?activationCode=${activationCode}" target="_blank" role="button">
                     <span style="padding-left: 20px;padding-right: 20px;">ACTIVATE ACCOUNT</span>
