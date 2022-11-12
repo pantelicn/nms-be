@@ -4,16 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 
 import com.opdev.model.Audit;
@@ -73,8 +64,9 @@ public class User extends Audit {
     @Builder.Default
     private List<UserRole> userRoles = new ArrayList<>();
 
+    @OneToOne
     @NonNull
-    @Column(nullable = false)
-    private UUID activationCode;
+    @JoinColumn(name = "verification_token_id", referencedColumnName = "id")
+    private VerificationToken verificationToken;
 
 }

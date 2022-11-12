@@ -1,37 +1,30 @@
 package com.opdev.model.user;
 
-import java.time.Instant;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.opdev.model.Audit;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(toBuilder = true)
 @Getter
+@Setter
 @ToString
 @Entity
 @Table(name = "verification_token")
 public class VerificationToken extends Audit {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
@@ -39,19 +32,16 @@ public class VerificationToken extends Audit {
 
     @NonNull
     @Column(nullable = false, unique = true)
-    private String token;
+    private UUID activationCode;
 
-    @NonNull
-    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne(mappedBy = "verificationToken")
     private User user;
 
-    @NonNull
-    @Column(nullable = false)
-    // messes up the `registerTalentAndAskForNewTokenAfterExpiration` test
-    // @Future
-    private Instant expiryDate;
-
     @Builder.Default
-    private Boolean active = Boolean.TRUE;
+    private Boolean used = Boolean.FALSE;
+
+    public void use(){
+        this.used = true;
+    }
+
 }

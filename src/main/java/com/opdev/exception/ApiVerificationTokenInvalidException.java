@@ -7,11 +7,11 @@ public class ApiVerificationTokenInvalidException extends ApiRuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    private final String token;
+    private final String activationCode;
 
-    public ApiVerificationTokenInvalidException(final String message, final String token) {
+    public ApiVerificationTokenInvalidException(final String message, final String activationCode) {
         super(message);
-        this.token = token;
+        this.activationCode = activationCode;
     }
 
 }

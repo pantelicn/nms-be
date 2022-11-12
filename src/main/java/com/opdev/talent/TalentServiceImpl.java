@@ -6,9 +6,13 @@ import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.location.AvailableLocation;
 import com.opdev.model.talent.Talent;
 import com.opdev.model.user.User;
+import com.opdev.model.user.UserRole;
 import com.opdev.repository.TalentRepository;
 import com.opdev.talent.search.TalentSpecification;
 import com.opdev.user.UserService;
+import com.opdev.user.role.RoleService;
+import com.opdev.user.userole.UserRoleService;
+import com.opdev.user.verification.VerificationTokenService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,13 +33,23 @@ class TalentServiceImpl implements TalentService {
 
     private final UserService userService;
     private final TalentRepository talentRepository;
+    private final RoleService roleService;
+    private final UserRoleService userRoleService;
+    private final VerificationTokenService verificationTokenService;
+
 
     @Transactional
     @Override
     public Talent register(@NonNull final Talent talent) {
         validateTalent(talent);
         talent.getCurrentLocation().setTalent(talent);
-        userService.save(talent.getUser());
+        User talentUser = userService.save(talent.getUser());
+        verificationTokenService.create(talentUser.getVerificationToken());
+        UserRole talentUserRole = UserRole.builder()
+                .role(roleService.getTalentRole())
+                .user(talentUser)
+                .build();
+        userRoleService.create(talentUserRole);
         Talent created = talentRepository.save(talent);
         return created;
     }

@@ -4,10 +4,13 @@ import com.opdev.config.security.Roles;
 import com.opdev.exception.ApiEntityDisabledException;
 import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.exception.ApiUserNotLoggedException;
+import com.opdev.exception.ApiVerificationTokenInvalidException;
 import com.opdev.model.user.User;
 import com.opdev.model.user.UserType;
+import com.opdev.model.user.VerificationToken;
 import com.opdev.repository.UserRepository;
 import com.opdev.repository.VerificationTokenRepository;
+import com.opdev.user.verification.VerificationTokenService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +38,7 @@ import java.util.stream.Collectors;
 class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
-    private final VerificationTokenRepository verificationTokenRepository;
+    private final VerificationTokenService verificationTokenService;
 
     @Transactional(readOnly = true)
     @Override
@@ -80,8 +83,7 @@ class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public void delete(String username) {
         final User user = findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
-
-        verificationTokenRepository.findByUser(user).forEach(verificationTokenRepository::delete);
+        verificationTokenService.deleteByUser(user);
         userRepository.delete(user);
     }
 
@@ -123,12 +125,15 @@ class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     @Transactional
     public void activateUser(final UUID activationCode) {
-        Optional<User> found = userRepository.findByActivationCode(activationCode);
+        Optional<User> found = userRepository.findByVerificationTokenActivationCode(activationCode);
         if (found.isEmpty()) {
-            throw new RuntimeException("User with activation code does not exist");
+            throw new ApiVerificationTokenInvalidException("User with a verification code not found",
+                    activationCode.toString());
         }
-        found.get().setEnabled(true);
-        userRepository.save(found.get());
+        User foundUser = found.get();
+        verificationTokenService.use(foundUser.getVerificationToken());
+        foundUser.setEnabled(true);
+        userRepository.save(foundUser);
     }
 
     @Transactional(readOnly = true)

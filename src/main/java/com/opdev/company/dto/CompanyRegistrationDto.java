@@ -5,6 +5,7 @@ import java.util.UUID;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
+import com.opdev.model.user.VerificationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.opdev.dto.paging.RegistrationDto;
@@ -54,13 +55,17 @@ public class CompanyRegistrationDto implements RegistrationDto {
     private CompanyLocationDto location;
 
     public Company asCompany(PasswordEncoder passwordEncoder) {
+        final VerificationToken verificationToken = VerificationToken.builder()
+                .activationCode(UUID.randomUUID())
+                .build();
 
         final User user = User.builder()
                 .username(username)
                 .password(passwordEncoder.encode(password))
                 .type(UserType.COMPANY)
-                .activationCode(UUID.randomUUID())
+                .verificationToken(verificationToken)
                 .build();
+
         final Company company = Company.builder()
                 .user(user)
                 .name(name)

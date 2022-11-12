@@ -60,7 +60,7 @@ class CompanyController {
 
         final Company company = companyRegistrationDto.asCompany(passwordEncoder);
         final Company registeredCompany = companyRegistrationService.register(company);
-        nullHireMailSender.sendRegistrationEmail(companyRegistrationDto.getUsername(), company.getUser().getActivationCode());
+        nullHireMailSender.sendRegistrationEmail(companyRegistrationDto.getUsername(), company.getUser().getVerificationToken());
         return new CompanyViewDto(registeredCompany);
     }
 

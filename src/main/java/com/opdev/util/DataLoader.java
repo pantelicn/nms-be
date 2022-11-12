@@ -30,15 +30,11 @@ import com.opdev.model.term.TalentTerm;
 import com.opdev.model.term.Term;
 import com.opdev.model.term.TermType;
 import com.opdev.model.term.UnitOfMeasure;
-import com.opdev.model.user.Role;
-import com.opdev.model.user.User;
-import com.opdev.model.user.UserRole;
-import com.opdev.model.user.UserType;
+import com.opdev.model.user.*;
 
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -75,8 +71,6 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         initializeData();
     }
-
-
 
     private void initializeData() {
         initializeRoles();
@@ -144,14 +138,22 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
         planProductRepository.save(postPlanProduct);
     }
 
+    private VerificationToken initializeVerificationToken() {
+        VerificationToken createdToken = VerificationToken.builder()
+                .used(true)
+                .activationCode(UUID.randomUUID())
+                .build();
+        return verificationTokenRepository.save(createdToken);
+    }
+
     private void initializeAdmin() {
         userRepository.save(User.builder()
                 .enabled(true)
                 .type(UserType.ADMIN)
                 .username("admin@gmail.com")
                 .password("Admin12345!")
-                                    .activationCode(UUID.randomUUID())
-                                    .enabled(true)
+                .verificationToken(initializeVerificationToken())
+                .enabled(true)
                 .build());
     }
 
@@ -329,8 +331,8 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .type(UserType.COMPANY)
                 .username("google@gmail.com")
                 .password(passwordEncoder.encode("Google12345!"))
-                                                .activationCode(UUID.randomUUID())
-                                                .enabled(true)
+                .verificationToken(initializeVerificationToken())
+                .enabled(true)
                 .build());
 
         UserRole userRole = UserRole.builder()
@@ -482,8 +484,8 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .type(UserType.COMPANY)
                 .username("facebook@facebook.com")
                 .password("Facebook12345!")
-                                                .activationCode(UUID.randomUUID())
-                                                .enabled(true)
+                .verificationToken(initializeVerificationToken())
+                .enabled(true)
                 .build());
 
         CompanyLocation location = CompanyLocation.builder()
@@ -593,8 +595,8 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .type(UserType.TALENT)
                 .username("nikola@gmail.com")
                 .password(passwordEncoder.encode("Nikola12345!"))
-                                                .activationCode(UUID.randomUUID())
-                                                .enabled(true)
+                .verificationToken(initializeVerificationToken())
+                .enabled(true)
                 .build());
 
         UserRole userRole = UserRole.builder()
@@ -726,8 +728,8 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .type(UserType.TALENT)
                 .username("goransasic@gmail.com")
                 .password(passwordEncoder.encode("Goran12345!"))
-                                                .activationCode(UUID.randomUUID())
-                                                .enabled(true)
+                .verificationToken(initializeVerificationToken())
+                .enabled(true)
                 .build());
 
         UserRole userRole = UserRole.builder()

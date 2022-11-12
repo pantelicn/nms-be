@@ -2,6 +2,7 @@ package com.opdev.talent;
 
 import com.opdev.config.security.Roles;
 import com.opdev.dto.TalentRegistrationDto;
+import com.opdev.mail.NullHireMailSender;
 import com.opdev.model.talent.Talent;
 import com.opdev.model.user.User;
 import com.opdev.talent.dto.AvailableLocationUpdateDto;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +38,8 @@ public class TalentController {
 
     private final TalentService talentService;
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+    private final NullHireMailSender nullHireMailSender;
 
     @PostMapping
     @PreAuthorize("permitAll()")
@@ -43,8 +47,10 @@ public class TalentController {
     public TalentViewDto add(@Valid @RequestBody final TalentRegistrationDto talentRegistrationDto) {
         LOGGER.info("Registering a new talent: {}", talentRegistrationDto.getUsername());
 
-        final Talent talent = talentRegistrationDto.asTalent();
+        final Talent talent = talentRegistrationDto.asTalent(passwordEncoder);
         final Talent registeredTalent = talentService.register(talent);
+
+        nullHireMailSender.sendRegistrationEmail(talentRegistrationDto.getUsername(), talent.getUser().getVerificationToken());
 
         return new TalentViewDto(registeredTalent);
     }

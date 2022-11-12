@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -14,6 +15,7 @@ import com.opdev.model.talent.Talent;
 import com.opdev.model.talent.Talent.TalentBuilder;
 import com.opdev.model.user.User;
 import com.opdev.model.user.UserType;
+import com.opdev.model.user.VerificationToken;
 import com.opdev.validation.Password;
 
 import lombok.AccessLevel;
@@ -24,6 +26,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
 @Builder
@@ -60,11 +63,16 @@ public class TalentRegistrationDto implements RegistrationDto {
 
   private LocationDto location;
 
-  public Talent asTalent() {
+  public Talent asTalent(PasswordEncoder passwordEncoder) {
+
+    final VerificationToken verificationToken = VerificationToken.builder()
+            .activationCode(UUID.randomUUID())
+            .build();
 
     final User user = User.builder()
             .username(username)
-            .password(password)
+            .password(passwordEncoder.encode(password))
+            .verificationToken(verificationToken)
             .type(UserType.TALENT)
             .build();
 

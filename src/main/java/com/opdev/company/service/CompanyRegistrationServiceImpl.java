@@ -16,10 +16,12 @@ import com.opdev.model.user.UserRole;
 import com.opdev.offers.plan.PlanService;
 import com.opdev.repository.CompanyRepository;
 import com.opdev.repository.UserRepository;
+import com.opdev.repository.VerificationTokenRepository;
 import com.opdev.subscription.SubscriptionService;
 import com.opdev.user.role.RoleService;
 import com.opdev.user.userole.UserRoleService;
 
+import com.opdev.user.verification.VerificationTokenService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,12 +39,14 @@ class CompanyRegistrationServiceImpl implements CompanyRegistrationService {
     private final UserRoleService userRoleService;
     private final SubscriptionService subscriptionService;
     private final PlanService planService;
+    private final VerificationTokenService verificationTokenService;
 
     @Transactional
     @Override
     public Company register(Company company) {
         validateCompany(company);
         User companyUser = userRepository.save(company.getUser());
+        verificationTokenService.create(companyUser.getVerificationToken());
         UserRole companyUserRole = UserRole.builder()
                 .role(roleService.getCompanyRole())
                 .user(companyUser)

@@ -2,11 +2,11 @@ package com.opdev.mail;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import com.opdev.model.user.VerificationToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -27,7 +27,7 @@ public class NullHireMailSenderImpl implements NullHireMailSender {
     private String baseUrl;
 
     @Override
-    public void sendRegistrationEmail(final String emailTo, final UUID activationCode) {
+    public void sendRegistrationEmail(final String emailTo, final VerificationToken verificationToken) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
 
@@ -38,7 +38,7 @@ public class NullHireMailSenderImpl implements NullHireMailSender {
             mimeMessageHelper.setTo(emailTo);
             Map<String, Object> model = new HashMap<>();
             model.put("baseUrl", baseUrl);
-            model.put("activationCode", activationCode.toString());
+            model.put("activationCode", verificationToken.getActivationCode().toString());
 
             String content = geContentFromTemplate(model);
 

@@ -10,11 +10,12 @@ import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.exception.ApiErrorCodes;
 import com.opdev.exception.ApiSkillBadStatusException;
 import com.opdev.exception.ApiUnauthorizedException;
-import com.opdev.exception.ApiVerificationTokenExpiredException;
+import com.opdev.exception.ApiVerificationTokenAlreadyUsed;
 import com.opdev.exception.ApiVerificationTokenInvalidException;
 import com.opdev.exception.dto.ApiErrorDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -40,6 +41,8 @@ import java.util.Optional;
 class ApiControllerAdvice {
 
     private final MessageSource messageSource;
+    @Value("${nullhire.domain}")
+    private String domain;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<?> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
@@ -119,14 +122,18 @@ class ApiControllerAdvice {
         return logAndSendResponse(new ResponseEntity<>(apiError, responseStatus), e);
     }
 
-    @ExceptionHandler(ApiVerificationTokenExpiredException.class)
-    ResponseEntity<?> handleApiVerificationTokenExpiredException(final ApiVerificationTokenExpiredException e) {
-        return handleVerificationTokenExceptions(e, e.getToken());
+    @ExceptionHandler(ApiVerificationTokenAlreadyUsed.class)
+    ResponseEntity<?> handleApiVerificationTokenAlreadyUsedException(final ApiVerificationTokenAlreadyUsed e) {
+        return logAndSendResponse(ResponseEntity.status(HttpStatus.PERMANENT_REDIRECT)
+                .location(URI.create(domain + "/invalid-token"))
+                .build(), e);
     }
 
     @ExceptionHandler(ApiVerificationTokenInvalidException.class)
     ResponseEntity<?> handleApiVerificationTokenInvalidException(final ApiVerificationTokenInvalidException e) {
-        return handleVerificationTokenExceptions(e, e.getToken());
+        return logAndSendResponse(ResponseEntity.status(HttpStatus.PERMANENT_REDIRECT)
+                .location(URI.create(domain + "/invalid-token"))
+                .build(), e);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
