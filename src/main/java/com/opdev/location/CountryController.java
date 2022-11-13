@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.opdev.config.security.SpELAuthorizationExpressions.IS_ADMIN;
+import static com.opdev.config.security.SpELAuthorizationExpressions.IS_AUTHENTICATED;
 
 @RequiredArgsConstructor
 @RestController
@@ -30,7 +31,7 @@ public class CountryController {
 
     private final LocationService locationService;
 
-    @PreAuthorize(IS_ADMIN)
+    @PreAuthorize(IS_AUTHENTICATED)
     @GetMapping
     public List<CountryViewDto> getCountries() {
         List<Country> found = locationService.getCountries();
@@ -57,7 +58,7 @@ public class CountryController {
         locationService.deleteCountry(id);
     }
 
-    @PreAuthorize(IS_ADMIN)
+    @PreAuthorize(IS_AUTHENTICATED)
     @GetMapping("/{countryId}/cities")
     public List<CityViewDto> getCities(@PathVariable Long countryId) {
         List<City> cities = locationService.getCities(countryId);
