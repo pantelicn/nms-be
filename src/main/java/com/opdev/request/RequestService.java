@@ -19,6 +19,8 @@ public interface RequestService {
 
     Request editStatusForTalent(String username, Long id, RequestStatus newStatus);
 
+    Request rejectByCompany(String username, Long id);
+
     void removeRequestForCompany(Long id, String username);
 
     void removeRequestForTalent(Long id, String username);

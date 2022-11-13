@@ -2,6 +2,8 @@ package com.opdev.model.user;
 
 public enum NotificationType {
 
-    MESSAGE, REQUEST
+    MESSAGE,
+    REQUEST,
+    INFO
 
 }

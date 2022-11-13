@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.opdev.config.security.Roles;
 import com.opdev.model.user.Notification;
 import com.opdev.model.user.NotificationType;
+import com.opdev.notification.dto.NotificationInfoInfoDto;
 import com.opdev.notification.dto.NotificationResponseDto;
 import com.opdev.notification.dto.NotificationViewDto;
 
@@ -44,4 +45,14 @@ public class NotificationController {
     public void setSeenForNotificationType(@RequestParam Long lastVisibleRequestId, @RequestParam NotificationType type, Principal user) {
         service.setSeenForNotificationType(lastVisibleRequestId, user.getName(), type);
     }
+
+    @GetMapping("infos")
+    @PreAuthorize("(hasAnyRole('" + Roles.COMPANY + "', '" + Roles.TALENT + "'))")
+    public Page<NotificationInfoInfoDto> findAllInfos(@RequestParam(defaultValue = "0") Integer page, Principal user) {
+        Pageable pageable = PageRequest.of(page, perPageNotifications, Sort.by("createdOn").descending());
+        Page<Notification> found = service.findAllInfos(user.getName(), pageable);
+
+        return found.map(notification -> new NotificationInfoInfoDto(notification.getDescription(), notification.getCreatedOn()));
+    }
+
 }

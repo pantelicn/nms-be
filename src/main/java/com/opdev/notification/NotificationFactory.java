@@ -46,4 +46,14 @@ public class NotificationFactory {
                 .build();
     }
 
+    public static Notification createRejectedNotificationForCompany(Long referenceId, User notificationFor, String requestNote) {
+        return Notification.builder()
+                .referenceId(referenceId)
+                .seen(false)
+                .description(String.format("Request under note %s has been rejected", requestNote))
+                .type(NotificationType.INFO)
+                .user(notificationFor)
+                .build();
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.opdev.notification.dto;
 
+import java.time.Instant;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,18 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Builder
-public class NotificationResponseDto {
+public class NotificationInfoInfoDto {
 
-    private long unseenRequests;
-
-    private Long lastRequestId;
-
-    private long unseenMessages;
-
-    private Long lastMessageId;
-
-    private long unseenInfoNotifications;
-
-    private Long lastInfoNotificationId;
+    private String message;
+    private Instant createdOn;
 
 }

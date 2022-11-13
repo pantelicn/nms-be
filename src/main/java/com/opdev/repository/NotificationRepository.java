@@ -27,4 +27,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     Optional<Notification> findByUserAndReferenceIdAndType(User user, Long referenceId, NotificationType type);
 
+    Page<Notification> findAllByUserUsernameAndType(String username, NotificationType type, Pageable pageable);
+
 }

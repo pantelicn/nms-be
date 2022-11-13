@@ -14,7 +14,10 @@ import com.opdev.model.request.TalentTermRequest;
 import com.opdev.model.request.TalentTermRequestStatus;
 import com.opdev.model.talent.Talent;
 import com.opdev.model.term.TalentTerm;
+import com.opdev.model.user.Notification;
 import com.opdev.model.user.User;
+import com.opdev.notification.NotificationFactory;
+import com.opdev.notification.NotificationService;
 import com.opdev.repository.RequestRepository;
 import com.opdev.talent.TalentService;
 import com.opdev.util.encoding.TalentIdEncoder;
@@ -43,6 +46,7 @@ public class RequestServiceImpl implements RequestService {
     private final AvailableChatService availableChatService;
     private final TalentService talentService;
     private final TalentIdEncoder talentIdEncoder;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -117,8 +121,20 @@ public class RequestServiceImpl implements RequestService {
         found.setStatus(newStatus);
         if (newStatus == RequestStatus.ACCEPTED) {
             availableChatService.create(found.getCompany(), foundTalent);
+        } else if (newStatus == RequestStatus.REJECTED) {
+            Notification rejectedNotification = NotificationFactory.createRejectedNotificationForCompany(found.getId(), found.getCompany().getUser(), found.getNote());
+            notificationService.createOrUpdate(rejectedNotification);
         }
         return edit(found, foundTalent.getUser());
+    }
+
+    @Override
+    @Transactional
+    public Request rejectByCompany(final String username, final Long id) {
+        Company foundCompany = companyService.getByUsername(username);
+        Request found = getByIdAndCompany(id, foundCompany);
+        found.setStatus(RequestStatus.REJECTED);
+        return edit(found, foundCompany.getUser());
     }
 
     @Override
