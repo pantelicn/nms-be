@@ -74,4 +74,9 @@ public class SpELAuthorizationExpressions {
     public static final String IS_AUTHENTICATED =
             "isAuthenticated()";
 
+    /**
+     * Verifies that the caller is authenticated as admin
+     */
+    public static final String IS_ADMIN = "hasRole('" + Roles.ADMIN + "')";
+
 }

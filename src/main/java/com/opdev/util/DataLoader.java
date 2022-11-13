@@ -63,6 +63,7 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     private Plan trialPlan;
     private Role companyRole;
     private Role talentRole;
+    private Role adminRole;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -94,8 +95,13 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .name("ROLE_TALENT")
                 .build();
 
+        Role roleAdmin = Role.builder()
+                .name("ROLE_ADMIN")
+                .build();
+
         companyRole = roleRepository.save(roleCompany);
         talentRole = roleRepository.save(roleTalent);
+        adminRole = roleRepository.save(roleAdmin);
     }
 
     private void initializeSubscriptionForGoogle() {
@@ -147,14 +153,21 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     }
 
     private void initializeAdmin() {
-        userRepository.save(User.builder()
+        User user = userRepository.save(User.builder()
                 .enabled(true)
                 .type(UserType.ADMIN)
                 .username("admin@gmail.com")
-                .password("Admin12345!")
+                .password(passwordEncoder.encode("Admin12345!"))
                 .verificationToken(initializeVerificationToken())
                 .enabled(true)
                 .build());
+
+        UserRole userRole = UserRole.builder()
+                .user(user)
+                .role(adminRole)
+                .build();
+
+        userRoleRepository.save(userRole);
     }
 
     private void initializeSkills() {
