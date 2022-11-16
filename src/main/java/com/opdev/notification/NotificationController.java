@@ -52,7 +52,7 @@ public class NotificationController {
         Pageable pageable = PageRequest.of(page, perPageNotifications, Sort.by("createdOn").descending());
         Page<Notification> found = service.findAllInfos(user.getName(), pageable);
 
-        return found.map(notification -> new NotificationInfoInfoDto(notification.getDescription(), notification.getCreatedOn()));
+        return found.map(notification -> new NotificationInfoInfoDto(notification.getDescription(), notification.getCreatedOn(), notification.getInfoType()));
     }
 
 }

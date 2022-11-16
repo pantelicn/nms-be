@@ -52,6 +52,9 @@ public class Notification extends Audit {
     @Enumerated(EnumType.STRING)
     private NotificationType type;
 
+    @Enumerated(EnumType.STRING)
+    private NotificationInfoType infoType;
+
     private Long referenceId;
 
     @NonNull

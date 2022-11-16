@@ -11,6 +11,8 @@ public interface NotificationService {
 
     Notification createOrUpdate(Notification newNotification);
 
+    Notification create(Notification newNotification);
+
     NotificationResponseDto findAll(String username, Pageable pageable);
 
     Page<Notification> findAllInfos(String username, Pageable pageable);

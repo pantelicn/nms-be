@@ -21,8 +21,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     long countByUserAndTypeAndSeenIsFalse(User user, NotificationType type);
 
-    Page<Notification> findAllByUser(User user, Pageable pageable);
-
     List<Notification> findAllByUserAndTypeAndSeenIsFalseAndCreatedOnLessThanEqual(User user, NotificationType type, Instant creationDate);
 
     Optional<Notification> findByUserAndReferenceIdAndType(User user, Long referenceId, NotificationType type);

@@ -3,6 +3,7 @@ package com.opdev.notification;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +39,12 @@ public class NotificationServiceImpl implements NotificationService {
         } else {
             return repository.save(newNotification);
         }
+    }
+
+    @Override
+    @Transactional
+    public Notification create(final Notification newNotification) {
+        return repository.save(newNotification);
     }
 
     @Override

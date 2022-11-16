@@ -1,6 +1,7 @@
 package com.opdev.notification;
 
 import com.opdev.model.user.Notification;
+import com.opdev.model.user.NotificationInfoType;
 import com.opdev.model.user.NotificationType;
 import com.opdev.model.user.User;
 
@@ -50,8 +51,20 @@ public class NotificationFactory {
         return Notification.builder()
                 .referenceId(referenceId)
                 .seen(false)
-                .description(String.format("Request under note %s has been rejected", requestNote))
+                .description(String.format("Request under note %s has been rejected by talent", requestNote))
                 .type(NotificationType.INFO)
+                .infoType(NotificationInfoType.REQUEST)
+                .user(notificationFor)
+                .build();
+    }
+
+    public static Notification createAcceptedNotificationForCompany(Long referenceId, User notificationFor, String requestNote, String talentFullName) {
+        return Notification.builder()
+                .referenceId(referenceId)
+                .seen(false)
+                .description(String.format("Request under note %s has been accepted by talent %s", requestNote, talentFullName))
+                .type(NotificationType.INFO)
+                .infoType(NotificationInfoType.REQUEST)
                 .user(notificationFor)
                 .build();
     }

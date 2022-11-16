@@ -2,6 +2,8 @@ package com.opdev.notification.dto;
 
 import java.time.Instant;
 
+import com.opdev.model.user.NotificationInfoType;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,5 +18,6 @@ public class NotificationInfoInfoDto {
 
     private String message;
     private Instant createdOn;
+    private NotificationInfoType type;
 
 }

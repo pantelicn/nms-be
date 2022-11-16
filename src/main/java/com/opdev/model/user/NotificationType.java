@@ -4,6 +4,6 @@ public enum NotificationType {
 
     MESSAGE,
     REQUEST,
-    INFO
+    INFO,
 
 }
