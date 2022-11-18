@@ -194,6 +194,12 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Request findRejectedByTalentAndCompany(@NonNull final Long talentId, @NonNull final Long companyId) {
+        return repository.findTop1ByTalentIdAndCompanyIdAndStatusOrderByCreatedOn(talentId, companyId, RequestStatus.REJECTED);
+    }
+
+    @Override
     @Transactional
     public Request edit(@NonNull final Request request, @NonNull final User user) {
         request.setModifiedBy(user);

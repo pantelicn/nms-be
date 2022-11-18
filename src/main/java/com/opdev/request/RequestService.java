@@ -36,4 +36,6 @@ public interface RequestService {
     Request edit(Request request, User user);
 
     Request editRequestNote(Long id, String username, String note);
+
+    Request findRejectedByTalentAndCompany(Long talentId, Long companyId);
 }

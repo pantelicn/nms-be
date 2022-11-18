@@ -3,6 +3,8 @@ package com.opdev.talent;
 import com.opdev.company.service.CompanyService;
 import com.opdev.config.security.Roles;
 import com.opdev.model.company.Company;
+import com.opdev.model.request.Request;
+import com.opdev.request.RequestService;
 import com.opdev.talent.dto.FacetSpecifierDto;
 import com.opdev.talent.dto.LocationFilterDto;
 import com.opdev.talent.dto.TalentSearchDto;
@@ -31,6 +33,7 @@ public class TalentSearchController {
     private final TalentService talentService;
     private final TalentIdEncoder encoder;
     private final CompanyService companyService;
+    private final RequestService requestService;
 
     @PostMapping
     @PreAuthorize("hasRole('" + Roles.COMPANY + "')")
@@ -48,7 +51,10 @@ public class TalentSearchController {
         );
         Company foundCompany = companyService.getByUsername(user.getName());
         final Page<TalentViewSearchDto> response = talentService.find(talentSpecification, pageable)
-                .map(talent -> new TalentViewSearchDto(talent, encoder, foundCompany.getId()));
+                .map(talent -> {
+                    Request foundRequest = requestService.findRejectedByTalentAndCompany(talent.getId(), foundCompany.getId());
+                    return new TalentViewSearchDto(talent, encoder, foundCompany.getId(), foundRequest);
+                });
 
         return ResponseEntity.ok(response);
     }
