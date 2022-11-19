@@ -62,7 +62,18 @@ public class NotificationFactory {
         return Notification.builder()
                 .referenceId(referenceId)
                 .seen(false)
-                .description(String.format("Request under note %s has been accepted by talent %s", requestNote, talentFullName))
+                .description(String.format("Request under note %s has been accepted by talent %s. Find %s in messages and start conversation.", requestNote, talentFullName, talentFullName))
+                .type(NotificationType.INFO)
+                .infoType(NotificationInfoType.REQUEST)
+                .user(notificationFor)
+                .build();
+    }
+
+    public static Notification createAcceptedNotificationForTalent(Long referenceId, User notificationFor, String companyName) {
+        return Notification.builder()
+                .referenceId(referenceId)
+                .seen(false)
+                .description(String.format("You have accepted request from %s. Find %s in messages and start conversation.", companyName, companyName))
                 .type(NotificationType.INFO)
                 .infoType(NotificationInfoType.REQUEST)
                 .user(notificationFor)

@@ -123,6 +123,8 @@ public class RequestServiceImpl implements RequestService {
             availableChatService.create(found.getCompany(), foundTalent);
             Notification acceptedNotification = NotificationFactory.createAcceptedNotificationForCompany(found.getId(), found.getCompany().getUser(), found.getNote(), foundTalent.getFullName());
             notificationService.create(acceptedNotification);
+            Notification acceptedNotificationForTalent = NotificationFactory.createAcceptedNotificationForTalent(found.getId(), foundTalent.getUser(), found.getCompany().getName());
+            notificationService.create(acceptedNotificationForTalent);
         } else if (newStatus == RequestStatus.REJECTED) {
             Notification rejectedNotification = NotificationFactory.createRejectedNotificationForCompany(found.getId(), found.getCompany().getUser(), found.getNote());
             notificationService.create(rejectedNotification);
