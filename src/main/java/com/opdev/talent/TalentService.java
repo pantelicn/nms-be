@@ -34,6 +34,8 @@ public interface TalentService {
 
     Page<Talent> find(final TalentSpecification specification, final Pageable pageable);
 
-    Talent updateAvailableLocations(Talent oldTalent, List<AvailableLocation> availableLocations);
+    Talent addAvailableLocation(Talent oldTalent, AvailableLocation availableLocation);
+
+    Talent removeAvailableLocation(Talent oldTalent, Long id);
 
 }

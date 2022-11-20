@@ -152,12 +152,25 @@ class TalentServiceImpl implements TalentService {
 
     @Transactional
     @Override
-    public Talent updateAvailableLocations(Talent oldTalent, List<AvailableLocation> availableLocations) {
-        oldTalent.setAvailableLocations(availableLocations);
+    public Talent addAvailableLocation(@NonNull Talent oldTalent, @NonNull AvailableLocation availableLocation) {
+        oldTalent.getAvailableLocations().add(availableLocation);
         oldTalent.setModifiedOn(Instant.now());
 
         Talent updated = talentRepository.save(oldTalent);
-        LOGGER.info("Set new available locations on talent {}: {}", updated.getUser().getUsername(), availableLocations);
+        LOGGER.info("Added new available location on talent {}: {}", updated.getUser().getUsername(), availableLocation);
+        return updated;
+    }
+
+    @Transactional
+    @Override
+    public Talent removeAvailableLocation(@NonNull Talent oldTalent, @NonNull Long id) {
+        boolean removed = oldTalent.getAvailableLocations()
+                .removeIf(availableLocation -> availableLocation.getId().equals(id));
+        ApiEntityNotFoundException.builder().entity("AvailableCountry").id(id.toString()).build()
+                .throwIf(() -> !removed);
+
+        Talent updated = talentRepository.save(oldTalent);
+        LOGGER.info("Removed available location with id {} on talent {}", id,  updated.getUser().getUsername());
         return updated;
     }
 

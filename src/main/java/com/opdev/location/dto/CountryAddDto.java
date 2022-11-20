@@ -20,7 +20,7 @@ public class CountryAddDto {
 
     private String code;
 
-    public Country toCountry() {
+    public Country asCountry() {
         List<City> cityEntities = this.cities.stream()
                 .map(city -> City.builder().name(city.getName()).latitude(city.getLatitude()).longitude(city.getLongitude()).build())
                 .collect(Collectors.toList());

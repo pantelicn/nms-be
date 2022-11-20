@@ -1,6 +1,5 @@
 package com.opdev.talent;
 
-import com.opdev.config.security.Roles;
 import com.opdev.dto.TalentRegistrationDto;
 import com.opdev.mail.NullHireMailSender;
 import com.opdev.model.talent.Talent;
@@ -30,6 +29,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.opdev.config.security.SpELAuthorizationExpressions.AS_MATCHING_TALENT_OR_ADMIN;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -56,8 +57,7 @@ public class TalentController {
     }
 
     @GetMapping("/{username}")
-    @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.TALENT + "')) " + //
-            "|| hasRole('" + Roles.ADMIN + "')")
+    @PreAuthorize(AS_MATCHING_TALENT_OR_ADMIN)
     public ResponseEntity<TalentViewDto> view(@PathVariable final String username) {
         LOGGER.info("Viewing the talent: {}", username);
 
@@ -66,8 +66,7 @@ public class TalentController {
     }
 
     @PutMapping("/{username}")
-    @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.TALENT + "')) " + //
-            "|| hasRole('" + Roles.ADMIN + "')")
+    @PreAuthorize(AS_MATCHING_TALENT_OR_ADMIN)
     public ResponseEntity<TalentViewDto> updateBasicInfo(@PathVariable final String username,
                                                          @Valid @RequestBody final TalentBasicInfoUpdateDto talentBasicInfoUpdateDto) {
         LOGGER.info("Updating the talent: {}", username);
@@ -83,8 +82,7 @@ public class TalentController {
     }
 
     @DeleteMapping("/{username}")
-    @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.TALENT + "')) " + //
-            "|| hasRole('" + Roles.ADMIN + "')")
+    @PreAuthorize(AS_MATCHING_TALENT_OR_ADMIN)
     public void delete(@PathVariable final String username, @RequestParam(required = false) final boolean disable) {
         if (disable) {
             LOGGER.info("Disabling the talent: {}", username);
@@ -96,18 +94,22 @@ public class TalentController {
         talentService.delete(username);
     }
 
-    @PutMapping("/{username}/available-locations")
-    @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.TALENT + "')) " + //
-            "|| hasRole('" + Roles.ADMIN + "')")
-    public Talent updateAvailableLocations(@PathVariable String username,
-                                         @Valid @RequestBody List<AvailableLocationUpdateDto> availableLocations) {
+    @PostMapping("/{username}/available-locations")
+    @PreAuthorize(AS_MATCHING_TALENT_OR_ADMIN)
+    public TalentViewDto addAvailableLocation(@PathVariable String username,
+                                       @Valid @RequestBody AvailableLocationUpdateDto availableLocation) {
         Talent oldTalent = talentService.getByUsername(username);
-        return talentService.updateAvailableLocations(
-                oldTalent,
-                availableLocations.stream()
-                        .map(AvailableLocationUpdateDto::asAvailableLocation)
-                        .collect(Collectors.toList())
-        );
+        Talent updated = talentService.addAvailableLocation(oldTalent, availableLocation.asAvailableLocation());
+        return new TalentViewDto(updated);
+    }
+
+    @DeleteMapping("/{username}/available-locations/{id}")
+    @PreAuthorize(AS_MATCHING_TALENT_OR_ADMIN)
+    public TalentViewDto removeAvailableLocation(@PathVariable String username,
+                                          @PathVariable Long id) {
+        Talent oldTalent = talentService.getByUsername(username);
+        Talent updated = talentService.removeAvailableLocation(oldTalent, id);
+        return new TalentViewDto(updated);
     }
 
 }

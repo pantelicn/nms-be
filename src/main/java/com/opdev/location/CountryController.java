@@ -41,14 +41,14 @@ public class CountryController {
     @PreAuthorize(IS_ADMIN)
     @PostMapping
     public List<Country> addCountries(@Valid @RequestBody List<CountryAddDto> countries) {
-        List<Country> newCountries = countries.stream().map(CountryAddDto::toCountry).collect(Collectors.toList());
+        List<Country> newCountries = countries.stream().map(CountryAddDto::asCountry).collect(Collectors.toList());
         return locationService.addCountries(newCountries);
     }
 
     @PreAuthorize(IS_ADMIN)
     @PutMapping("/{id}")
     public Country updateCountry(@PathVariable Long id, @Valid @RequestBody CountryAddDto country) {
-        Country newCountry = country.toCountry();
+        Country newCountry = country.asCountry();
         return locationService.update(id, newCountry);
     }
 

@@ -10,6 +10,9 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @AllArgsConstructor
 @Builder
 @Getter
@@ -24,6 +27,8 @@ public class TalentViewDto {
 
     private LocationDto location;
 
+    private List<AvailableLocationViewDto> availableLocations;
+
     public TalentViewDto(Talent talent) {
         asView(talent);
     }
@@ -33,6 +38,9 @@ public class TalentViewDto {
         this.lastName = talent.getLastName();
         this.user = new UserViewDto(talent.getUser());
         this.location = new LocationDto(talent.getCurrentLocation());
+        this.availableLocations = talent.getAvailableLocations().stream()
+                .map(AvailableLocationViewDto::new)
+                .collect(Collectors.toList());
     }
 
 }
