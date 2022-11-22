@@ -35,17 +35,22 @@ public class PostViewController {
     @PreAuthorize(SpELAuthorizationExpressions.IS_AUTHENTICATED)
     public Page<PostViewDto> find(
             @RequestParam(value = "company", required = false) final Long companyId,
-            @RequestParam(value = "country", required = false) final String country,
-            @RequestParam(value = "city", required = false) final String city,
+            @RequestParam(value = "country", required = false) final Long countryId,
+            @RequestParam(value = "followers", required = false) final boolean followers,
             @RequestParam(defaultValue = "0") Integer page) {
         Pageable pageable = PageRequest.of(page, MAX_POSTS_PER_PAGE);
         Page<Post> foundPosts;
 
         if (companyId != null) {
             foundPosts = postViewService.findByCompanyId(companyId, pageable);
-        } else if (city != null && country != null) {
-            foundPosts = postViewService.findByLocation(country, city, pageable);
-        } else throw new ApiBadRequestException("Incorrect query params");
+        } else if (countryId != null) {
+            foundPosts = postViewService.findByCountryId(countryId, pageable);
+        } else if (followers) {
+            // TODO: get followers posts
+            foundPosts = Page.empty();
+        } else {
+            foundPosts = postViewService.findAll(pageable);
+        };
         return foundPosts.map(PostViewDto::new);
     }
 

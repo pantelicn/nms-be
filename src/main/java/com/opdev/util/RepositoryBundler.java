@@ -79,5 +79,10 @@ public abstract class RepositoryBundler {
     @Autowired
     protected AvailableLocationRepository availableLocationRepository;
 
+    @Autowired
+    protected CountryRepository countryRepository;
+
+    @Autowired
+    protected CityRepository cityRepository;
 
 }

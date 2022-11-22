@@ -96,17 +96,17 @@ public abstract class AbstractIntegrationTest {
                 .type(UserType.COMPANY)
                 .username(username)
                 .build());
-        CompanyLocation location = CompanyLocation.builder()
-                .city("Novi Sad")
-                .country("Serbia")
-                .countryCode("RS")
-                .address("Olge Petrov 27")
-                .build();
+//        CompanyLocation location = CompanyLocation.builder()
+//                .city(noviSa)
+//                .country("Serbia")
+//                .countryCode("RS")
+//                .address("Olge Petrov 27")
+//                .build();
 
         Company company = Company.builder()
                 .description("google company")
                 .name("Google")
-                .location(location)
+                .location(null)
                 .user(user)
                 .build();
         return companyRepository.save(company);

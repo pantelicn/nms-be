@@ -15,6 +15,8 @@ public interface PostViewService {
 
     List<Post> findByCompanyIds(List<Long> companyIds);
 
-    Page<Post> findByLocation(String country, String city, Pageable pageable);
+    Page<Post> findByCountryId(Long countryId, Pageable pageable);
+
+    Page<Post> findAll(Pageable pageable);
 
 }

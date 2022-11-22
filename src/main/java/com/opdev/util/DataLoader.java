@@ -6,7 +6,9 @@ import com.opdev.model.company.Company;
 import com.opdev.model.contact.Contact;
 import com.opdev.model.contact.ContactType;
 import com.opdev.model.location.AvailableLocation;
+import com.opdev.model.location.City;
 import com.opdev.model.location.CompanyLocation;
+import com.opdev.model.location.Country;
 import com.opdev.model.location.Location;
 import com.opdev.model.post.Post;
 import com.opdev.model.request.Request;
@@ -64,6 +66,10 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     private Role companyRole;
     private Role talentRole;
     private Role adminRole;
+    private Country serbia;
+    private Country croatia;
+    private City noviSad;
+    private City zagreb;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -74,6 +80,8 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     }
 
     private void initializeData() {
+        initializeCountries();
+        initializeCities();
         initializeRoles();
         initializeAdmin();
         initializeSkills();
@@ -85,6 +93,41 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
         initializeAvailableChats();
         initializePlanAndProducts();
         initializeSubscriptionForGoogle();
+    }
+
+    private void initializeCities() {
+        noviSad = City.builder()
+                .country(serbia)
+                .latitude(1f)
+                .longitude(1f)
+                .name("Novi Sad")
+                .build();
+
+        noviSad = cityRepository.save(noviSad);
+
+        zagreb = City.builder()
+                .country(croatia)
+                .name("Zagreb")
+                .longitude(2f)
+                .latitude(2f)
+                .name("Zagreb")
+                .build();
+
+        zagreb = cityRepository.save(zagreb);
+    }
+
+    private void initializeCountries() {
+        serbia = Country.builder()
+                .code("SRB")
+                .name("Serbia")
+                .build();
+        croatia = Country.builder()
+                .code("CRO")
+                .name("Croatia")
+                .build();
+
+        serbia = countryRepository.save(serbia);
+        croatia = countryRepository.save(croatia);
     }
 
     private void initializeRoles() {
@@ -356,10 +399,9 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
         userRoleRepository.save(userRole);
 
         CompanyLocation location = CompanyLocation.builder()
-                .city("Novi Sad")
+                .city(noviSad)
                 .province("Vojvodina")
-                .country("Serbia")
-                .countryCode("RS")
+                .country(serbia)
                 .address("Olge Petrov 27")
                 .build();
 
@@ -377,21 +419,21 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                         .content("https://hybrid-it.rs/ f blandit o eu massa. https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg")
                         .title("Duis title")
                         .url("http://dummyimage.com/136x100.png/ff4444/ffffff")
-                        .country("Serbia")
+                        .country(serbia)
                         .company(company)
                         .build(),
                 Post.builder()
                         .content("Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl.")
                         .title("Duis title")
                         .url("http://dummyimage.com/163x100.png/ff4444/ffffff")
-                        .country("Serbia")
+                        .country(serbia)
                         .company(company)
                         .build(),
                 Post.builder()
                         .content("Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis.")
                         .title("Duis title")
                         .url("http://dummyimage.com/207x100.png/cc0000/ffffff")
-                        .country("Serbia")
+                        .country(croatia)
                         .company(company)
                         .build()));
     }
@@ -502,10 +544,8 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .build());
 
         CompanyLocation location = CompanyLocation.builder()
-                .city("Moa")
-                .province("Pinar del Río")
-                .country("Cuba")
-                .countryCode("CU")
+                .city(zagreb)
+                .country(croatia)
                 .address("1257 Vermont Parkway")
                 .build();
 
@@ -523,21 +563,21 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                         .content("Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.")
                         .title("Duis title")
                         .url("http://dummyimage.com/190x100.png/dddddd/000000")
-                        .country("Nigeria")
+                        .country(serbia)
                         .company(company)
                         .build(),
                 Post.builder()
                         .content("Proin interdum mauris non ligula pellentesque ultrices.")
                         .title("Proin title")
                         .url("http://dummyimage.com/236x100.png/cc0000/ffffff")
-                        .country("Japan")
+                        .country(croatia)
                         .company(company)
                         .build(),
                 Post.builder()
                         .content("Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc.")
                         .title("Maecenas title")
                         .url("http://dummyimage.com/146x100.png/5fa2dd/ffffff")
-                        .country("China")
+                        .country(serbia)
                         .company(company)
                         .build()
         ));

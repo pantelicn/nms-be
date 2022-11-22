@@ -12,6 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
@@ -28,20 +30,17 @@ public class CompanyLocation {
     @Column
     private Long id;
 
-    @NonNull
-    @Column
-    private String country;
+    @ManyToOne
+    @JoinColumn(name = "country_id", referencedColumnName = "id")
+    private Country country;
 
     @Column
     private String province;
 
     @NonNull
-    @Column
-    private String city;
-
-    @NonNull
-    @Column(name = "country_code")
-    private String countryCode;
+    @ManyToOne
+    @JoinColumn(name = "city_id", referencedColumnName = "id")
+    private City city;
 
     @NotBlank
     @NonNull

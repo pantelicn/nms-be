@@ -15,5 +15,8 @@ public interface LocationService {
     List<City> addCities(Long countryId, List<City> cities);
     City update(Long id, City city);
     void deleteCity(Long id);
+    Country findByCountryId(Long countryId);
+    City findByCityIdAndCountryId(Long countryId, Long cityId);
+    Country findByCountryName(String name);
 
 }

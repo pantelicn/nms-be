@@ -1,5 +1,7 @@
 package com.opdev.company.dto;
 
+import com.opdev.location.dto.CityViewDto;
+import com.opdev.location.dto.CountryViewDto;
 import com.opdev.model.location.CompanyLocation;
 
 import lombok.AccessLevel;
@@ -12,22 +14,19 @@ public class CompanyLocationViewDto {
 
     private Long id;
 
-    private String country;
+    private CountryViewDto country;
 
     private String province;
 
-    private String city;
-
-    private String countryCode;
+    private CityViewDto city;
 
     private String address;
 
     public CompanyLocationViewDto(CompanyLocation location) {
         id = location.getId();
-        country = location.getCountry();
+        country = new CountryViewDto(location.getCountry());
         province = location.getProvince();
-        city = location.getCity();
-        countryCode = location.getCountryCode();
+        city = new CityViewDto(location.getCity());
         address = location.getAddress();
     }
 

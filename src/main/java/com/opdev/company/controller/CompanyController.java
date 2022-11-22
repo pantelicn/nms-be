@@ -13,8 +13,11 @@ import com.opdev.company.dto.CompanyUpdateDto;
 import com.opdev.config.security.Roles;
 import com.opdev.dto.CompanyViewDto;
 import com.opdev.dto.paging.PageDto;
+import com.opdev.location.LocationService;
 import com.opdev.mail.NullHireMailSender;
 import com.opdev.model.company.Company;
+import com.opdev.model.location.City;
+import com.opdev.model.location.Country;
 import com.opdev.model.user.User;
 import com.opdev.user.UserService;
 
@@ -51,14 +54,16 @@ class CompanyController {
     private final UserService userService;
     private final NullHireMailSender nullHireMailSender;
     private final PasswordEncoder passwordEncoder;
+    private final LocationService locationService;
 
     @PostMapping
     @PreAuthorize("permitAll()")
     @ResponseStatus(HttpStatus.CREATED)
     public CompanyViewDto add(@Valid @RequestBody final CompanyRegistrationDto companyRegistrationDto) {
         LOGGER.info("Registering a new company: {}", companyRegistrationDto.getUsername());
-
-        final Company company = companyRegistrationDto.asCompany(passwordEncoder);
+        final Country foundCountry = locationService.findByCountryId(companyRegistrationDto.getLocation().getCountryId());
+        final City foundCity = locationService.findByCityIdAndCountryId(companyRegistrationDto.getLocation().getCityId(), companyRegistrationDto.getLocation().getCountryId());
+        final Company company = companyRegistrationDto.asCompany(passwordEncoder, foundCountry, foundCity);
         final Company registeredCompany = companyRegistrationService.register(company);
         nullHireMailSender.sendRegistrationEmail(companyRegistrationDto.getUsername(), company.getUser().getVerificationToken());
         return new CompanyViewDto(registeredCompany);
@@ -97,8 +102,10 @@ class CompanyController {
         if (userService.isAdminLoggedIn()) {
             admin = userService.getLoggedInUser();
         }
+        final Country foundCountry = locationService.findByCountryId(companyUpdateDto.getNewLocation().getCountryId());
+        final City foundCity = locationService.findByCityIdAndCountryId(companyUpdateDto.getNewLocation().getCityId(), companyUpdateDto.getNewLocation().getCountryId());
 
-        final Company company = companyService.update(companyUpdateDto.asCompany(oldCompany, admin));
+        final Company company = companyService.update(companyUpdateDto.asCompany(oldCompany, admin, foundCountry, foundCity));
         return ResponseEntity.ok(new CompanyViewDto(company));
     }
 

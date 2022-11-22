@@ -8,6 +8,8 @@ import javax.validation.constraints.NotNull;
 import com.opdev.common.utils.MappingUtils;
 import com.opdev.model.company.Company;
 import com.opdev.model.company.Company.CompanyBuilder;
+import com.opdev.model.location.City;
+import com.opdev.model.location.Country;
 import com.opdev.model.user.User;
 
 import lombok.AccessLevel;
@@ -33,7 +35,7 @@ public class CompanyUpdateDto {
     @NotNull
     private UpdateCompanyLocationDto newLocation;
 
-    public Company asCompany(final Company oldCompany, final User admin) {
+    public Company asCompany(final Company oldCompany, final User admin, final Country country, final City city) {
         Objects.requireNonNull(oldCompany);
 
         final CompanyBuilder oldCompanyBuilder = oldCompany.toBuilder();
@@ -45,7 +47,7 @@ public class CompanyUpdateDto {
             oldCompanyBuilder.description(description);
         }
         if (oldCompany.getLocation().getId().equals(newLocation.getId())) {
-            oldCompanyBuilder.location(newLocation.asCompanyLocation());
+            oldCompanyBuilder.location(newLocation.asCompanyLocation(country, city));
         }
 
         final Company updatedCompany = oldCompanyBuilder.build();

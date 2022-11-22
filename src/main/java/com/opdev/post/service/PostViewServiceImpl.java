@@ -47,8 +47,14 @@ public class PostViewServiceImpl implements PostViewService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Post> findByLocation(String country, String city, Pageable pageable) {
-        return repository.findByCountryAndCity(country, city, pageable);
+    public Page<Post> findByCountryId(Long countryId, Pageable pageable) {
+        return repository.findByCountryIdOrderByCreatedOn(countryId, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Post> findAll(final Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
 }

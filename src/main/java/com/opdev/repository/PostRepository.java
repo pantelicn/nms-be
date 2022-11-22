@@ -1,5 +1,6 @@
 package com.opdev.repository;
 
+import com.opdev.model.location.Country;
 import com.opdev.model.post.Post;
 
 import org.springframework.data.domain.Page;
@@ -23,13 +24,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("select p from Post p where p.company.id in :companyIds")
     List<Post> findByCompanyIds(@Param("companyIds") List<Long> companyIds);
 
-    // TODO @nikolagudelj Does this work if City or Country are null?
-    @Query("select p from Post p " +
-            "where upper(p.company.location.country) like concat('%', upper(:country), '%') and " +
-            "upper(p.company.location.city) like concat('%', upper(:city) , '%') order by p.createdOn DESC")
-    Page<Post> findByCountryAndCity(@Param("country") String country, @Param("city") String city, Pageable pageable);
+    Page<Post> findByCountryIdOrderByCreatedOn(Long countryId, Pageable pageable);
 
     @Query(value = "select * from post where country = :country order by created_on DESC limit 10", nativeQuery = true)
     List<Post> findLatest10ByCountry(@Param("country") String country);
+
+    List<Post> findTop10ByCountryOrderByCreatedOn(Country country);
 
 }

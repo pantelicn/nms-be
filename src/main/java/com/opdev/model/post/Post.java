@@ -2,6 +2,8 @@ package com.opdev.model.post;
 
 import com.opdev.model.Audit;
 import com.opdev.model.company.Company;
+import com.opdev.model.location.Country;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -49,8 +51,10 @@ public class Post extends Audit {
 
     private String url;
 
-    @Column(nullable = false)
-    private String country;
+    @NonNull
+    @ManyToOne
+    @JoinColumn(name = "country_id", referencedColumnName = "id", nullable = false)
+    private Country country;
 
     @NonNull
     @ManyToOne

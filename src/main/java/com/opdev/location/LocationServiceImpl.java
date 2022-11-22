@@ -5,6 +5,8 @@ import com.opdev.model.location.City;
 import com.opdev.model.location.Country;
 import com.opdev.repository.CityRepository;
 import com.opdev.repository.CountryRepository;
+
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -82,6 +84,27 @@ public class LocationServiceImpl implements LocationService {
     public void deleteCity(Long id) {
         validateCityExists(id);
         cityRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Country findByCountryId(@NonNull final Long countryId) {
+        return getById(countryId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public City findByCityIdAndCountryId(final Long countryId, final Long cityId) {
+        return cityRepository.findByIdAndCountryId(cityId, countryId).orElseThrow(() -> ApiEntityNotFoundException.builder()
+                .entity("City_Country")
+                .id(cityId.toString() + "_" + countryId.toString())
+                .build());
+    }
+
+    @Override
+    @Transactional
+    public Country findByCountryName(@NonNull final String name) {
+        return countryRepository.findByName(name).orElseThrow(() -> ApiEntityNotFoundException.builder().entity("Country").id(name).build());
     }
 
     private Country getById(Long id) {

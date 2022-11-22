@@ -4,7 +4,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import com.opdev.model.location.City;
 import com.opdev.model.location.CompanyLocation;
+import com.opdev.model.location.Country;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -26,29 +28,24 @@ public class UpdateCompanyLocationDto {
 
     @NonNull
     @NotEmpty
-    private String country;
+    private Long countryId;
 
     private String province;
 
     @NonNull
     @NotEmpty
-    private String city;
-
-    @NonNull
-    @NotEmpty
-    private String countryCode;
+    private Long cityId;
 
     @NotBlank
     @NotEmpty
     private String address;
 
-    public CompanyLocation asCompanyLocation() {
+    public CompanyLocation asCompanyLocation(Country country, City city) {
         return CompanyLocation.builder()
                 .id(id)
                 .country(country)
                 .province(province)
                 .city(city)
-                .countryCode(countryCode)
                 .address(address)
                 .build();
     }
