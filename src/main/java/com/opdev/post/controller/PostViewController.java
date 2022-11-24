@@ -4,6 +4,7 @@ import com.opdev.config.security.SpELAuthorizationExpressions;
 import com.opdev.exception.ApiBadRequestException;
 import com.opdev.model.post.Post;
 import com.opdev.post.dto.PostViewDto;
+import com.opdev.post.dto.PostsType;
 import com.opdev.post.service.noimpl.PostReactionService;
 import com.opdev.post.service.noimpl.PostViewService;
 import lombok.AllArgsConstructor;
@@ -29,28 +30,28 @@ public class PostViewController {
     private final PostViewService postViewService;
     private final PostReactionService postReactionService;
 
-    // TODO @nikolagudelj Find user feed
-
     @GetMapping
     @PreAuthorize(SpELAuthorizationExpressions.IS_AUTHENTICATED)
     public Page<PostViewDto> find(
-            @RequestParam(value = "company", required = false) final Long companyId,
-            @RequestParam(value = "country", required = false) final Long countryId,
-            @RequestParam(value = "followers", required = false) final boolean followers,
+            @RequestParam PostsType postsType,
+            @RequestParam(required = false) final Long companyId,
+            @RequestParam(required = false) final Long countryId,
             @RequestParam(defaultValue = "0") Integer page) {
         Pageable pageable = PageRequest.of(page, MAX_POSTS_PER_PAGE);
         Page<Post> foundPosts;
 
-        if (companyId != null) {
-            foundPosts = postViewService.findByCompanyId(companyId, pageable);
-        } else if (countryId != null) {
-            foundPosts = postViewService.findByCountryId(countryId, pageable);
-        } else if (followers) {
-            // TODO: get followers posts
-            foundPosts = Page.empty();
-        } else {
+        if (postsType == PostsType.GLOBAL) {
             foundPosts = postViewService.findAll(pageable);
-        };
+        } else if (postsType == PostsType.FOLLOWING) {
+            foundPosts = Page.empty();
+        } else if (postsType == PostsType.COUNTRY && countryId != null) {
+            foundPosts = postViewService.findByCountryId(countryId, pageable);
+        } else if (postsType == PostsType.COMPANY && companyId != null) {
+            foundPosts = postViewService.findByCompanyId(companyId, pageable);
+        } else {
+            throw ApiBadRequestException.message("Not able to pull posts for provided params");
+        }
+
         return foundPosts.map(PostViewDto::new);
     }
 
