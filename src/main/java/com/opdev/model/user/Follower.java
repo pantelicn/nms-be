@@ -6,10 +6,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.opdev.model.Audit;
+import com.opdev.model.company.Company;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,8 +28,8 @@ import lombok.ToString;
 @Getter
 @ToString(callSuper = true)
 @Entity
-@Table(name = "follow")
-public class Follow extends Audit {
+@Table(name = "follower")
+public class Follower extends Audit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,8 +37,13 @@ public class Follow extends Audit {
     private Long id;
 
     @NonNull
-    @OneToOne
-    @JoinColumn(name = "follow", referencedColumnName = "id", nullable = false)
-    private User follow;
+    @ManyToOne
+    @JoinColumn(name = "company_id", referencedColumnName = "id", nullable = false)
+    private Company company;
+
+    @NonNull
+    @ManyToOne
+    @JoinColumn(name = "follower", referencedColumnName = "id", nullable = false)
+    private User follower;
 
 }

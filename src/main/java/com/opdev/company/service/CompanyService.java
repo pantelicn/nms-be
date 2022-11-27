@@ -26,4 +26,6 @@ public interface CompanyService {
 
     String uploadProfileImage(String companyUsername, MultipartFile image);
 
+    Company getById(Long id);
+
 }

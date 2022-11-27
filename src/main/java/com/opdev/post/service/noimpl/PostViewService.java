@@ -13,7 +13,7 @@ public interface PostViewService {
 
     Page<Post> findByCompanyId(Long companyId, Pageable pageable);
 
-    List<Post> findByCompanyIds(List<Long> companyIds);
+    Page<Post> findByCompanyIds(List<Long> companyIds, Pageable pageable);
 
     Page<Post> findByCountryId(Long countryId, Pageable pageable);
 

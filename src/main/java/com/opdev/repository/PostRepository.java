@@ -22,7 +22,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findByCompanyId(@Param("companyId") Long companyId, Pageable pageable);
 
     @Query("select p from Post p where p.company.id in :companyIds")
-    List<Post> findByCompanyIds(@Param("companyIds") List<Long> companyIds);
+    Page<Post> findByCompanyIds(@Param("companyIds") List<Long> companyIds, Pageable pageable);
 
     Page<Post> findByCountryIdOrderByCreatedOn(Long countryId, Pageable pageable);
 

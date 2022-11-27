@@ -1,8 +1,14 @@
 package com.opdev.post.controller;
 
+import java.security.Principal;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.opdev.config.security.SpELAuthorizationExpressions;
 import com.opdev.exception.ApiBadRequestException;
+import com.opdev.follower.FollowerService;
 import com.opdev.model.post.Post;
+import com.opdev.model.user.Follower;
 import com.opdev.post.dto.PostViewDto;
 import com.opdev.post.dto.PostsType;
 import com.opdev.post.service.noimpl.PostReactionService;
@@ -29,6 +35,7 @@ public class PostViewController {
 
     private final PostViewService postViewService;
     private final PostReactionService postReactionService;
+    private final FollowerService followerService;
 
     @GetMapping
     @PreAuthorize(SpELAuthorizationExpressions.IS_AUTHENTICATED)
@@ -36,14 +43,15 @@ public class PostViewController {
             @RequestParam PostsType postsType,
             @RequestParam(required = false) final Long companyId,
             @RequestParam(required = false) final Long countryId,
-            @RequestParam(defaultValue = "0") Integer page) {
+            @RequestParam(defaultValue = "0") Integer page, Principal user) {
         Pageable pageable = PageRequest.of(page, MAX_POSTS_PER_PAGE);
         Page<Post> foundPosts;
 
         if (postsType == PostsType.GLOBAL) {
             foundPosts = postViewService.findAll(pageable);
         } else if (postsType == PostsType.FOLLOWING) {
-            foundPosts = Page.empty();
+            List<Follower> following =  followerService.findByFollower(user.getName());
+            foundPosts = postViewService.findByCompanyIds(following.stream().map(follower -> follower.getCompany().getId()).collect(Collectors.toList()), pageable);
         } else if (postsType == PostsType.COUNTRY && countryId != null) {
             foundPosts = postViewService.findByCountryId(countryId, pageable);
         } else if (postsType == PostsType.COMPANY && companyId != null) {

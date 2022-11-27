@@ -36,13 +36,13 @@ public class PostViewServiceImpl implements PostViewService {
     @Transactional(readOnly = true)
     public List<Post> findUserFeedPosts(final Long userId) {
         // TODO @nikolagudelj Fetch companies which user follows from the db
-        return findByCompanyIds(List.of());
+        return List.of();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Post> findByCompanyIds(final List<Long> companyIds) {
-        return repository.findByCompanyIds(companyIds);
+    public Page<Post> findByCompanyIds(final List<Long> companyIds, Pageable pageable) {
+        return repository.findByCompanyIds(companyIds, pageable);
     }
 
     @Override

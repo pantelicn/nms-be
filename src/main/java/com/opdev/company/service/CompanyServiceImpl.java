@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -127,6 +128,13 @@ class CompanyServiceImpl implements CompanyService {
         } catch (IOException e) {
             throw ApiBadRequestException.message("Unable to upload profile image.");
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Company getById(@NonNull final Long id) {
+        return companyRepository.findById(id).orElseThrow(() -> ApiEntityNotFoundException.builder()
+                .message("Entity.not.found").entity("Company").id(id.toString()).build());
     }
 
     private String generateFullPath(String originalFileName, String companyName) {
