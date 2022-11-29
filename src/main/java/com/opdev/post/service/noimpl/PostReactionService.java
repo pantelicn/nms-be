@@ -4,8 +4,12 @@ import com.opdev.model.post.ReactionType;
 
 public interface PostReactionService {
 
-    void addReaction(String username, Long postId, ReactionType reaction);
+    void addReactionForTalent(String username, Long postId, ReactionType reaction);
 
-    void removeReaction(String username, Long postId, ReactionType reaction);
+    void removeReactionForTalent(String username, Long postId, ReactionType reaction);
+
+    void addReactionForCompany(String username, Long postId, ReactionType reaction);
+
+    void removeReactionForCompany(String username, Long postId, ReactionType reaction);
 
 }

@@ -137,6 +137,12 @@ class CompanyServiceImpl implements CompanyService {
                 .message("Entity.not.found").entity("Company").id(id.toString()).build());
     }
 
+    @Override
+    @Transactional
+    public Company save(final Company company) {
+        return companyRepository.save(company);
+    }
+
     private String generateFullPath(String originalFileName, String companyName) {
         String fileExtension = FilenameUtils.getExtension(originalFileName);
         StringBuilder sb = new StringBuilder();

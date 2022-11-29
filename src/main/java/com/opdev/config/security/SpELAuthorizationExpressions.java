@@ -1,5 +1,7 @@
 package com.opdev.config.security;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 public class SpELAuthorizationExpressions {
 
     /**
@@ -78,5 +80,7 @@ public class SpELAuthorizationExpressions {
      * Verifies that the caller is authenticated as admin
      */
     public static final String IS_ADMIN = "hasRole('" + Roles.ADMIN + "')";
+
+    public static final String HAS_ANY_ROLE_TALENT_OR_COMPANY = "(hasAnyRole('" + Roles.COMPANY + "', '" + Roles.TALENT + "'))";
 
 }

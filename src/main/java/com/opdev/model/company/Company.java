@@ -4,6 +4,7 @@ import com.opdev.model.Audit;
 import com.opdev.model.contact.Contact;
 import com.opdev.model.location.CompanyLocation;
 import com.opdev.model.post.Post;
+import com.opdev.model.post.ReactionType;
 import com.opdev.model.request.Request;
 import com.opdev.model.search.SearchTemplate;
 import com.opdev.model.subscription.Prepaid;
@@ -31,7 +32,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.hibernate.annotations.Type;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -101,4 +106,30 @@ public class Company extends Audit {
     @OneToMany(mappedBy = "company")
     @Builder.Default
     private List<ProductUsage> productUsages = new ArrayList<>();
+
+    @ToString.Exclude
+    @Type(type = "json")
+    @Builder.Default
+    private Map<Long, ReactionType> postReactions = new HashMap<>();
+
+    public boolean alreadyReacted(Long postId) {
+        return postReactions.containsKey(postId);
+    }
+
+    public void addPostReaction(Long postId, ReactionType reaction) {
+        postReactions.put(postId, reaction);
+    }
+
+    public void removePostReaction(Long postId, ReactionType reaction) {
+        postReactions.remove(postId, reaction);
+    }
+
+    public void replacePostReaction(Long postId, ReactionType reaction) {
+        postReactions.replace(postId, reaction);
+    }
+
+    public ReactionType getReactionForPost(Long postId) {
+        return postReactions.get(postId);
+    }
+
 }

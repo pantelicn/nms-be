@@ -2,6 +2,7 @@ package com.opdev.talent.dto;
 
 import com.opdev.dto.LocationDto;
 import com.opdev.dto.UserViewDto;
+import com.opdev.model.post.ReactionType;
 import com.opdev.model.talent.Talent;
 
 import lombok.AllArgsConstructor;
@@ -10,7 +11,10 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -29,6 +33,8 @@ public class TalentViewDto {
 
     private List<AvailableLocationViewDto> availableLocations;
 
+    private List<Long> likedPosts = new ArrayList<>();
+
     public TalentViewDto(Talent talent) {
         asView(talent);
     }
@@ -41,6 +47,11 @@ public class TalentViewDto {
         this.availableLocations = talent.getAvailableLocations().stream()
                 .map(AvailableLocationViewDto::new)
                 .collect(Collectors.toList());
+        talent.getPostReactions().forEach( (k,v) -> {
+            if (v == ReactionType.LIKE) {
+                likedPosts.add(k);
+            }
+        });
     }
 
 }

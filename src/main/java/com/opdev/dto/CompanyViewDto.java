@@ -1,7 +1,11 @@
 package com.opdev.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.opdev.company.dto.CompanyLocationViewDto;
 import com.opdev.model.company.Company;
+import com.opdev.model.post.ReactionType;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -26,6 +30,8 @@ public class CompanyViewDto {
 
     private CompanyLocationViewDto location;
 
+    private List<Long> likedPosts = new ArrayList<>();
+
     public CompanyViewDto(@NonNull final Company company) {
         asView(company);
     }
@@ -36,6 +42,11 @@ public class CompanyViewDto {
         description = company.getDescription();
         user = new UserViewDto(company.getUser());
         location = new CompanyLocationViewDto(company.getLocation());
+        company.getPostReactions().forEach( (k,v) -> {
+            if (v == ReactionType.LIKE) {
+                likedPosts.add(k);
+            }
+        });
     }
 
 }

@@ -29,21 +29,21 @@ public class FollowerController {
     private final FollowerService service;
 
     @PostMapping
-    @PreAuthorize(SpELAuthorizationExpressions.AS_MATCHING_TALENT_OR_COMPANY)
+    @PreAuthorize(SpELAuthorizationExpressions.HAS_ANY_ROLE_TALENT_OR_COMPANY)
     @ResponseStatus(HttpStatus.CREATED)
     public void follow(@RequestBody CreateFollowerDto request, Principal user) {
         service.followCompany(user.getName(), request.getCompanyId());
     }
 
     @GetMapping("following")
-    @PreAuthorize(SpELAuthorizationExpressions.AS_MATCHING_TALENT_OR_COMPANY)
+    @PreAuthorize(SpELAuthorizationExpressions.HAS_ANY_ROLE_TALENT_OR_COMPANY)
     public List<Long> following(Principal user) {
         List<Follower> found = service.findByFollower(user.getName());
         return found.stream().map(follower -> follower.getCompany().getId()).collect(Collectors.toList());
     }
 
     @DeleteMapping
-    @PreAuthorize(SpELAuthorizationExpressions.AS_MATCHING_TALENT_OR_COMPANY)
+    @PreAuthorize(SpELAuthorizationExpressions.HAS_ANY_ROLE_TALENT_OR_COMPANY)
     public void unfollow(@RequestBody UnfollowRequestDto request, Principal user) {
         service.unfollowCompany(user.getName(), request.getCompanyId());
     }

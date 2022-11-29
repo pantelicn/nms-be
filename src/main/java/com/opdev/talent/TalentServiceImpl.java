@@ -55,6 +55,7 @@ class TalentServiceImpl implements TalentService {
     }
 
     @Override
+    @Transactional
     public Talent save(@NonNull Talent talent) {
         return talentRepository.save(talent);
     }

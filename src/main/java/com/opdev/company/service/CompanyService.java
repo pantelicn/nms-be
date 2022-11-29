@@ -28,4 +28,6 @@ public interface CompanyService {
 
     Company getById(Long id);
 
+    Company save(Company company);
+
 }

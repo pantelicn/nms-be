@@ -7,9 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.opdev.company.service.CompanyService;
 import com.opdev.exception.AlreadyFollowException;
+import com.opdev.exception.ApiBadRequestException;
 import com.opdev.model.company.Company;
 import com.opdev.model.user.Follower;
 import com.opdev.model.user.User;
+import com.opdev.model.user.UserType;
 import com.opdev.repository.FollowerRepository;
 import com.opdev.user.UserService;
 
@@ -31,6 +33,12 @@ public class FollowerServiceImpl implements FollowerService {
         Company toFollow = companyService.getById(companyId);
         if (repository.existsByCompanyAndFollower(toFollow, follower)) {
             throw new AlreadyFollowException(toFollow.getId());
+        }
+        if (follower.getType() == UserType.COMPANY) {
+            Company loggedCompany = companyService.getByUsername(username);
+            if (loggedCompany.getId() == toFollow.getId()) {
+                throw ApiBadRequestException.message("You can't follow yourself");
+            }
         }
         Follower newFollower = Follower.builder()
                 .follower(follower)
