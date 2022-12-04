@@ -13,12 +13,14 @@ import com.opdev.talent.search.TalentSpecification;
 import com.opdev.util.encoding.TalentIdEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -35,11 +37,14 @@ public class TalentSearchController {
     private final CompanyService companyService;
     private final RequestService requestService;
 
+    private static final int MAX_TALENTS_PER_PAGE = 3;
+
     @PostMapping
     @PreAuthorize("hasRole('" + Roles.COMPANY + "')")
     public ResponseEntity<Page<TalentViewSearchDto>> find(@Valid @RequestBody TalentSearchDto talentSearch,
-                                                          final Pageable pageable,
+                                                          @RequestParam(defaultValue = "0") Integer page,
                                                           final Principal user) {
+        Pageable pageable = PageRequest.of(page, MAX_TALENTS_PER_PAGE);
         TalentSpecification talentSpecification = new TalentSpecification(
                 talentSearch.getFacets()
                         .stream()
@@ -55,7 +60,6 @@ public class TalentSearchController {
                     Request foundRequest = requestService.findRejectedByTalentAndCompany(talent.getId(), foundCompany.getId());
                     return new TalentViewSearchDto(talent, encoder, foundCompany.getId(), foundRequest);
                 });
-
         return ResponseEntity.ok(response);
     }
 
