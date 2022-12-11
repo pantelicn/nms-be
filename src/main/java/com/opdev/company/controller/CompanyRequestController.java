@@ -1,6 +1,7 @@
 package com.opdev.company.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.opdev.company.dto.RequestCreateDto;
 import com.opdev.company.dto.RequestDetailViewDto;
@@ -57,23 +58,19 @@ public class CompanyRequestController {
     @GetMapping("active")
     @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.COMPANY + "'))")
     @ResponseStatus(HttpStatus.OK)
-    public Page<RequestViewDto> findWithStatusPending(@PathVariable String username,
-                                                      @RequestParam(defaultValue = "0") Integer page) {
-        Pageable pageable = PageRequest.of(page, MAX_REQUESTS_PER_PAGE);
+    public List<RequestViewDto> findWithStatusPending(@PathVariable String username) {
         List<RequestStatus> requiredStatuses = List.of(RequestStatus.PENDING, RequestStatus.COUNTER_OFFER_TALENT, RequestStatus.COUNTER_OFFER_COMPANY);
-        final Page<Request> found = service.findByStatusForCompany(username, requiredStatuses, pageable);
-        return found.map(RequestViewDto::new);
+        final List<Request> found = service.findByStatusForCompany(username, requiredStatuses);
+        return found.stream().map(RequestViewDto::new).collect(Collectors.toList());
     }
 
     @GetMapping("accepted")
     @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.COMPANY + "'))")
     @ResponseStatus(HttpStatus.OK)
-    public Page<RequestViewDto> findWithStatusAccepted(@PathVariable String username,
-                                                       @RequestParam(defaultValue = "0") Integer page) {
-        Pageable pageable = PageRequest.of(page, MAX_REQUESTS_PER_PAGE);
+    public List<RequestViewDto> findWithStatusAccepted(@PathVariable String username) {
         List<RequestStatus> requiredStatuses = List.of(RequestStatus.ACCEPTED);
-        final Page<Request> found = service.findByStatusForCompany(username, requiredStatuses, pageable);
-        return found.map(RequestViewDto::new);
+        final List<Request> found = service.findByStatusForCompany(username, requiredStatuses);
+        return found.stream().map(RequestViewDto::new).collect(Collectors.toList());
     }
 
     @GetMapping("{id}")

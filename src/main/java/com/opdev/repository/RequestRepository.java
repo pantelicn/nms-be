@@ -17,7 +17,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface RequestRepository extends JpaRepository<Request, Long> {
 
-    Page<Request> findByCompanyAndStatusIn(Company company, List<RequestStatus> statuses, Pageable pageable);
+    List<Request> findByCompanyAndStatusIn(Company company, List<RequestStatus> statuses);
 
     Page<Request> findByTalentAndStatusIn(Talent talent, List<RequestStatus> statuses, Pageable pageable);
 

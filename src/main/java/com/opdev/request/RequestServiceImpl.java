@@ -96,11 +96,10 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Request> findByStatusForCompany(@NonNull final String username,
-                                                @NonNull final List<RequestStatus> statuses,
-                                                @NonNull final Pageable pageable) {
+    public List<Request> findByStatusForCompany(@NonNull final String username,
+                                                @NonNull final List<RequestStatus> statuses) {
         Company foundCompany = companyService.getByUsername(username);
-        return repository.findByCompanyAndStatusIn(foundCompany, statuses, pageable);
+        return repository.findByCompanyAndStatusIn(foundCompany, statuses);
     }
 
     @Override

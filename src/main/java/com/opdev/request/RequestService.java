@@ -13,7 +13,7 @@ public interface RequestService {
 
     Request create(RequestCreateDto newRequest, String username);
 
-    Page<Request> findByStatusForCompany(String username, List<RequestStatus> statuses, Pageable pageable);
+    List<Request> findByStatusForCompany(String username, List<RequestStatus> statuses);
 
     Page<Request> findByStatusForTalent(String username, List<RequestStatus> statuses, Pageable pageable);
 
