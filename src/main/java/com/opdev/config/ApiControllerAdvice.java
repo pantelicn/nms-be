@@ -12,6 +12,7 @@ import com.opdev.exception.ApiSkillBadStatusException;
 import com.opdev.exception.ApiUnauthorizedException;
 import com.opdev.exception.ApiVerificationTokenAlreadyUsed;
 import com.opdev.exception.ApiVerificationTokenInvalidException;
+import com.opdev.exception.ResetPasswordTokenExpired;
 import com.opdev.exception.dto.ApiErrorDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -148,6 +149,11 @@ class ApiControllerAdvice {
         final ApiErrorDto apiError = ApiErrorDto.builder().message(message).build();
 
         return logAndSendResponse(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError), e);
+    }
+
+    @ExceptionHandler(ResetPasswordTokenExpired.class)
+    ResponseEntity<ApiErrorDto> handleResetPasswordTokenExpired(ResetPasswordTokenExpired e) {
+        return new ResponseEntity<>(ApiErrorDto.builder().message(e.getMessage()).build(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(Exception.class)

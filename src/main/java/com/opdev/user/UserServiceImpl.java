@@ -5,15 +5,20 @@ import com.opdev.exception.ApiEntityDisabledException;
 import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.exception.ApiUserNotLoggedException;
 import com.opdev.exception.ApiVerificationTokenInvalidException;
+import com.opdev.exception.PasswordsNotSameException;
+import com.opdev.exception.ResetPasswordTokenExpired;
+import com.opdev.mail.NullHireMailSender;
+import com.opdev.model.user.ResetPasswordRequest;
 import com.opdev.model.user.User;
 import com.opdev.model.user.UserType;
-import com.opdev.model.user.VerificationToken;
 import com.opdev.repository.UserRepository;
-import com.opdev.repository.VerificationTokenRepository;
+import com.opdev.user.resetpasswordrequest.ResetPasswordRequestService;
 import com.opdev.user.verification.VerificationTokenService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,9 +26,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -39,6 +46,9 @@ class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
     private final VerificationTokenService verificationTokenService;
+    private final ResetPasswordRequestService resetPasswordRequestService;
+    private final NullHireMailSender nullHireMailSender;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     @Override
@@ -146,6 +156,32 @@ class UserServiceImpl implements UserService, UserDetailsService {
 
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
                                                                       user.getEnabled(), true, true, true, authorities);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @PreAuthorize("permitAll()")
+    public void resetPasswordBegin(final String email) {
+        final User foundUser = findByUsername(email).orElseThrow(() -> new UsernameNotFoundException(email));
+        ResetPasswordRequest resetPasswordRequest = resetPasswordRequestService.create(foundUser);
+        nullHireMailSender.sendResetPasswordEmail(foundUser.getUsername(), resetPasswordRequest.getValidityToken());
+    }
+
+    @Override
+    @Transactional
+    @PreAuthorize("permitAll()")
+    public void resetPasswordFinish(@NonNull final UUID validityToken, @NonNull final String newPassword, @NonNull final String newPasswordConfirmation) {
+        ResetPasswordRequest foundResetPasswordRequest = resetPasswordRequestService.findByValidityToken(validityToken);
+        if (foundResetPasswordRequest.getValidTo().isBefore(Instant.now())) {
+            throw new ResetPasswordTokenExpired();
+        }
+        if (!newPassword.equals(newPasswordConfirmation)) {
+            throw new PasswordsNotSameException();
+        }
+        User user = foundResetPasswordRequest.getUser();
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        foundResetPasswordRequest.setUsed(true);
     }
 
 }

@@ -8,4 +8,6 @@ public interface NullHireMailSender {
 
     void sendRegistrationEmail(String emailTo, VerificationToken verificationToken);
 
+    void sendResetPasswordEmail(String emailTo, UUID validityToken);
+
 }

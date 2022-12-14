@@ -39,6 +39,7 @@ public class User extends Audit {
 
     @NonNull
     @Column(nullable = false)
+    @Setter
     private String password;
 
     @NonNull

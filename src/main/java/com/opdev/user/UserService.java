@@ -45,4 +45,8 @@ public interface UserService {
 
     void activateUser(UUID activationCode);
 
+    void resetPasswordBegin(String email);
+
+    void resetPasswordFinish(UUID validityToken, String newPassword, String newPasswordConfirmation);
+
 }
