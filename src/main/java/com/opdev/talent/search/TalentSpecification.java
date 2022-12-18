@@ -36,6 +36,7 @@ public class TalentSpecification implements Specification<Talent> {
 
     private final transient List<Facet> facets;
     private final transient List<LocationFilter> locationFilters;
+    private final transient Integer experienceYears;
 
     @Override
     public Predicate toPredicate(@NonNull Root<Talent> root,
@@ -66,6 +67,10 @@ public class TalentSpecification implements Specification<Talent> {
             );
             Predicate locationPredicate = criteriaBuilder.or(locationPredicateList.toArray(new Predicate[]{}));
             predicates.add(locationPredicate);
+        }
+
+        if (experienceYears != null) {
+            predicates.add(criteriaBuilder.and(criteriaBuilder.ge(root.get("experienceYears"), experienceYears)));
         }
 
         return predicates;

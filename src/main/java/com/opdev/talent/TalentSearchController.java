@@ -52,7 +52,8 @@ public class TalentSearchController {
                         .collect(Collectors.toList()),
                 talentSearch.getLocations() == null ? null : talentSearch.getLocations().stream()
                         .map(LocationFilterDto::asLocationFilter)
-                        .collect(Collectors.toList())
+                        .collect(Collectors.toList()),
+                talentSearch.getExperienceYears()
         );
         Company foundCompany = companyService.getByUsername(user.getName());
         return talentService.find(talentSpecification, pageable).map(talent -> mapTalentSearch(foundCompany, talent));
