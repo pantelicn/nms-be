@@ -12,9 +12,7 @@ import lombok.NonNull;
 import lombok.ToString;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -26,6 +24,8 @@ public class TalentViewDto {
     private String firstName;
 
     private String lastName;
+
+    private Integer experienceYears;
 
     private UserViewDto user;
 
@@ -42,6 +42,7 @@ public class TalentViewDto {
     private void asView(@NonNull Talent talent) {
         this.firstName = talent.getFirstName();
         this.lastName = talent.getLastName();
+        this.experienceYears = talent.getExperienceYears();
         this.user = new UserViewDto(talent.getUser());
         this.location = new LocationDto(talent.getCurrentLocation());
         this.availableLocations = talent.getAvailableLocations().stream()

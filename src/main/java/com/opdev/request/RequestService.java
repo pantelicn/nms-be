@@ -1,6 +1,7 @@
 package com.opdev.request;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.opdev.company.dto.RequestCreateDto;
 import com.opdev.model.request.Request;
@@ -23,8 +24,6 @@ public interface RequestService {
 
     void removeRequestForCompany(Long id, String username);
 
-    void removeRequestForTalent(Long id, String username);
-
     Request getByIdAndCompany(Long id, String username);
 
     Request getByIdAndTalent(Long id, String username);
@@ -37,5 +36,6 @@ public interface RequestService {
 
     Request editRequestNote(Long id, String username, String note);
 
-    Request findRejectedByTalentAndCompany(Long talentId, Long companyId);
+    Optional<Request> findPreviousByTalentAndCompany(Long talentId, Long companyId);
+
 }

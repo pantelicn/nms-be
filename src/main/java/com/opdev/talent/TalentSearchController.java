@@ -1,9 +1,10 @@
 package com.opdev.talent;
 
+import com.opdev.company.dto.RequestViewDto;
 import com.opdev.company.service.CompanyService;
 import com.opdev.config.security.Roles;
 import com.opdev.model.company.Company;
-import com.opdev.model.request.Request;
+import com.opdev.model.talent.Talent;
 import com.opdev.request.RequestService;
 import com.opdev.talent.dto.FacetSpecifierDto;
 import com.opdev.talent.dto.LocationFilterDto;
@@ -15,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,7 +41,7 @@ public class TalentSearchController {
 
     @PostMapping
     @PreAuthorize("hasRole('" + Roles.COMPANY + "')")
-    public ResponseEntity<Page<TalentViewSearchDto>> find(@Valid @RequestBody TalentSearchDto talentSearch,
+    public Page<TalentViewSearchDto> find(@Valid @RequestBody TalentSearchDto talentSearch,
                                                           @RequestParam(defaultValue = "0") Integer page,
                                                           final Principal user) {
         Pageable pageable = PageRequest.of(page, MAX_TALENTS_PER_PAGE);
@@ -52,15 +52,18 @@ public class TalentSearchController {
                         .collect(Collectors.toList()),
                 talentSearch.getLocations() == null ? null : talentSearch.getLocations().stream()
                         .map(LocationFilterDto::asLocationFilter)
-                        .collect(Collectors.toList())
+                        .collect(Collectors.toList()),
+                talentSearch.getExperienceYears()
         );
         Company foundCompany = companyService.getByUsername(user.getName());
-        final Page<TalentViewSearchDto> response = talentService.find(talentSpecification, pageable)
-                .map(talent -> {
-                    Request foundRequest = requestService.findRejectedByTalentAndCompany(talent.getId(), foundCompany.getId());
-                    return new TalentViewSearchDto(talent, encoder, foundCompany.getId(), foundRequest);
-                });
-        return ResponseEntity.ok(response);
+        return talentService.find(talentSpecification, pageable).map(talent -> mapTalentSearch(foundCompany, talent));
+    }
+
+    private TalentViewSearchDto mapTalentSearch(Company foundCompany, Talent talent) {
+        TalentViewSearchDto talentSearch = new TalentViewSearchDto(talent, encoder, foundCompany.getId());
+        requestService.findPreviousByTalentAndCompany(talent.getId(), foundCompany.getId())
+                .ifPresent(request -> talentSearch.setPreviousRequest(new RequestViewDto(request)));
+        return talentSearch;
     }
 
 }

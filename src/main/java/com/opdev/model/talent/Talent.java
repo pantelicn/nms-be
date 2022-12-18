@@ -31,6 +31,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -122,6 +124,12 @@ public class Talent extends Audit {
     @Type(type = "json")
     @Builder.Default
     private Map<Long, ReactionType> postReactions = new HashMap<>();
+
+    @NonNull
+    @NotNull
+    @Min(0)
+    @Builder.Default
+    private Integer experienceYears = 0;
 
     public boolean alreadyReacted(Long postId) {
         return postReactions.containsKey(postId);

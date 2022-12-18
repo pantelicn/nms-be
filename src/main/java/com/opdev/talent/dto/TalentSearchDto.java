@@ -11,5 +11,6 @@ public class TalentSearchDto {
 
     List<FacetSpecifierDto> facets;
     List<LocationFilterDto> locations;
+    Integer experienceYears;
 
 }
