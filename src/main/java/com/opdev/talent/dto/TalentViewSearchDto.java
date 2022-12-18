@@ -20,6 +20,8 @@ public class TalentViewSearchDto {
 
     private String talentId;
 
+    private Integer experienceYears;
+
     private List<TalentTermViewDto> terms = new ArrayList<>();
 
     private List<SkillViewDto> skills = new ArrayList<>();
@@ -31,6 +33,7 @@ public class TalentViewSearchDto {
 
     public TalentViewSearchDto(final Talent talent, final TalentIdEncoder encoder, final Long companyId) {
         talentId = encoder.encode(talent.getId(), companyId);
+        experienceYears = talent.getExperienceYears();
         talent.getTalentTerms().forEach(term -> terms.add(new TalentTermViewDto(term)));
         talent.getTalentSkills().forEach(talentSkill -> skills.add(new SkillViewDto(talentSkill.getSkill())));
         talent.getTalentPositions().forEach(talentPosition -> positions.add(new PositionViewDto(talentPosition.getPosition())));

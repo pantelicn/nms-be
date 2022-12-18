@@ -2,6 +2,8 @@ package com.opdev.talent.dto;
 
 import java.util.Objects;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 import com.opdev.common.utils.MappingUtils;
@@ -16,6 +18,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+
+import static java.util.Objects.requireNonNullElseGet;
 
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -32,6 +36,10 @@ public class TalentBasicInfoUpdateDto {
     @NonNull
     private String lastName;
 
+    @Min(0)
+    @Max(99)
+    private Integer experienceYears;
+
     public Talent asTalent(final Talent oldTalent, final User admin) {
         Objects.requireNonNull(oldTalent);
 
@@ -45,12 +53,12 @@ public class TalentBasicInfoUpdateDto {
             oldTalentBuilder.lastName(lastName);
         }
 
-        final Talent updatedTalent = oldTalentBuilder.build();
-        if (null != admin) {
-            updatedTalent.setModifiedBy(admin);
-        } else {
-            updatedTalent.setModifiedBy(oldTalent.getUser());
+        if (MappingUtils.shouldUpdate(experienceYears, oldTalent.getExperienceYears())) {
+            oldTalentBuilder.experienceYears(experienceYears);
         }
+
+        final Talent updatedTalent = oldTalentBuilder.build();
+        updatedTalent.setModifiedBy(requireNonNullElseGet(admin, oldTalent::getUser));
         return updatedTalent;
     }
 
