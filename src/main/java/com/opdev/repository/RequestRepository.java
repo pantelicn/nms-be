@@ -33,6 +33,6 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
     @Query("update Request r set r.seenByTalent = :seen where r.id = :id")
     void updateSeenByTalent(@Param("id") Long id, @Param("seen") boolean seen);
 
-    Request findTop1ByTalentIdAndCompanyIdAndStatusOrderByCreatedOn(Long talentId, Long companyId, RequestStatus status);
+    Optional<Request> findTop1ByTalentIdAndCompanyIdOrderByCreatedOn(Long talentId, Long companyId);
 
 }

@@ -31,8 +31,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -57,8 +60,8 @@ public class RequestServiceImpl implements RequestService {
         Talent foundTalent = talentService.getById(talentId);
         List<TalentTerm> talentTerms = foundTalent.getTalentTerms();
 
-        validateTerms(talentTerms.stream().map(TalentTerm::getId).collect(Collectors.toList()),
-                newRequestDto.getTerms().stream().map(TermCreateDto::getTermId).collect(Collectors.toList()));
+        validateTerms(talentTerms.stream().map(TalentTerm::getId).collect(Collectors.toSet()),
+                newRequestDto.getTerms().stream().map(TermCreateDto::getTermId).collect(Collectors.toSet()));
 
         Request newRequest = Request.builder()
                 .talent(foundTalent)
@@ -148,13 +151,6 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    @Transactional
-    public void removeRequestForTalent(final Long id, final String username) {
-        Request found = getByIdAndTalent(id, username);
-        repository.delete(found);
-    }
-
-    @Override
     @Transactional(readOnly = true)
     public Request getByIdAndCompany(@NonNull Long id, @NonNull String username) {
         Company foundCompany = companyService.getByUsername(username);
@@ -196,8 +192,8 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     @Transactional(readOnly = true)
-    public Request findRejectedByTalentAndCompany(@NonNull final Long talentId, @NonNull final Long companyId) {
-        return repository.findTop1ByTalentIdAndCompanyIdAndStatusOrderByCreatedOn(talentId, companyId, RequestStatus.REJECTED);
+    public Optional<Request> findPreviousByTalentAndCompany(@NonNull final Long talentId, @NonNull final Long companyId) {
+        return repository.findTop1ByTalentIdAndCompanyIdOrderByCreatedOn(talentId, companyId);
     }
 
     @Override
@@ -214,7 +210,7 @@ public class RequestServiceImpl implements RequestService {
         }
     }
 
-    private void validateTerms(List<Long> talentTermIds, List<Long> feedbackTermIds) {
+    private void validateTerms(Set<Long> talentTermIds, Set<Long> feedbackTermIds) {
         if (!talentTermIds.containsAll(feedbackTermIds)) {
             throw new ApiBadRequestException("Invalid terms");
         }
