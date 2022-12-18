@@ -63,7 +63,7 @@ class TalentCrudIntegrationTest extends AbstractIntegrationTest {
 
 		final String newFirstName = "New First Name";
 		final String newLastName = "New Last Name";
-		final TalentBasicInfoUpdateDto modifiedPositionDto = new TalentBasicInfoUpdateDto(newFirstName, newLastName);
+		final TalentBasicInfoUpdateDto modifiedPositionDto = new TalentBasicInfoUpdateDto(newFirstName, newLastName, 0);
 		final HttpEntity<TalentBasicInfoUpdateDto> httpEntityPUT = new HttpEntity<>(modifiedPositionDto,
 				createAuthHeaders((token)));
 

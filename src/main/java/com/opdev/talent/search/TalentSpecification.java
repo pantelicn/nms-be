@@ -59,7 +59,7 @@ public class TalentSpecification implements Specification<Talent> {
             }
         }
 
-        if (locationFilters != null) {
+        if (isNotEmpty(locationFilters)) {
             Join<Talent, AvailableLocation> joinEntity = root.join(AVAILABLE_LOCATIONS_TABLE_NAME, JoinType.LEFT);
             List<Predicate> locationPredicateList = new ArrayList<>();
             locationFilters.forEach(locationFilter ->
@@ -69,7 +69,7 @@ public class TalentSpecification implements Specification<Talent> {
             predicates.add(locationPredicate);
         }
 
-        if (experienceYears != null) {
+        if (experienceYears != null && experienceYears > 0) {
             predicates.add(criteriaBuilder.and(criteriaBuilder.ge(root.get("experienceYears"), experienceYears)));
         }
 

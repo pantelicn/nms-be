@@ -677,11 +677,11 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .currentLocation(currentLocation)
                 .availableLocations(List.of(
                         AvailableLocation.builder()
-                                .country("United States")
-                                .cities(Set.of("Dallas")).build(),
+                                .country("Serbia")
+                                .cities(Set.of("Novi Sad")).build(),
                         AvailableLocation.builder()
-                                .country("Bosnia and Herzegovina")
-                                .cities(Set.of("Vareš")).build()
+                                .country("Croatia")
+                                .cities(Set.of("Split")).build()
                 ))
                 .build());
     }
