@@ -30,4 +30,6 @@ public interface CompanyService {
 
     Company save(Company company);
 
+    Page<Company> findByNameStarts(String nameStarts, Pageable pageable);
+
 }

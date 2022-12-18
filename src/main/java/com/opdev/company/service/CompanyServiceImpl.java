@@ -143,6 +143,12 @@ class CompanyServiceImpl implements CompanyService {
         return companyRepository.save(company);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Company> findByNameStarts(@NonNull final String nameStarts, @NonNull final Pageable pageable) {
+        return companyRepository.findByNameContainsIgnoreCase(nameStarts, pageable);
+    }
+
     private String generateFullPath(String originalFileName, String companyName) {
         String fileExtension = FilenameUtils.getExtension(originalFileName);
         StringBuilder sb = new StringBuilder();

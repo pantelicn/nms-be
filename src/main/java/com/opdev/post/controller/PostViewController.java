@@ -38,7 +38,7 @@ public class PostViewController {
     private final FollowerService followerService;
 
     @GetMapping
-    @PreAuthorize(SpELAuthorizationExpressions.IS_AUTHENTICATED)
+    @PreAuthorize("permitAll()")
     public Page<PostViewDto> find(
             @RequestParam PostsType postsType,
             @RequestParam(required = false) final Long companyId,

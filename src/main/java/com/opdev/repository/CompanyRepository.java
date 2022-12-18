@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface CompanyRepository extends JpaRepository<Company, Long> {
+
     Optional<Company> findByUserUsername(final String username);
 
     /**
@@ -34,4 +35,7 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     @Override
     @Query("SELECT c FROM Company c where c.user.enabled = true")
     Page<Company> findAll(final Pageable pageable);
+
+    Page<Company> findByNameContainsIgnoreCase(String nameStarts, Pageable pageable);
+
 }
