@@ -13,6 +13,7 @@ import com.opdev.exception.ApiUnauthorizedException;
 import com.opdev.exception.ApiVerificationTokenAlreadyUsed;
 import com.opdev.exception.ApiVerificationTokenInvalidException;
 import com.opdev.exception.ResetPasswordTokenExpired;
+import com.opdev.exception.UserAlreadyExistsException;
 import com.opdev.exception.dto.ApiErrorDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -163,6 +164,11 @@ class ApiControllerAdvice {
         final ApiErrorDto apiError = ApiErrorDto.builder().message(message).build();
 
         return logAndSendResponse(new ResponseEntity<>(apiError, responseStatus), e);
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    ResponseEntity<?> userAlreadyExists(UserAlreadyExistsException e) {
+        return new ResponseEntity<>(ApiErrorDto.builder().message(e.getMessage()).build(), HttpStatus.CONFLICT);
     }
 
     protected <E extends Exception> ResponseEntity<?> handleVerificationTokenExceptions(final E e, final String token) {
