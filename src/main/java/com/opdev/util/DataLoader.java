@@ -674,7 +674,6 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .user(user)
                 .available(true)
                 .availabilityChangeDate(Instant.now())
-                .currentLocation(currentLocation)
                 .availableLocations(List.of(
                         AvailableLocation.builder()
                                 .country("Serbia")
@@ -805,7 +804,6 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .user(user)
                 .available(true)
                 .availabilityChangeDate(Instant.now())
-                .currentLocation(currentLocation)
                 .build();
         currentLocation.setTalent(goran);
 

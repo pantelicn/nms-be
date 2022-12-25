@@ -44,7 +44,6 @@ public class TalentViewDto {
         this.lastName = talent.getLastName();
         this.experienceYears = talent.getExperienceYears();
         this.user = new UserViewDto(talent.getUser());
-        this.location = new LocationDto(talent.getCurrentLocation());
         this.availableLocations = talent.getAvailableLocations().stream()
                 .map(AvailableLocationViewDto::new)
                 .collect(Collectors.toList());

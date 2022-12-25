@@ -42,7 +42,6 @@ class TalentServiceImpl implements TalentService {
     @Override
     public Talent register(@NonNull final Talent talent) {
         validateTalent(talent);
-        talent.getCurrentLocation().setTalent(talent);
         User talentUser = userService.save(talent.getUser());
         verificationTokenService.create(talentUser.getVerificationToken());
         UserRole talentUserRole = UserRole.builder()
@@ -50,8 +49,7 @@ class TalentServiceImpl implements TalentService {
                 .user(talentUser)
                 .build();
         userRoleService.create(talentUserRole);
-        Talent created = talentRepository.save(talent);
-        return created;
+        return talentRepository.save(talent);
     }
 
     @Override

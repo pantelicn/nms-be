@@ -61,8 +61,6 @@ public class TalentRegistrationDto implements RegistrationDto {
   @NotBlank
   private String passwordConfirmed;
 
-  private LocationDto location;
-
   public Talent asTalent(PasswordEncoder passwordEncoder) {
 
     final VerificationToken verificationToken = VerificationToken.builder()
@@ -84,23 +82,10 @@ public class TalentRegistrationDto implements RegistrationDto {
             .dateOfBirth(dateOfBirth)
             .availabilityChangeDate(Instant.now());
 
-    final Optional<Location> currentLocation = createLocation();
-    currentLocation.ifPresent(builder::currentLocation);
-
     final Talent talent = builder.build();
     talent.setCreatedBy(user);
 
     return talent;
-  }
-
-  private Optional<Location> createLocation() {
-    Location currentLocation = null;
-    if (!Objects.isNull(this.location)) {
-      currentLocation = Location.builder().city(this.location.getCity()).country(this.location.getCountry())
-          .province(this.location.getProvince()).countryCode(this.location.getCountryCode()).build();
-    }
-
-    return Optional.ofNullable(currentLocation);
   }
 
 }

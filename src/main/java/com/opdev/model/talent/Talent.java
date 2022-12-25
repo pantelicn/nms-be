@@ -89,10 +89,6 @@ public class Talent extends Audit {
     @JoinColumn(name = "user", referencedColumnName = "id", nullable = false)
     private User user;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "location", referencedColumnName = "id")
-    private Location currentLocation;
-
     @Setter
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
