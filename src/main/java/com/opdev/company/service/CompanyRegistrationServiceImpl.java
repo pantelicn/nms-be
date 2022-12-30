@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.opdev.exception.ApiEmailExistsException;
+import com.opdev.exception.UserAlreadyExistsException;
 import com.opdev.model.company.Company;
 import com.opdev.model.subscription.Plan;
 import com.opdev.model.subscription.PlanType;
@@ -63,9 +64,7 @@ class CompanyRegistrationServiceImpl implements CompanyRegistrationService {
         final Optional<User> existingUser = userRepository.findByUsername(company.getUser().getUsername());
         if (existingUser.isPresent()) {
             LOGGER.info("The username already exists: {}", company.getUser().getUsername());
-            // TODO: handle this exception in the global message handler, and return 201
-            throw ApiEmailExistsException.builder().message("User.already.exists").entity("Company")
-                    .id(company.getUser().getUsername()).build();
+            throw new UserAlreadyExistsException();
         }
     }
 
