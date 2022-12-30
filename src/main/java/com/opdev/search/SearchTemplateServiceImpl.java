@@ -10,14 +10,10 @@ import com.opdev.model.search.Facet;
 import com.opdev.model.search.OperatorType;
 import com.opdev.model.search.SearchTemplate;
 import com.opdev.model.search.TableName;
-import com.opdev.model.talent.Position;
-import com.opdev.model.talent.Skill;
 import com.opdev.model.term.Term;
 import com.opdev.model.term.TermType;
-import com.opdev.position.PositionService;
 import com.opdev.repository.FacetRepository;
 import com.opdev.repository.SearchTemplateRepository;
-import com.opdev.skill.SkillService;
 import com.opdev.term.TermService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -33,34 +29,29 @@ public class SearchTemplateServiceImpl implements SearchTemplateService {
 
     private final SearchTemplateRepository repository;
     private final TermService termService;
-    private final PositionService positionService;
-    private final SkillService skillService;
     private final CompanyService companyService;
     private final FacetRepository facetRepository;
 
     @Override
     @Transactional
-    public SearchTemplate add(@NonNull final String name, @NonNull final List<Facet> facets, @NonNull final String companyUsername) {
+    public SearchTemplate add(@NonNull final SearchTemplate newSearchTemplate, @NonNull final String companyUsername) {
         Company foundCompany = companyService.getByUsername(companyUsername);
-        SearchTemplate newSearchTemplate = SearchTemplate.builder()
-                .name(name)
-                .company(foundCompany)
-                .build();
-        facets.forEach(facet -> {
+        newSearchTemplate.setCompany(foundCompany);
+        newSearchTemplate.getFacets().forEach(facet -> {
             validateFacet(facet);
             facet.setSearchTemplate(newSearchTemplate);
         });
-        newSearchTemplate.getFacets().addAll(facets);
         return repository.save(newSearchTemplate);
     }
 
     @Override
     @Transactional
     public SearchTemplate edit(@NonNull final SearchTemplate modified, @NonNull final String companyUsername) {
-        Company foundCompany = companyService.getByUsername(companyUsername);
         SearchTemplate found = get(modified.getId(), companyUsername);
         updateFacets(found, modified, companyUsername);
         found.setName(modified.getName());
+        found.setExperienceYears(modified.getExperienceYears());
+        found.setAvailableLocations(modified.getAvailableLocations());
         return repository.save(found);
     }
 
@@ -92,8 +83,7 @@ public class SearchTemplateServiceImpl implements SearchTemplateService {
     public Facet addFacet(@NonNull final Long id, @NonNull final Facet newFacet, @NonNull final String companyUsername) {
         get(id, companyUsername);
         validateFacet(newFacet);
-        Facet created = facetRepository.save(newFacet);
-        return created;
+        return facetRepository.save(newFacet);
     }
 
     @Override
@@ -101,8 +91,12 @@ public class SearchTemplateServiceImpl implements SearchTemplateService {
     public Facet editFacet(@NonNull final Long id, @NonNull final Facet newFacet, @NonNull final String companyUsername) {
         validateFacet(newFacet);
         SearchTemplate foundSearchTemplate = get(id, companyUsername);
-        facetRepository.findByIdAndSearchTemplate(newFacet.getId(), foundSearchTemplate).orElseThrow(() -> ApiEntityNotFoundException.builder()
-                .message("Entity.not.found").entity("Facet").id(newFacet.getId().toString() + "_" + foundSearchTemplate.getId().toString()).build());
+        if(facetRepository.findByIdAndSearchTemplate(newFacet.getId(), foundSearchTemplate).isEmpty()) {
+            throw ApiEntityNotFoundException.builder()
+                    .message("Entity.not.found")
+                    .entity("Facet").id(newFacet.getId().toString() + "_" + foundSearchTemplate.getId().toString())
+                    .build();
+        }
         return facetRepository.save(newFacet);
     }
 
@@ -119,7 +113,7 @@ public class SearchTemplateServiceImpl implements SearchTemplateService {
     public void updateFacets(SearchTemplate found, SearchTemplate modified, String companyUsername) {
         addNewFacets(found, modified, companyUsername);
         updateExistingFacets(found, modified, companyUsername);
-        removeRedundantFacets(found, modified, companyUsername);
+        removeRedundantFacets(found, modified);
     }
 
     private void addNewFacets(SearchTemplate found, SearchTemplate modified, String companyUsername) {
@@ -138,7 +132,7 @@ public class SearchTemplateServiceImpl implements SearchTemplateService {
                 .forEach(facet -> editFacet(found.getId(), facet, companyUsername));
     }
 
-    private void removeRedundantFacets(SearchTemplate found, SearchTemplate modified, String companyUsername) {
+    private void removeRedundantFacets(SearchTemplate found, SearchTemplate modified) {
         List<Facet> redundantFacets = found
                 .getFacets()
                 .stream()
@@ -160,14 +154,12 @@ public class SearchTemplateServiceImpl implements SearchTemplateService {
     }
 
     private void validatePosition(Facet facet) {
-        Position foundPosition = positionService.get(facet.getCode());
         if (facet.getOperatorType() != OperatorType.EQ) {
             throw new FacetInvalidPositionException(facet.getCode(), facet.getOperatorType());
         }
     }
 
     private void validateSkill(Facet facet) {
-        Skill foundSkill = skillService.get(facet.getCode());
         if (facet.getOperatorType() != OperatorType.EQ) {
             throw new FacetInvalidSkillException(facet.getCode(), facet.getOperatorType());
         }

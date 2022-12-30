@@ -2,9 +2,14 @@ package com.opdev.search.dto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 
+import com.opdev.model.search.SearchTemplate;
+import com.opdev.talent.dto.AvailableLocationUpdateDto;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,7 +26,24 @@ public class SearchTemplateAddDto {
     @NonNull
     @NotEmpty
     private String name;
-
     private List<FacetAddDto> facets = new ArrayList<>();
+    @NonNull
+    @Min(0)
+    @Max(99)
+    private Integer experienceYears;
+    @NonNull
+    private List<AvailableLocationUpdateDto> availableLocations = new ArrayList<>();
+
+    public SearchTemplate asSearchTemplate() {
+        return SearchTemplate.builder()
+                .name(name)
+                .facets(facets.stream().map(FacetAddDto::asFacet).collect(Collectors.toList()))
+                .experienceYears(experienceYears)
+                .availableLocations(availableLocations.stream()
+                        .map(AvailableLocationUpdateDto::asAvailableLocation)
+                        .collect(Collectors.toList())
+                )
+                .build();
+    }
 
 }

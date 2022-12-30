@@ -2,6 +2,7 @@ package com.opdev.model.search;
 
 import com.opdev.model.Audit;
 import com.opdev.model.company.Company;
+import com.opdev.model.location.AvailableLocation;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,6 +46,15 @@ public class SearchTemplate extends Audit {
     @Column(nullable = false)
     private String name;
 
+    @NonNull
+    @Setter
+    private Integer experienceYears;
+
+    @NonNull
+    @Setter
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<AvailableLocation> availableLocations = new ArrayList<>();
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "searchTemplate", orphanRemoval = true)
     @Builder.Default
     private List<Facet> facets = new ArrayList<>();
@@ -53,14 +63,6 @@ public class SearchTemplate extends Audit {
     @JoinColumn(name = "company_id", referencedColumnName = "id", nullable = false)
     @Setter
     private Company company;
-
-    public Facet getFacet(Long facetId) {
-        return facets
-                .stream()
-                .filter(facet -> facet.getId().equals(facetId))
-                .findAny()
-                .orElse(null);
-    }
 
     public boolean containsFacet(Facet facet) {
         return facets

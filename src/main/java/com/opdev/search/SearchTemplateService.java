@@ -7,7 +7,7 @@ import com.opdev.model.search.SearchTemplate;
 
 public interface SearchTemplateService {
 
-    SearchTemplate add(String name, List<Facet> facets, String companyUsername);
+    SearchTemplate add(SearchTemplate searchTemplate, String companyUsername);
 
     SearchTemplate edit(SearchTemplate modified, String companyUsername);
 

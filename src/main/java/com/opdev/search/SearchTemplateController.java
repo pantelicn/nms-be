@@ -37,7 +37,7 @@ public class SearchTemplateController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.COMPANY + "'))")
     public SearchTemplateViewDto add(@RequestBody @Valid SearchTemplateAddDto newSearchTemplate, @PathVariable String username) {
-        SearchTemplate created = service.add(newSearchTemplate.getName(), newSearchTemplate.getFacets().stream().map(FacetAddDto::asFacet).collect(Collectors.toList()), username);
+        SearchTemplate created = service.add(newSearchTemplate.asSearchTemplate(), username);
         return new SearchTemplateViewDto(created);
     }
 
