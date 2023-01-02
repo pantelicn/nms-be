@@ -43,11 +43,11 @@ public class Position extends Audit {
     @Column(nullable = false, unique = true)
     private String code;
 
-    @OneToMany(mappedBy = "talent")
+    @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL)
     @Builder.Default
     private List<TalentPosition> talentPositions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "position")
+    @OneToMany(mappedBy = "position", cascade = CascadeType.ALL)
     @Builder.Default
     private List<PositionSkill> positionSkills = new ArrayList<>();
 
