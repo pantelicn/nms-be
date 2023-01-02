@@ -26,7 +26,7 @@ public class SecurityConfig {
     @Bean
     public CorsFilter corsFilter() {
         final CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("http://localhost:4200"); // STOMP doesn't allow wildcard for allowed origings
+        config.addAllowedOrigin("http://localhost:4200"); // STOMP doesn't allow wildcard for allowed origins
         config.addAllowedHeader("*"); // this allows all headers
         config.setAllowCredentials(true);
 

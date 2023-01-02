@@ -1,6 +1,6 @@
 package com.opdev.skill;
 
-import com.opdev.config.security.Roles;
+import com.opdev.config.security.SpELAuthorizationExpressions;
 import com.opdev.model.talent.Skill;
 import com.opdev.skill.dto.SkillAddDto;
 import com.opdev.skill.dto.SkillEditDto;
@@ -18,8 +18,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,7 +27,7 @@ public class SkillController {
     private final SkillService service;
 
     @PostMapping
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize(SpELAuthorizationExpressions.IS_AUTHENTICATED)
     public ResponseEntity<SkillViewDto> add(@Valid @RequestBody final SkillAddDto newSkill) {
         final Skill created = service.add(newSkill.asSkill());
         return ResponseEntity.status(HttpStatus.CREATED).body(new SkillViewDto(created));
@@ -37,15 +35,13 @@ public class SkillController {
 
     @GetMapping
     @PreAuthorize("permitAll()")
-    public ResponseEntity<List<SkillViewDto>> find(
+    public Page<SkillViewDto> find(
             @Spec(path = "status", spec = Equal.class) Specification<Skill> skillSpec, final Pageable pageable) {
-        final Page<Skill> found = service.find(skillSpec, pageable);
-        final List<SkillViewDto> response = found.get().map(SkillViewDto::new).collect(Collectors.toList());
-        return ResponseEntity.ok(response);
+        return service.find(skillSpec, pageable).map(SkillViewDto::new);
     }
 
     @PutMapping
-    @PreAuthorize("hasRole('" + Roles.ADMIN + "')")
+    @PreAuthorize(SpELAuthorizationExpressions.IS_ADMIN)
     public ResponseEntity<SkillViewDto> edit(@Valid @RequestBody final SkillEditDto modified) {
         final Skill updated = service.edit(modified.asSkill());
         return ResponseEntity.ok(new SkillViewDto(updated));
@@ -59,14 +55,14 @@ public class SkillController {
     }
 
     @DeleteMapping("/{code}")
-    @PreAuthorize("hasRole('" + Roles.ADMIN + "')")
+    @PreAuthorize(SpELAuthorizationExpressions.IS_ADMIN)
     public ResponseEntity<Void> remove(@PathVariable final String code) {
         service.remove(code);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{code}/status")
-    @PreAuthorize("hasRole('" + Roles.ADMIN + "')")
+    @PreAuthorize(SpELAuthorizationExpressions.IS_ADMIN)
     public ResponseEntity<SkillViewDto> setStatus(@Valid @RequestBody final SkillStatusDto statusDto,
                                                   @PathVariable final String code) {
         final Skill modified = service.updateStatus(code, statusDto.getStatus());

@@ -3,6 +3,7 @@ package com.opdev.model.talent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -46,11 +47,11 @@ public class Skill extends Audit {
     @Column(nullable = false, unique = true)
     private String code;
 
-    @OneToMany(mappedBy = "skill")
+    @OneToMany(mappedBy = "skill", cascade = CascadeType.ALL)
     @Builder.Default
     private List<PositionSkill> skillPositions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "skill")
+    @OneToMany(mappedBy = "skill", cascade = CascadeType.ALL)
     @Builder.Default
     private List<TalentSkill> skillTalents = new ArrayList<>();
 
