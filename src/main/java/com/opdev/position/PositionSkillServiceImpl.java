@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -27,19 +28,27 @@ public class PositionSkillServiceImpl implements PositionSkillService {
 
     @Override
     @Transactional
-    public List<PositionSkill> addSkillsToPosition(final String positionCode, final List<String> skillCodes) {
+    public List<PositionSkill> addSkillsToPosition(final String positionCode, final Set<String> skillCodes) {
         Objects.requireNonNull(positionCode);
         Objects.requireNonNull(skillCodes);
         final List<PositionSkill> result = new ArrayList<>();
         final Position foundPosition = positionService.get(positionCode);
-        skillCodes.forEach(skillCode -> {
+        for (String skillCode: skillCodes) {
             final Skill foundSkill = skillService.get(skillCode);
+            if (skillExists(foundPosition, skillCode)) {
+                continue;
+            }
             checkSkillStatus(foundSkill);
             final PositionSkill created = repository.save(PositionSkill.builder().position(foundPosition).skill(foundSkill).build());
             result.add(created);
-        });
+        }
         LOGGER.info("New relation(s) between position with code {} and skill code(s) {} has been created.", positionCode, skillCodes.toString());
         return result;
+    }
+
+    private boolean skillExists(Position foundPosition, String skillCode) {
+        return foundPosition.getPositionSkills().stream()
+                .anyMatch(positionSkill -> positionSkill.getSkill().getCode().equals(skillCode));
     }
 
     @Override

@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("v1/positions/{code}/skills")
@@ -20,7 +21,7 @@ public class PositionSkillController {
 
     @PostMapping
     @PreAuthorize("hasRole('" + Roles.ADMIN + "')")
-    public ResponseEntity<PositionSkillsViewDto> addSkills(@RequestBody List<String> skillCodes, @PathVariable String code) {
+    public ResponseEntity<PositionSkillsViewDto> addSkills(@RequestBody Set<String> skillCodes, @PathVariable String code) {
         final List<PositionSkill> created = service.addSkillsToPosition(code, skillCodes);
         return ResponseEntity.status(HttpStatus.CREATED).body(new PositionSkillsViewDto(created));
     }
