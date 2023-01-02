@@ -12,17 +12,15 @@ import lombok.RequiredArgsConstructor;
 @EqualsAndHashCode
 public class TermViewDto {
 
+    private Long id;
     private String name;
-
     private String code;
-
     private String description;
-
     private TermType type;
-
     private boolean availableForSearch;
 
     public TermViewDto(Term term) {
+        id = term.getId();
         name = term.getName();
         code = term.getCode();
         description = term.getDescription();
