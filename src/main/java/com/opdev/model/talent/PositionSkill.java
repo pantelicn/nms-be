@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.opdev.model.Audit;
 
@@ -27,7 +28,13 @@ import lombok.ToString;
 @Getter
 @ToString(callSuper = true)
 @Entity
-@Table(name = "position_skill")
+@Table(
+        name = "position_skill",
+        uniqueConstraints = @UniqueConstraint(
+                name = "unique_position_id_skill_id",
+                columnNames = { "position_id", "skill_id" }
+        )
+)
 public class PositionSkill extends Audit {
 
     @Id
