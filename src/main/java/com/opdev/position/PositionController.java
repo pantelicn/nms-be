@@ -56,10 +56,9 @@ public class PositionController {
 
     @GetMapping
     @PreAuthorize("permitAll()")
-    public ResponseEntity<List<PositionViewDto>> find(@PageableDefault final Pageable pageable) {
+    public Page<PositionViewDto> find(@PageableDefault final Pageable pageable) {
         final Page<Position> found = positionService.find(pageable);
-        final List<PositionViewDto> response = found.getContent().stream().map(PositionViewDto::new).collect(Collectors.toList());
-        return ResponseEntity.ok(response);
+        return found.map(PositionViewDto::new);
     }
 
 }
