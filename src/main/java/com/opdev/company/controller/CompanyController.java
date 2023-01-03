@@ -71,14 +71,9 @@ class CompanyController {
 
     @GetMapping
     @PreAuthorize("permitAll()")
-    public PageDto<CompanyViewDto> viewMultiple(@PageableDefault Pageable pageable) {
+    public Page<CompanyViewDto> viewMultiple(@PageableDefault Pageable pageable) {
         LOGGER.info("Viewing all companies");
-
-        final Page<Company> results = companyService.view(pageable);
-
-        final List<CompanyViewDto> content = results.getContent().stream().map(CompanyViewDto::new)
-                .collect(Collectors.toList());
-        return PageDto.from(results, content);
+        return companyService.view(pageable).map(CompanyViewDto::new);
     }
 
     @GetMapping("/{username}")
