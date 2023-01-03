@@ -13,6 +13,9 @@ import javax.validation.constraints.NotEmpty;
 public class TermEditDto {
 
     @NonNull
+    private Long id;
+
+    @NonNull
     @NotEmpty
     private String code;
 
@@ -31,6 +34,7 @@ public class TermEditDto {
 
     public Term asTerm() {
         return Term.builder()
+                .id(id)
                 .name(name)
                 .description(description)
                 .type(type)

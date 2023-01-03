@@ -1,5 +1,6 @@
 package com.opdev.model.term;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -66,7 +67,7 @@ public class Term extends Audit {
     private boolean availableForSearch;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "talent")
+    @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL)
     @Builder.Default
     private List<TalentTerm> talentTerms = new ArrayList<>();
 

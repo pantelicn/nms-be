@@ -5,6 +5,7 @@ import com.opdev.model.term.Term;
 import com.opdev.repository.TermRepository;
 import com.opdev.user.UserService;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,6 +42,13 @@ public class TermServiceImpl implements TermService {
                 .id(code).build());
     }
 
+    private Term get(@NonNull Long id) {
+        return repository.findById(id).orElseThrow(() -> ApiEntityNotFoundException.builder()
+                .message("Entity.not.found")
+                .entity("Term")
+                .id(id.toString()).build());
+    }
+
     @Override
     @Transactional(readOnly = true)
     public List<Term> findAll(Specification<Term> termSpec) {
@@ -51,7 +59,7 @@ public class TermServiceImpl implements TermService {
     @Transactional
     public Term edit(final Term modified) {
         Objects.requireNonNull(modified);
-        final Term existing = get(modified.getCode());
+        final Term existing = get(modified.getId());
         existing.update(modified, userService.getLoggedInUser());
         final Term newTerm = repository.save(existing);
         LOGGER.info("Term with code {} is modified {}", modified.getCode(), modified.toString());
