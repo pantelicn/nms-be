@@ -125,7 +125,7 @@ public class SearchTemplateCrudIntegrationTest extends AbstractIntegrationTest {
         FacetAddDto minSalary = new FacetAddDto(TableName.TERM, "SALARY", "1500", OperatorType.GTE);
         FacetAddDto maxSalary = new FacetAddDto(TableName.TERM, "SALARY", "2000", OperatorType.LTE);
         List<FacetAddDto> facets = new ArrayList<>(List.of(backendDev, java, minSalary, maxSalary));
-        SearchTemplateAddDto javaDeveloperTemplate = new SearchTemplateAddDto("Senior java developer", facets);
+        SearchTemplateAddDto javaDeveloperTemplate = new SearchTemplateAddDto("Senior java developer", facets, 0, List.of());
 
         final HttpEntity<SearchTemplateAddDto> addJavaDevTemplate = new HttpEntity<>(javaDeveloperTemplate, headers);
         final ResponseEntity<SearchTemplateViewDto> javaDevTemplateCreatedResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/search-templates", HttpMethod.POST, addJavaDevTemplate, SearchTemplateViewDto.class);
@@ -154,7 +154,7 @@ public class SearchTemplateCrudIntegrationTest extends AbstractIntegrationTest {
 
         List<FacetEditDto> facetEdits = new ArrayList<>(List.of(backendDevEdit, minSalaryEdit, maxSalaryEdit, django, jenkins));
 
-        SearchTemplateEditDto javaDeveloperTemplateEdit = new SearchTemplateEditDto(javaDevTemplateBody.getId(), "Senior java developer for SH", facetEdits);
+        SearchTemplateEditDto javaDeveloperTemplateEdit = new SearchTemplateEditDto(javaDevTemplateBody.getId(), "Senior java developer for SH", 0, List.of(), facetEdits);
 
         final HttpEntity<SearchTemplateEditDto> editJavaDevTemplate = new HttpEntity<>(javaDeveloperTemplateEdit, headers);
         final ResponseEntity<SearchTemplateViewDto> javaDevTemplateModifiedResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/search-templates", HttpMethod.PUT, editJavaDevTemplate, SearchTemplateViewDto.class);
