@@ -29,7 +29,7 @@ public interface TalentService {
 
     Talent getById(Long id);
 
-    List<Talent> findLatest10ByCountry(final String country);
+    Page<Talent> findAll(Pageable pageable);
 
     Page<Talent> find(final TalentSpecification specification, final Pageable pageable);
 

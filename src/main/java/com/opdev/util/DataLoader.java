@@ -5,11 +5,11 @@ import com.opdev.model.company.Benefit;
 import com.opdev.model.company.Company;
 import com.opdev.model.contact.Contact;
 import com.opdev.model.contact.ContactType;
-import com.opdev.model.location.AvailableLocation;
 import com.opdev.model.location.City;
 import com.opdev.model.location.CompanyLocation;
 import com.opdev.model.location.Country;
 import com.opdev.model.location.Location;
+import com.opdev.model.location.TalentAvailableLocation;
 import com.opdev.model.post.Post;
 import com.opdev.model.request.Request;
 import com.opdev.model.request.RequestStatus;
@@ -674,14 +674,16 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .user(user)
                 .available(true)
                 .availabilityChangeDate(Instant.now())
-                .availableLocations(List.of(
-                        AvailableLocation.builder()
-                                .country("Serbia")
-                                .cities(Set.of("Novi Sad")).build(),
-                        AvailableLocation.builder()
-                                .country("Croatia")
-                                .cities(Set.of("Split")).build()
-                ))
+//                .availableLocations(List.of(
+//                        TalentAvailableLocation.builder()
+//                                .country("Serbia")
+//                                .countryId(1L)
+//                                .cities(Set.of("Novi Sad")).build(),
+//                        TalentAvailableLocation.builder()
+//                                .country("Croatia")
+//                                .countryId(2L)
+//                                .cities(Set.of("Split")).build()
+//                ))
                 .build());
     }
 
@@ -710,10 +712,10 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     private void initializeNikolaAvailableLocations(Talent talent) {
         availableLocationRepository.saveAll(
                 List.of(
-                        AvailableLocation.builder()
+                        TalentAvailableLocation.builder()
                                 .country("United States")
                                 .cities(Set.of("Dallas")).build(),
-                        AvailableLocation.builder()
+                        TalentAvailableLocation.builder()
                                 .country("Bosnia and Herzegovina")
                                 .cities(Set.of("Vareš")).build()
                 )
@@ -835,10 +837,10 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     private void initializeGoranAvailableLocations(Talent talent) {
         availableLocationRepository.saveAll(
                 List.of(
-                        AvailableLocation.builder()
+                        TalentAvailableLocation.builder()
                                 .country("Mexico")
                                 .cities(Set.of("Parque Industrial")).build(),
-                        AvailableLocation.builder()
+                        TalentAvailableLocation.builder()
                                 .country("Sweden")
                                 .cities(Set.of("Nol")).build()
                 )

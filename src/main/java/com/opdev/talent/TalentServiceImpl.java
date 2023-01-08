@@ -20,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -135,8 +134,8 @@ class TalentServiceImpl implements TalentService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Talent> findLatest10ByCountry(@NonNull final String country) {
-        return talentRepository.findLatest10ByCountry(country);
+    public Page<Talent> findAll(Pageable pageable) {
+        return talentRepository.findAll(pageable);
     }
 
     @Transactional(readOnly = true)

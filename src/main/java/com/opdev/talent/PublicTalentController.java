@@ -1,11 +1,11 @@
 package com.opdev.talent;
 
-import com.opdev.model.talent.Talent;
-import com.opdev.talent.dto.TalentViewDto;
+import com.opdev.talent.dto.PublicTalentViewDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -19,9 +19,11 @@ public class PublicTalentController {
     private final TalentService service;
 
     @GetMapping
-    public List<TalentViewDto> findLatest10ByCountry(@RequestParam final String country) {
-        List<Talent> found = service.findLatest10ByCountry(country);
-        return found.stream().map(TalentViewDto::new).collect(Collectors.toList());
+    public List<PublicTalentViewDto> findLatest10() {
+        return service.findAll(PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdOn")))
+                .getContent().stream()
+                .map(PublicTalentViewDto::new)
+                .collect(Collectors.toList());
     }
 
 }
