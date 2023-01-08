@@ -9,7 +9,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 
 import com.opdev.model.search.SearchTemplate;
-import com.opdev.talent.dto.AvailableLocationUpdateDto;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,18 +32,19 @@ public class SearchTemplateAddDto {
     @Max(99)
     private Integer experienceYears;
     @NonNull
-    private List<AvailableLocationUpdateDto> availableLocations = new ArrayList<>();
+    private List<SearchTemplateAvailableLocationUpdateDto> availableLocations = new ArrayList<>();
 
     public SearchTemplate asSearchTemplate() {
-        return SearchTemplate.builder()
+        SearchTemplate searchTemplate =  SearchTemplate.builder()
                 .name(name)
                 .facets(facets.stream().map(FacetAddDto::asFacet).collect(Collectors.toList()))
                 .experienceYears(experienceYears)
-                .availableLocations(availableLocations.stream()
-                        .map(AvailableLocationUpdateDto::asAvailableLocation)
-                        .collect(Collectors.toList())
-                )
                 .build();
+
+        searchTemplate.setAvailableLocations(availableLocations.stream()
+                                    .map(availableLocation -> availableLocation.asAvailableLocation(searchTemplate))
+                                    .collect(Collectors.toList()));
+        return searchTemplate;
     }
 
 }

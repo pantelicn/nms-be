@@ -2,8 +2,7 @@ package com.opdev.model.talent;
 
 import com.opdev.model.Audit;
 import com.opdev.model.contact.Contact;
-import com.opdev.model.location.AvailableLocation;
-import com.opdev.model.location.Location;
+import com.opdev.model.location.TalentAvailableLocation;
 import com.opdev.model.post.ReactionType;
 import com.opdev.model.request.Request;
 import com.opdev.model.term.TalentTerm;
@@ -92,7 +91,7 @@ public class Talent extends Audit {
     @Setter
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<AvailableLocation> availableLocations = new ArrayList<>();
+    private List<TalentAvailableLocation> availableLocations = new ArrayList<>();
 
     @OneToMany(mappedBy = "talent")
     @Builder.Default

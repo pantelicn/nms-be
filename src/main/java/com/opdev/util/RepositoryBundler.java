@@ -77,7 +77,7 @@ public abstract class RepositoryBundler {
     protected UserRoleRepository userRoleRepository;
 
     @Autowired
-    protected AvailableLocationRepository availableLocationRepository;
+    protected TalentAvailableLocationRepository availableLocationRepository;
 
     @Autowired
     protected CountryRepository countryRepository;

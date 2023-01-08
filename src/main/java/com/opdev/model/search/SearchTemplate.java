@@ -2,7 +2,8 @@ package com.opdev.model.search;
 
 import com.opdev.model.Audit;
 import com.opdev.model.company.Company;
-import com.opdev.model.location.AvailableLocation;
+import com.opdev.model.location.SearchTemplateAvailableLocation;
+import com.opdev.model.location.TalentAvailableLocation;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,7 +54,7 @@ public class SearchTemplate extends Audit {
     @NonNull
     @Setter
     @OneToMany(cascade = CascadeType.ALL)
-    private List<AvailableLocation> availableLocations = new ArrayList<>();
+    private List<SearchTemplateAvailableLocation> availableLocations = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "searchTemplate", orphanRemoval = true)
     @Builder.Default

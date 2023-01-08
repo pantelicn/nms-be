@@ -42,7 +42,7 @@ class TermCrudIntegrationTest extends AbstractIntegrationTest {
 
         findAll(List.of(createdVacationDaysTerm, createSalaryTerm), headers);
 
-        final TermEditDto modifiedSalaryTerm = new TermEditDto(createSalaryTerm.getCode(), "Salary", "Monthly salary", TermType.INT);
+        final TermEditDto modifiedSalaryTerm = new TermEditDto(1L, createSalaryTerm.getCode(), "Salary", "Monthly salary", TermType.INT);
 
         TermViewDto newSalaryTerm = edit(modifiedSalaryTerm, headers);
 

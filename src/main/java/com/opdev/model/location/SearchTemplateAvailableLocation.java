@@ -1,6 +1,21 @@
 package com.opdev.model.location;
 
-import com.opdev.model.Audit;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import com.opdev.model.search.SearchTemplate;
+import com.opdev.model.talent.Talent;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,16 +25,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.util.HashSet;
-import java.util.Set;
-
 @RequiredArgsConstructor
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -27,8 +32,8 @@ import java.util.Set;
 @Getter
 @ToString(callSuper = true)
 @Entity
-@Table(name = "available_location")
-public class AvailableLocation extends Audit {
+@Table(name = "search_template_available_location")
+public class SearchTemplateAvailableLocation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,5 +48,10 @@ public class AvailableLocation extends Audit {
     @Column
     @ElementCollection
     private Set<String> cities = new HashSet<>();
+
+    @ToString.Exclude
+    @ManyToOne
+    @JoinColumn(name = "search_template_id", referencedColumnName = "id")
+    private SearchTemplate searchTemplate;
 
 }

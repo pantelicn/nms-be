@@ -22,7 +22,7 @@ public class SearchTemplateViewDto {
     private String name;
     private List<FacetViewDto> facets = new ArrayList<>();
     private Integer experienceYears;
-    private List<AvailableLocationViewDto> availableLocations = new ArrayList<>();
+    private List<SearchTemplateAvailableLocationViewDto> availableLocations = new ArrayList<>();
 
     public SearchTemplateViewDto(@NonNull SearchTemplate model) {
         id = model.getId();
@@ -30,7 +30,7 @@ public class SearchTemplateViewDto {
         model.getFacets().forEach(facet -> facets.add(new FacetViewDto(facet)));
         experienceYears = model.getExperienceYears();
         availableLocations = model.getAvailableLocations().stream()
-                .map(AvailableLocationViewDto::new)
+                .map(SearchTemplateAvailableLocationViewDto::new)
                 .collect(Collectors.toList());
     }
 

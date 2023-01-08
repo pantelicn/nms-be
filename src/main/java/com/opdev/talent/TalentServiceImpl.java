@@ -3,7 +3,6 @@ package com.opdev.talent;
 
 import com.opdev.exception.ApiEmailExistsException;
 import com.opdev.exception.ApiEntityNotFoundException;
-import com.opdev.model.location.AvailableLocation;
 import com.opdev.model.talent.Talent;
 import com.opdev.model.user.User;
 import com.opdev.model.user.UserRole;
@@ -21,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,7 +34,6 @@ class TalentServiceImpl implements TalentService {
     private final RoleService roleService;
     private final UserRoleService userRoleService;
     private final VerificationTokenService verificationTokenService;
-
 
     @Transactional
     @Override
@@ -147,17 +144,6 @@ class TalentServiceImpl implements TalentService {
     public Page<Talent> find(TalentSpecification specification, Pageable pageable) {
         Objects.requireNonNull(pageable);
         return talentRepository.findAll(specification, pageable);
-    }
-
-    @Transactional
-    @Override
-    public Talent addAvailableLocation(@NonNull Talent oldTalent, @NonNull AvailableLocation availableLocation) {
-        oldTalent.getAvailableLocations().add(availableLocation);
-        oldTalent.setModifiedOn(Instant.now());
-
-        Talent updated = talentRepository.save(oldTalent);
-        LOGGER.info("Added new available location on talent {}: {}", updated.getUser().getUsername(), availableLocation);
-        return updated;
     }
 
     @Transactional

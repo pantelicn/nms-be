@@ -1,7 +1,7 @@
 package com.opdev.search.dto;
 
 import com.opdev.model.search.SearchTemplate;
-import com.opdev.talent.dto.AvailableLocationUpdateDto;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,7 +35,7 @@ public class SearchTemplateEditDto {
     private Integer experienceYears;
 
     @NonNull
-    private List<AvailableLocationUpdateDto> availableLocations = new ArrayList<>();
+    private List<SearchTemplateAvailableLocationUpdateDto> availableLocations = new ArrayList<>();
     private List<FacetEditDto> facets = new ArrayList<>();
 
 
@@ -50,7 +50,7 @@ public class SearchTemplateEditDto {
                         .collect(Collectors.toList()))
                 .experienceYears(experienceYears)
                 .availableLocations(availableLocations.stream()
-                        .map(AvailableLocationUpdateDto::asAvailableLocation)
+                        .map(availableLocation -> availableLocation.asAvailableLocation(searchTemplate))
                         .collect(Collectors.toList()))
                 .build();
     }

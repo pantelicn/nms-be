@@ -1,7 +1,7 @@
 package com.opdev.talent.search;
 
 import com.opdev.exception.ApiBadRequestException;
-import com.opdev.model.location.AvailableLocation;
+import com.opdev.model.location.TalentAvailableLocation;
 import com.opdev.model.search.LocationFilter;
 import com.opdev.model.search.Facet;
 import com.opdev.model.search.TableName;
@@ -60,7 +60,7 @@ public class TalentSpecification implements Specification<Talent> {
         }
 
         if (isNotEmpty(locationFilters)) {
-            Join<Talent, AvailableLocation> joinEntity = root.join(AVAILABLE_LOCATIONS_TABLE_NAME, JoinType.LEFT);
+            Join<Talent, TalentAvailableLocation> joinEntity = root.join(AVAILABLE_LOCATIONS_TABLE_NAME, JoinType.LEFT);
             List<Predicate> locationPredicateList = new ArrayList<>();
             locationFilters.forEach(locationFilter ->
                     locationPredicateList.add(getLocationPredicate(joinEntity, criteriaBuilder, locationFilter))
@@ -76,7 +76,7 @@ public class TalentSpecification implements Specification<Talent> {
         return predicates;
     }
 
-    private Predicate getLocationPredicate(Join<Talent, AvailableLocation> joinEntity, CriteriaBuilder criteriaBuilder, LocationFilter locationFilter) {
+    private Predicate getLocationPredicate(Join<Talent, TalentAvailableLocation> joinEntity, CriteriaBuilder criteriaBuilder, LocationFilter locationFilter) {
         Predicate locationPredicate = criteriaBuilder.equal(joinEntity.get("country"), locationFilter.getCountry());
         if (isNotEmpty(locationFilter.getCities())) {
             List<Predicate> cityPredicateList = new ArrayList<>();

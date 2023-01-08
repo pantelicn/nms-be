@@ -2,9 +2,13 @@ package com.opdev.talent;
 
 import com.opdev.dto.TalentRegistrationDto;
 import com.opdev.mail.NullHireMailSender;
+import com.opdev.model.location.TalentAvailableLocation;
 import com.opdev.model.talent.Talent;
 import com.opdev.model.user.User;
-import com.opdev.talent.dto.AvailableLocationUpdateDto;
+import com.opdev.talent.availablelocation.AvailableLocationService;
+import com.opdev.talent.dto.AvailableLocationCreateDto;
+import com.opdev.talent.dto.AvailableLocationViewDto;
+import com.opdev.talent.dto.TalentAvaliableLocationAddCityDto;
 import com.opdev.talent.dto.TalentBasicInfoUpdateDto;
 import com.opdev.talent.dto.TalentViewDto;
 import com.opdev.user.UserService;
@@ -16,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -26,8 +31,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.opdev.config.security.SpELAuthorizationExpressions.AS_MATCHING_TALENT_OR_ADMIN;
 
@@ -41,6 +44,7 @@ public class TalentController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final NullHireMailSender nullHireMailSender;
+    private final AvailableLocationService availableLocationService;
 
     @PostMapping
     @PreAuthorize("permitAll()")
@@ -96,20 +100,35 @@ public class TalentController {
 
     @PostMapping("/{username}/available-locations")
     @PreAuthorize(AS_MATCHING_TALENT_OR_ADMIN)
-    public TalentViewDto addAvailableLocation(@PathVariable String username,
-                                       @Valid @RequestBody AvailableLocationUpdateDto availableLocation) {
-        Talent oldTalent = talentService.getByUsername(username);
-        Talent updated = talentService.addAvailableLocation(oldTalent, availableLocation.asAvailableLocation());
-        return new TalentViewDto(updated);
+    public AvailableLocationViewDto addAvailableLocation(@PathVariable String username,
+                                       @Valid @RequestBody AvailableLocationCreateDto availableLocation) {
+        Talent foundTalent = talentService.getByUsername(username);
+        TalentAvailableLocation created = availableLocationService.create(availableLocation.asAvailableLocation(foundTalent));
+        return new AvailableLocationViewDto(created);
+    }
+
+    @PatchMapping("/{username}/available-locations/{id}")
+    @PreAuthorize(AS_MATCHING_TALENT_OR_ADMIN)
+    public void addAvailableCity(@PathVariable String username, @PathVariable Long id, @Valid @RequestBody TalentAvaliableLocationAddCityDto addCityDto) {
+        Talent foundTalent = talentService.getByUsername(username);
+        availableLocationService.addCity(id, addCityDto.getCity(), foundTalent);
     }
 
     @DeleteMapping("/{username}/available-locations/{id}")
     @PreAuthorize(AS_MATCHING_TALENT_OR_ADMIN)
-    public TalentViewDto removeAvailableLocation(@PathVariable String username,
+    public void removeAvailableLocation(@PathVariable String username,
                                           @PathVariable Long id) {
-        Talent oldTalent = talentService.getByUsername(username);
-        Talent updated = talentService.removeAvailableLocation(oldTalent, id);
-        return new TalentViewDto(updated);
+        Talent foundTalent = talentService.getByUsername(username);
+        availableLocationService.remove(id, foundTalent);
+    }
+
+    @DeleteMapping("/{username}/available-locations/{id}/cities/{cityName}")
+    @PreAuthorize(AS_MATCHING_TALENT_OR_ADMIN)
+    public void removeAvailableCity(@PathVariable String username,
+                                    @PathVariable Long id,
+                                    @PathVariable String cityName) {
+        Talent foundTalent = talentService.getByUsername(username);
+        availableLocationService.removeCity(id, cityName, foundTalent);
     }
 
 }
