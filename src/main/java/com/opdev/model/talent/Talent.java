@@ -89,7 +89,7 @@ public class Talent extends Audit {
     private User user;
 
     @Setter
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "talent")
     @Builder.Default
     private List<TalentAvailableLocation> availableLocations = new ArrayList<>();
 
