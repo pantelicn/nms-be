@@ -69,16 +69,18 @@ public class Talent extends Audit {
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
+    @Setter
     @NonNull
     @Column(nullable = false)
     @Builder.Default
-    private Boolean available = Boolean.TRUE;
+    private Boolean available = Boolean.FALSE;
 
     /**
      * This field will be updated when user change it location or change
      * availability from false to true. It's used by search template when cron job
      * starts.
      */
+    @Setter
     @NonNull
     @Column(name = "availability_change_date", nullable = false)
     private Instant availabilityChangeDate;

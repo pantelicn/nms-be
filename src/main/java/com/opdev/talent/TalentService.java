@@ -5,7 +5,6 @@ import com.opdev.talent.search.TalentSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 
@@ -34,5 +33,7 @@ public interface TalentService {
     Page<Talent> find(final TalentSpecification specification, final Pageable pageable);
 
     Talent removeAvailableLocation(Talent oldTalent, Long id);
+
+    void updateAvailability(Talent talent, boolean available);
 
 }

@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -156,6 +157,14 @@ class TalentServiceImpl implements TalentService {
         Talent updated = talentRepository.save(oldTalent);
         LOGGER.info("Removed available location with id {} on talent {}", id,  updated.getUser().getUsername());
         return updated;
+    }
+
+    @Transactional
+    @Override
+    public void updateAvailability(Talent talent, boolean available) {
+        talent.setAvailable(available);
+        talent.setAvailabilityChangeDate(Instant.now());
+        LOGGER.info("Updated talent {} availability  to {}", talent.getUser().getUsername(), available);
     }
 
 }

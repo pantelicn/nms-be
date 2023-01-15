@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 @ToString(callSuper = true)
 public class TalentViewDto {
 
+    private Long id;
+
     private String firstName;
 
     private String lastName;
@@ -35,11 +37,14 @@ public class TalentViewDto {
 
     private List<Long> likedPosts = new ArrayList<>();
 
+    private Boolean available;
+
     public TalentViewDto(Talent talent) {
         asView(talent);
     }
 
     private void asView(@NonNull Talent talent) {
+        this.id = talent.getId();
         this.firstName = talent.getFirstName();
         this.lastName = talent.getLastName();
         this.experienceYears = talent.getExperienceYears();
@@ -52,6 +57,7 @@ public class TalentViewDto {
                 likedPosts.add(k);
             }
         });
+        this.available = talent.getAvailable();
     }
 
 }

@@ -1,6 +1,5 @@
 package com.opdev.talent.term;
 
-import com.opdev.config.security.Roles;
 import com.opdev.model.term.TalentTerm;
 import com.opdev.talent.dto.TalentTermAddDto;
 import com.opdev.talent.dto.TalentTermEditDto;
@@ -22,6 +21,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.opdev.config.security.SpELAuthorizationExpressions.AS_MATCHING_TALENT_OR_ADMIN;
+
 @RestController
 @RequestMapping("v1/talents/{username}/terms")
 @RequiredArgsConstructor
@@ -30,7 +31,7 @@ public class TalentTermController {
     private final TalentTermService service;
 
     @GetMapping
-    @PreAuthorize("#username == authentication.name && hasRole('" + Roles.TALENT + "')")
+    @PreAuthorize(AS_MATCHING_TALENT_OR_ADMIN)
     public List<TalentTermViewDto> getAll(@PathVariable String username) {
         final List<TalentTerm> found = service.getByTalent(username);
         return found.stream()
@@ -40,7 +41,7 @@ public class TalentTermController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("#username == authentication.name && hasRole('" + Roles.TALENT + "')")
+    @PreAuthorize(AS_MATCHING_TALENT_OR_ADMIN)
     public List<TalentTermViewDto> add(@PathVariable String username,
                                        @RequestBody List<TalentTermAddDto> newTalentTerms) {
         List<TalentTerm> mapped = newTalentTerms.stream()
@@ -53,7 +54,7 @@ public class TalentTermController {
     }
 
     @PutMapping
-    @PreAuthorize("#username == authentication.name && hasRole('" + Roles.TALENT + "')")
+    @PreAuthorize(AS_MATCHING_TALENT_OR_ADMIN)
     public List<TalentTermViewDto> edit(@PathVariable String username, @Valid @RequestBody final List<TalentTermEditDto> modified) {
         final List<TalentTerm> updated = service.edit(modified.stream()
                 .map(TalentTermEditDto::asTalentTerm)
@@ -63,7 +64,7 @@ public class TalentTermController {
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("#username == authentication.name && hasRole('" + Roles.TALENT + "')")
+    @PreAuthorize(AS_MATCHING_TALENT_OR_ADMIN)
     public void remove(@PathVariable String username, @PathVariable Long id) {
         service.remove(id, username);
     }

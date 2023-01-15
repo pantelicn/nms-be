@@ -1,5 +1,6 @@
 package com.opdev.talent;
 
+import com.opdev.dto.CompanyViewDto;
 import com.opdev.dto.TalentRegistrationDto;
 import com.opdev.mail.NullHireMailSender;
 import com.opdev.model.location.TalentAvailableLocation;
@@ -8,12 +9,16 @@ import com.opdev.model.user.User;
 import com.opdev.talent.availablelocation.AvailableLocationService;
 import com.opdev.talent.dto.AvailableLocationCreateDto;
 import com.opdev.talent.dto.AvailableLocationViewDto;
+import com.opdev.talent.dto.AvailableUpdateDto;
 import com.opdev.talent.dto.TalentAvaliableLocationAddCityDto;
 import com.opdev.talent.dto.TalentBasicInfoUpdateDto;
 import com.opdev.talent.dto.TalentViewDto;
 import com.opdev.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 import static com.opdev.config.security.SpELAuthorizationExpressions.AS_MATCHING_TALENT_OR_ADMIN;
+import static com.opdev.config.security.SpELAuthorizationExpressions.IS_ADMIN;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -67,6 +73,13 @@ public class TalentController {
 
         final Talent talent = talentService.view(username);
         return ResponseEntity.ok(new TalentViewDto(talent));
+    }
+
+    @GetMapping
+    @PreAuthorize(IS_ADMIN)
+    public Page<TalentViewDto> viewMultiple(@PageableDefault Pageable pageable) {
+        LOGGER.info("Viewing all talents");
+        return talentService.findAll(pageable).map(TalentViewDto::new);
     }
 
     @PutMapping("/{username}")
@@ -129,6 +142,13 @@ public class TalentController {
                                     @PathVariable String cityName) {
         Talent foundTalent = talentService.getByUsername(username);
         availableLocationService.removeCity(id, cityName, foundTalent);
+    }
+
+    @PatchMapping("/{username}/available")
+    @PreAuthorize(AS_MATCHING_TALENT_OR_ADMIN)
+    public void setAvailableForSearch(@PathVariable String username, @RequestBody AvailableUpdateDto availableUpdateDto) {
+        Talent foundTalent = talentService.getByUsername(username);
+        talentService.updateAvailability(foundTalent, availableUpdateDto.isAvailable());
     }
 
 }
