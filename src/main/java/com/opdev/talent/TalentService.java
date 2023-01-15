@@ -1,9 +1,9 @@
 package com.opdev.talent;
 
 import com.opdev.model.talent.Talent;
-import com.opdev.talent.search.TalentSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Optional;
 
@@ -30,7 +30,7 @@ public interface TalentService {
 
     Page<Talent> findAll(Pageable pageable);
 
-    Page<Talent> find(final TalentSpecification specification, final Pageable pageable);
+    Page<Talent> find(final Specification<Talent> specification, final Pageable pageable);
 
     Talent removeAvailableLocation(Talent oldTalent, Long id);
 

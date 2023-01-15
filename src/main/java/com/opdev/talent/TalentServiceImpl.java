@@ -7,7 +7,6 @@ import com.opdev.model.talent.Talent;
 import com.opdev.model.user.User;
 import com.opdev.model.user.UserRole;
 import com.opdev.repository.TalentRepository;
-import com.opdev.talent.search.TalentSpecification;
 import com.opdev.user.UserService;
 import com.opdev.user.role.RoleService;
 import com.opdev.user.userole.UserRoleService;
@@ -17,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -141,7 +141,7 @@ class TalentServiceImpl implements TalentService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Talent> find(TalentSpecification specification, Pageable pageable) {
+    public Page<Talent> find(Specification<Talent> specification, Pageable pageable) {
         Objects.requireNonNull(pageable);
         return talentRepository.findAll(specification, pageable);
     }
