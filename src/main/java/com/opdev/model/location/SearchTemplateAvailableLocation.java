@@ -2,6 +2,7 @@ package com.opdev.model.location;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -53,5 +54,13 @@ public class SearchTemplateAvailableLocation {
     @ManyToOne
     @JoinColumn(name = "search_template_id", referencedColumnName = "id")
     private SearchTemplate searchTemplate;
+
+    public void removeCity(String toRemoveCity) {
+        cities = cities.stream().filter(city -> !city.equals(toRemoveCity)).collect(Collectors.toSet());
+    }
+
+    public void addCity(String toAddCity) {
+        cities.add(toAddCity);
+    }
 
 }

@@ -51,9 +51,8 @@ public class SearchTemplate extends Audit {
     @Setter
     private Integer experienceYears;
 
-    @NonNull
     @Setter
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "searchTemplate")
     private List<SearchTemplateAvailableLocation> availableLocations = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "searchTemplate", orphanRemoval = true)
