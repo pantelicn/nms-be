@@ -13,6 +13,7 @@ import com.opdev.model.search.TableName;
 import com.opdev.model.term.Term;
 import com.opdev.model.term.TermType;
 import com.opdev.repository.FacetRepository;
+import com.opdev.repository.SearchTemplateAvailableLocationRepository;
 import com.opdev.repository.SearchTemplateRepository;
 import com.opdev.term.TermService;
 import lombok.NonNull;
@@ -31,6 +32,7 @@ public class SearchTemplateServiceImpl implements SearchTemplateService {
     private final TermService termService;
     private final CompanyService companyService;
     private final FacetRepository facetRepository;
+    private final SearchTemplateAvailableLocationRepository searchTemplateAvailableLocationRepository;
 
     @Override
     @Transactional
@@ -48,6 +50,7 @@ public class SearchTemplateServiceImpl implements SearchTemplateService {
     @Transactional
     public SearchTemplate edit(@NonNull final SearchTemplate modified, @NonNull final String companyUsername) {
         SearchTemplate found = get(modified.getId(), companyUsername);
+        searchTemplateAvailableLocationRepository.deleteBySearchTemplate(found);
         updateFacets(found, modified, companyUsername);
         found.setName(modified.getName());
         found.setExperienceYears(modified.getExperienceYears());
