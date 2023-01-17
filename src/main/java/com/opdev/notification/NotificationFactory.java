@@ -1,5 +1,7 @@
 package com.opdev.notification;
 
+import com.opdev.model.company.Company;
+import com.opdev.model.subscription.Subscription;
 import com.opdev.model.user.Notification;
 import com.opdev.model.user.NotificationInfoType;
 import com.opdev.model.user.NotificationType;
@@ -78,6 +80,21 @@ public class NotificationFactory {
                 .infoType(NotificationInfoType.REQUEST)
                 .user(notificationFor)
                 .build();
+    }
+
+    public static Notification createWelcomeNotificationCompanyTrialPeriod(Company company) {
+        return Notification.builder()
+                .referenceId(company.getUser().getId())
+                .seen(false)
+                .description("Thank you for registering on Nullhire. You have been subscribed to trial period until 1. July 2023. Use Nullhire to find best fitting developers for your company. Enjoy!")
+                .type(NotificationType.INFO)
+                .infoType(NotificationInfoType.ACTIVATION)
+                .user(company.getUser())
+                .build();
+    }
+
+    public static Notification createWelcomeNotificationTalent() {
+        return null;
     }
 
 }

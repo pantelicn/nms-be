@@ -32,4 +32,6 @@ public interface CompanyService {
 
     Page<Company> findByNameStarts(String nameStarts, Pageable pageable);
 
+    void createWelcomeNotification(String companyUsername);
+
 }
