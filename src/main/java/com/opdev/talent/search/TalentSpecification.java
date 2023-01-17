@@ -38,6 +38,12 @@ public class TalentSpecification implements Specification<Talent> {
     private final transient List<LocationFilter> locationFilters;
     private final transient Integer experienceYears;
 
+    public TalentSpecification() {
+        this.facets = new ArrayList<>();
+        this.locationFilters = new ArrayList<>();
+        this.experienceYears = 0;
+    }
+
     @Override
     public Predicate toPredicate(@NonNull Root<Talent> root,
                                  @NonNull CriteriaQuery<?> criteriaQuery,
@@ -72,6 +78,8 @@ public class TalentSpecification implements Specification<Talent> {
         if (experienceYears != null && experienceYears > 0) {
             predicates.add(criteriaBuilder.and(criteriaBuilder.ge(root.get("experienceYears"), experienceYears)));
         }
+
+        predicates.add(criteriaBuilder.and(criteriaBuilder.isTrue(root.get("available"))));
 
         return predicates;
     }

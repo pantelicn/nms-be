@@ -87,7 +87,7 @@ public class Talent extends Audit {
 
     @NonNull
     @OneToOne
-    @JoinColumn(name = "user", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
     @Setter

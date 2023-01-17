@@ -1,6 +1,7 @@
 package com.opdev.talent;
 
 import com.opdev.talent.dto.PublicTalentViewDto;
+import com.opdev.talent.search.TalentSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -20,7 +21,7 @@ public class PublicTalentController {
 
     @GetMapping
     public List<PublicTalentViewDto> findLatest10() {
-        return service.findAll(PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdOn")))
+        return service.find(new TalentSpecification(), PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdOn")))
                 .getContent().stream()
                 .map(PublicTalentViewDto::new)
                 .collect(Collectors.toList());

@@ -10,23 +10,17 @@ spring:
         default-page-size: 10
 
   datasource:
-    driverClassName: org.h2.Driver
-    url: jdbc:h2:mem:testdb
-    username: sa
-    password: ""
-
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-      settings:
-        trace: false
-        web-allow-others: false
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
 
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
 
   mail:
     host: mail.privateemail.com
@@ -43,6 +37,10 @@ spring:
   messages:
     basename: i18n/messages
     encoding: UTF-8
+  sql:
+    init:
+      platform: postgres
+      mode: always
 
 logging:
   level:
@@ -57,6 +55,11 @@ security:
   aes:
     secret: "3WTR3Ep7MItSFduTZvgyQQ=="
 
+nullhire:
+  profile-images-dir: https://api.nullhire.com/images
+  base-url: https://api.nullhire.com/api
+  domain: nullhire.com
+
 import:
   local:
-    data: true
+    data: false
