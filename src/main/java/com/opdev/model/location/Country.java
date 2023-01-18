@@ -33,7 +33,7 @@ public class Country {
     @Column(unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "country")
+    @OneToMany(mappedBy = "country", cascade = CascadeType.ALL)
     private List<City> cities = new ArrayList<>();
 
     private String code;
