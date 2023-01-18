@@ -57,7 +57,7 @@ security:
 
 nullhire:
   profile-images-dir: https://api.nullhire.com/images
-  base-url: https://api.nullhire.com/api
+  base-url: https://api.nullhire.com
   domain: nullhire.com
 
 import:
