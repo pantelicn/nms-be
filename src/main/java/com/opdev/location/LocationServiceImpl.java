@@ -33,6 +33,9 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public List<Country> addCountries(List<Country> countries) {
         LOGGER.info("Saving {} countries", countries.size());
+        countries.forEach(country ->
+                country.getCities().forEach(city -> city.setCountry(country))
+        );
         return countryRepository.saveAll(countries);
     }
 

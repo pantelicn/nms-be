@@ -33,6 +33,7 @@ public class City {
 
     private Float longitude;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "country_id", referencedColumnName = "id")
     private Country country;
