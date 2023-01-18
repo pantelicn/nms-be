@@ -8,6 +8,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import com.opdev.model.user.VerificationToken;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -18,6 +19,7 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NullHireMailSenderImpl implements NullHireMailSender {
@@ -35,7 +37,7 @@ public class NullHireMailSenderImpl implements NullHireMailSender {
     public void sendRegistrationEmail(final String emailTo, final VerificationToken verificationToken) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
-
+            LOGGER.info("Sending verification email to {}", emailTo);
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
 
             mimeMessageHelper.setSubject("Nullhire activation");
@@ -50,8 +52,9 @@ public class NullHireMailSenderImpl implements NullHireMailSender {
             mimeMessageHelper.setText(content, true);
 
             javaMailSender.send(mimeMessageHelper.getMimeMessage());
+            LOGGER.info("Sent verification email to {}", emailTo);
         } catch (MessagingException e) {
-            e.printStackTrace();
+            LOGGER.error("Error during sending verification email {}", e.getMessage(), e);
         }
     }
 
@@ -59,7 +62,7 @@ public class NullHireMailSenderImpl implements NullHireMailSender {
     public void sendResetPasswordEmail(final String emailTo, final UUID validityToken) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
-
+            LOGGER.info("Sending password reset email to {}", emailTo);
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
 
             mimeMessageHelper.setSubject("Nullhire reset password");
@@ -74,13 +77,14 @@ public class NullHireMailSenderImpl implements NullHireMailSender {
             mimeMessageHelper.setText(content, true);
 
             javaMailSender.send(mimeMessageHelper.getMimeMessage());
+            LOGGER.info("Sent password reset email to {}", emailTo);
         } catch (MessagingException e) {
-            e.printStackTrace();
+            LOGGER.error("Error during sending verification email {}", e.getMessage(), e);
         }
     }
 
     public String geContentFromTemplate(Map<String, Object> model, String template) {
-        StringBuffer content = new StringBuffer();
+        StringBuilder content = new StringBuilder();
         try {
             content.append(FreeMarkerTemplateUtils.processTemplateIntoString(nullHireFreeMarkerConfiguration.getTemplate(template), model));
         } catch (Exception e) {
