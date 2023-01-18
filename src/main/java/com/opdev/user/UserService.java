@@ -43,7 +43,7 @@ public interface UserService {
 
     Optional<User> findUserByUsernameAndType(String username, UserType type);
 
-    void activateUser(UUID activationCode);
+    User activateUser(UUID activationCode);
 
     void resetPasswordBegin(String email);
 

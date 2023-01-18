@@ -39,7 +39,7 @@ public class TalentTermRequestController {
     public RequestDetailViewDto editByTalent(@Valid @RequestBody RequestResponseDto requestResponse,
                                        @PathVariable String username) {
         Request modified = service.editByTalent(requestResponse, username);
-        notificationService.createOrUpdate(NotificationFactory.editRequestByTalent(modified.getId(), modified.getTalent().getUser(), modified.getNote()));
+        notificationService.createOrUpdate(NotificationFactory.editRequestByTalent(modified.getId(), modified.getCompany().getUser(), modified.getNote()));
         return new RequestDetailViewDto(modified);
     }
 

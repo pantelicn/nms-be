@@ -3,6 +3,7 @@ package com.opdev.model.user;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -69,5 +70,13 @@ public class User extends Audit {
     @NonNull
     @JoinColumn(name = "verification_token_id", referencedColumnName = "id")
     private VerificationToken verificationToken;
+
+    public boolean isCompany() {
+        return userRoles.stream().filter(userRole -> userRole.getRole().getName().equals("ROLE_COMPANY")).collect(Collectors.toList()).size() == 1;
+    }
+
+    public boolean isTalent() {
+        return userRoles.stream().filter(userRole -> userRole.getRole().getName().equals("ROLE_TALENT")).collect(Collectors.toList()).size() == 1;
+    }
 
 }

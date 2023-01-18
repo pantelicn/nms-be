@@ -2,6 +2,7 @@ package com.opdev.request.dto;
 
 import com.opdev.model.request.TalentTermRequest;
 import com.opdev.model.request.TalentTermRequestStatus;
+import com.opdev.model.term.TermType;
 import com.opdev.model.term.UnitOfMeasure;
 
 import lombok.AccessLevel;
@@ -18,6 +19,7 @@ public class TalentTermRequestViewDto {
     private String value;
     private String counterOffer;
     private TalentTermRequestStatus status;
+    private TermType termType;
 
     public TalentTermRequestViewDto(TalentTermRequest talentTermRequest) {
         id = talentTermRequest.getId();
@@ -26,6 +28,7 @@ public class TalentTermRequestViewDto {
         value = talentTermRequest.getTalentTerm().getValue();
         counterOffer = talentTermRequest.getCounterOffer();
         status = talentTermRequest.getStatus();
+        termType = talentTermRequest.getTalentTerm().getTerm().getType();
     }
 
 }

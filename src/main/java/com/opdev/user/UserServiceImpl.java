@@ -1,5 +1,6 @@
 package com.opdev.user;
 
+import com.opdev.company.service.CompanyService;
 import com.opdev.config.security.Roles;
 import com.opdev.exception.ApiEntityDisabledException;
 import com.opdev.exception.ApiEntityNotFoundException;
@@ -8,9 +9,15 @@ import com.opdev.exception.ApiVerificationTokenInvalidException;
 import com.opdev.exception.PasswordsNotSameException;
 import com.opdev.exception.ResetPasswordTokenExpired;
 import com.opdev.mail.NullHireMailSender;
+import com.opdev.model.company.Company;
+import com.opdev.model.subscription.PlanType;
+import com.opdev.model.subscription.Subscription;
+import com.opdev.model.user.Notification;
 import com.opdev.model.user.ResetPasswordRequest;
 import com.opdev.model.user.User;
 import com.opdev.model.user.UserType;
+import com.opdev.notification.NotificationFactory;
+import com.opdev.notification.NotificationService;
 import com.opdev.repository.UserRepository;
 import com.opdev.user.resetpasswordrequest.ResetPasswordRequestService;
 import com.opdev.user.verification.VerificationTokenService;
@@ -134,7 +141,7 @@ class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     @Transactional
-    public void activateUser(final UUID activationCode) {
+    public User activateUser(final UUID activationCode) {
         Optional<User> found = userRepository.findByVerificationTokenActivationCode(activationCode);
         if (found.isEmpty()) {
             throw new ApiVerificationTokenInvalidException("User with a verification code not found",
@@ -143,7 +150,7 @@ class UserServiceImpl implements UserService, UserDetailsService {
         User foundUser = found.get();
         verificationTokenService.use(foundUser.getVerificationToken());
         foundUser.setEnabled(true);
-        userRepository.save(foundUser);
+        return userRepository.save(foundUser);
     }
 
     @Transactional(readOnly = true)

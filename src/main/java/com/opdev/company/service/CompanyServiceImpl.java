@@ -13,7 +13,12 @@ import java.util.UUID;
 import com.opdev.exception.ApiBadRequestException;
 import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.company.Company;
+import com.opdev.model.subscription.PlanType;
+import com.opdev.model.subscription.Subscription;
+import com.opdev.model.user.Notification;
 import com.opdev.model.user.User;
+import com.opdev.notification.NotificationFactory;
+import com.opdev.notification.NotificationService;
 import com.opdev.repository.CompanyRepository;
 import com.opdev.user.UserService;
 
@@ -34,6 +39,7 @@ class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
     private final UserService userService;
+    private final NotificationService notificationService;
     private static final List<String> VALID_PROFILE_IMAGE_EXTENSIONS = List.of("png", "jpg", "jpeg");
 
     @Value("${nullhire.profile-images-dir}")
@@ -147,6 +153,21 @@ class CompanyServiceImpl implements CompanyService {
     @Transactional(readOnly = true)
     public Page<Company> findByNameStarts(@NonNull final String nameStarts, @NonNull final Pageable pageable) {
         return companyRepository.findByNameContainsIgnoreCase(nameStarts, pageable);
+    }
+
+    @Override
+    @Transactional
+    public void createWelcomeNotification(final String companyUsername) {
+        Notification accountActivateNotification;
+        Company foundCompany = getByUsername(companyUsername);
+        Subscription companySubscription = foundCompany.getSubscriptions().get(0);
+        if (companySubscription.getPlan().getType() == PlanType.TRIAL) {
+            accountActivateNotification = NotificationFactory.createWelcomeNotificationCompanyTrialPeriod(foundCompany);
+        } else {
+            accountActivateNotification = NotificationFactory.createWelcomeNotificationCompanyTrialPeriod(foundCompany);
+        }
+
+        notificationService.create(accountActivateNotification);
     }
 
     private String generateFullPath(String originalFileName, String companyName) {
