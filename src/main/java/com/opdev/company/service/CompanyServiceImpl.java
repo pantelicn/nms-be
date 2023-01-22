@@ -130,7 +130,7 @@ class CompanyServiceImpl implements CompanyService {
         Company found = getByUsername(companyUsername);
         String fullPath = generateFullPath(image.getOriginalFilename(), found.getName());
         found.setProfileImage(fullPath);
-        Path fileNameAndPath = Paths.get(URI.create(profileImagesDir + "/" + fullPath));
+        Path fileNameAndPath = Paths.get(URI.create(profileImagesDir + "/" + fullPath).getPath());
         try {
             Files.write(fileNameAndPath, image.getBytes());
             companyRepository.save(found);
