@@ -56,7 +56,7 @@ security:
     secret: "3WTR3Ep7MItSFduTZvgyQQ=="
 
 nullhire:
-  profile-images-dir: https://api.nullhire.com/images
+  profile-images-dir: /var/www/data/
   base-url: https://api.nullhire.com
   domain: https://nullhire.com
   allowed-origins: https://nullhire.com,https://admin.nullhire.com
