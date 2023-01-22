@@ -132,7 +132,7 @@ class CompanyServiceImpl implements CompanyService {
         try {
             Files.write(fileNameAndPath, image.getBytes());
             companyRepository.save(found);
-            return fileNameAndPath.toString();
+            return fullPath;
         } catch (IOException e) {
             LOGGER.error("Unable to upload profile image: {}", e.getMessage(), e);
             throw ApiBadRequestException.message("Unable to upload profile image.");

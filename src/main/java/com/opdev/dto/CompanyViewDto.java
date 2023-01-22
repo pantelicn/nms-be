@@ -32,6 +32,8 @@ public class CompanyViewDto {
 
     private List<Long> likedPosts = new ArrayList<>();
 
+    private String profileImage;
+
     public CompanyViewDto(@NonNull final Company company) {
         asView(company);
     }
@@ -47,6 +49,7 @@ public class CompanyViewDto {
                 likedPosts.add(k);
             }
         });
+        profileImage = company.getProfileImage();
     }
 
 }
