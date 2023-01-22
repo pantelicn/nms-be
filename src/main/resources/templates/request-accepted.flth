@@ -93,14 +93,14 @@
             </tr>
             <tr>
                 <td colspan="2" style="padding-top: 10px;font-family: system-ui;color: #6c757d !important;">
-                    You have received request from ${company}. You can find it under requests section.
+                    Request under ${requestNote} has been accepted by ${talent}. Now you can start a conversation with ${talent}.
                 </td>
             </tr>
             <tr>
                 <td>
                     <div class="btn-div">
-                        <a class="nh-button" href="${domain}/talent/requests?id=${id}" target="_blank" role="button">
-                            <span style="padding-left: 20px;padding-right: 20px;">VIEW REQUEST</span>
+                        <a class="nh-button" href="${domain}/company/messages" target="_blank" role="button">
+                            <span style="padding-left: 20px;padding-right: 20px;">VIEW MESSAGES</span>
                         </a>
                     </div>
                 </td>
