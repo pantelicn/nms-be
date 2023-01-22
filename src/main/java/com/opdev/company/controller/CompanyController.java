@@ -98,7 +98,7 @@ class CompanyController {
             admin = userService.getLoggedInUser();
         }
         final Country foundCountry = locationService.findByCountryId(companyUpdateDto.getNewLocation().getCountryId());
-        final City foundCity = locationService.findByCityIdAndCountryId(companyUpdateDto.getNewLocation().getCityId(), companyUpdateDto.getNewLocation().getCountryId());
+        final City foundCity = locationService.findByCityIdAndCountryId(companyUpdateDto.getNewLocation().getCountryId(), companyUpdateDto.getNewLocation().getCityId());
 
         final Company company = companyService.update(companyUpdateDto.asCompany(oldCompany, admin, foundCountry, foundCity));
         return ResponseEntity.ok(new CompanyViewDto(company));
