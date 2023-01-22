@@ -62,7 +62,7 @@ class CompanyController {
     public CompanyViewDto add(@Valid @RequestBody final CompanyRegistrationDto companyRegistrationDto) {
         LOGGER.info("Registering a new company: {}", companyRegistrationDto.getUsername());
         final Country foundCountry = locationService.findByCountryId(companyRegistrationDto.getLocation().getCountryId());
-        final City foundCity = locationService.findByCityIdAndCountryId(companyRegistrationDto.getLocation().getCityId(), companyRegistrationDto.getLocation().getCountryId());
+        final City foundCity = locationService.findByCityIdAndCountryId(companyRegistrationDto.getLocation().getCountryId(), companyRegistrationDto.getLocation().getCityId());
         final Company company = companyRegistrationDto.asCompany(passwordEncoder, foundCountry, foundCity);
         final Company registeredCompany = companyRegistrationService.register(company);
         nullHireMailSender.sendRegistrationEmail(companyRegistrationDto.getUsername(), company.getUser().getVerificationToken());
