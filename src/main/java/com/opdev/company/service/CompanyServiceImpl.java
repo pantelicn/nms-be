@@ -22,6 +22,7 @@ import com.opdev.notification.NotificationService;
 import com.opdev.repository.CompanyRepository;
 import com.opdev.user.UserService;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -33,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 class CompanyServiceImpl implements CompanyService {
@@ -132,6 +134,7 @@ class CompanyServiceImpl implements CompanyService {
             companyRepository.save(found);
             return fileNameAndPath.toString();
         } catch (IOException e) {
+            LOGGER.error("Unable to upload profile image: {}", e.getMessage(), e);
             throw ApiBadRequestException.message("Unable to upload profile image.");
         }
     }
