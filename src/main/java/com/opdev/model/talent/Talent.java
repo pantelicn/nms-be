@@ -149,6 +149,6 @@ public class Talent extends Audit {
     }
 
     public String getFullName() {
-        return String.join(" ", firstName, middleName, lastName);
+        return String.join(" ", firstName, lastName);
     }
 }

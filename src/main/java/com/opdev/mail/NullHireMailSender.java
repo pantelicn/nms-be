@@ -10,4 +10,6 @@ public interface NullHireMailSender {
 
     void sendResetPasswordEmail(String emailTo, UUID validityToken);
 
+    void sendRequestReceivedEmail(String emailTo, Long requestId, String companyName);
+
 }

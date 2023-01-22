@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <style>
+            .nh-cyan {
+                color: #17a2b8;
+            }
+            .nh-button {
+                color: #fff;
+                background-color: #17a2b8;
+                border-color: #17a2b8;
+                text-decoration: none;
+                padding: 10px 10px 10px 10px;
+                border-radius: 20px 20px 20px 20px;
+                font-family: system-ui;
+            }
+            .nh-button:hover {
+                color: #fff;
+                background-color: #52bebe;
+                border-color: #8ad3d3
+            }
+            .btn-primary:hover {
+                color: #fff;
+                background-color: #52bebe;
+                border-color: #8ad3d3
+            }
+            .nh-container {
+                background-color: #FFFFFF !important;
+                width: 30%;
+                padding: 10px 10px 10px 10px;
+            }
+            .btn-div {
+                margin-top: 30px;
+                margin-bottom: 30px;
+                text-align: center;
+            }
+            a[href] {
+                color: white !important;
+            }
+            /* For Mobile */
+            @media screen and (max-width: 540px) {
+                .view {
+                    width: 100%;
+                }
+            }
+
+            /* For Tablets */
+            @media screen and (min-width: 540px) and (max-width: 780px) {
+                .view {
+                    width: 100%;
+                }
+            }
+
+            @media screen and (min-width: 780px) {
+                .view {
+                    width: 50%;
+                }
+            }
+
+            .logo {
+                height: 30px;
+            }
+
+            .tr {
+                max-width: 300px;
+            }
+
+            #tablediv {
+                width: 400px;
+                margin-left: auto;
+                margin-right: auto;
+                background-color: white;
+                border-radius: 0.25rem;
+                border: 1px solid rgba(0, 0, 0, 0.125);
+                padding-top: 10px;
+            }
+
+            body {
+                background-color: #f8f9fa;
+            }
+
+        </style>
+</head>
+<body>
+    <div id="tablediv">
+        <table border="0" cellpadding="0" cellspacing="0" width="90%" style="margin-left:auto;margin-right:auto;">
+            <tr valign="top">
+                <td style="vertical-align: bottom;font-family: system-ui;">Request received</td>
+                <td style="float: right"><img class="logo" src="https://api.nullhire.com/images/logo.png" /></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding-top: 10px;font-family: system-ui;color: #6c757d !important;">
+                    You have received request from Google
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="btn-div">
+                        <a class="nh-button" href="${domain}/talent/requests?id=${id}" target="_blank" role="button">
+                            <span style="padding-left: 20px;padding-right: 20px;">VIEW REQUEST</span>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

@@ -14,6 +14,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import freemarker.template.Configuration;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
@@ -32,6 +33,7 @@ public class NullHireMailSenderImpl implements NullHireMailSender {
     private String domain;
     private static final String REGISTRATION_TEMPLATE = "registration-email.flth";
     private static final String RESET_PASSWORD_TEMPLATE = "reset-password-email.flth";
+    private static final String REQUEST_RECEIVED_TEMPLATE = "request-received.flth";
 
     @Override
     public void sendRegistrationEmail(final String emailTo, final VerificationToken verificationToken) {
@@ -80,6 +82,32 @@ public class NullHireMailSenderImpl implements NullHireMailSender {
             LOGGER.info("Sent password reset email to {}", emailTo);
         } catch (MessagingException e) {
             LOGGER.error("Error during sending verification email {}", e.getMessage(), e);
+        }
+    }
+
+    @Async
+    @Override
+    public void sendRequestReceivedEmail(final String emailTo, final Long requestId, final String companyName) {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+            LOGGER.info("Sending request received email to {}", emailTo);
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+
+            mimeMessageHelper.setSubject(String.format("Request from %s has been received", companyName));
+            mimeMessageHelper.setFrom("noreply@nullhire.com");
+            mimeMessageHelper.setTo(emailTo);
+            Map<String, Object> model = new HashMap<>();
+            model.put("domain", domain);
+            model.put("id", requestId.toString());
+
+            String content = geContentFromTemplate(model, REQUEST_RECEIVED_TEMPLATE);
+
+            mimeMessageHelper.setText(content, true);
+
+            javaMailSender.send(mimeMessageHelper.getMimeMessage());
+            LOGGER.info("Sent request received email to {}", emailTo);
+        } catch (MessagingException e) {
+            LOGGER.error("Error during sending request received email {}", e.getMessage(), e);
         }
     }
 
