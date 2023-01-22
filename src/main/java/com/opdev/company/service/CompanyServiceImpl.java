@@ -1,6 +1,7 @@
 package com.opdev.company.service;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,6 +25,7 @@ import com.opdev.user.UserService;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -128,7 +130,7 @@ class CompanyServiceImpl implements CompanyService {
         Company found = getByUsername(companyUsername);
         String fullPath = generateFullPath(image.getOriginalFilename(), found.getName());
         found.setProfileImage(fullPath);
-        Path fileNameAndPath = Paths.get(profileImagesDir, fullPath);
+        Path fileNameAndPath = Paths.get(URI.create(profileImagesDir + "/" + fullPath));
         try {
             Files.write(fileNameAndPath, image.getBytes());
             companyRepository.save(found);
