@@ -4,7 +4,6 @@ import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.opdev.config.security.SpELAuthorizationExpressions;
 import com.opdev.exception.ApiBadRequestException;
 import com.opdev.follower.FollowerService;
 import com.opdev.model.post.Post;
@@ -17,6 +16,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,7 +44,7 @@ public class PostViewController {
             @RequestParam(required = false) final Long companyId,
             @RequestParam(required = false) final Long countryId,
             @RequestParam(defaultValue = "0") Integer page, Principal user) {
-        Pageable pageable = PageRequest.of(page, MAX_POSTS_PER_PAGE);
+        Pageable pageable = PageRequest.of(page, MAX_POSTS_PER_PAGE, Sort.by("createdOn").descending());
         Page<Post> foundPosts;
 
         if (postsType == PostsType.GLOBAL) {
