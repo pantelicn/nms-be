@@ -6,6 +6,7 @@ import com.opdev.company.service.CompanyService;
 import com.opdev.exception.ApiBadRequestException;
 import com.opdev.exception.ApiBadRequestStatusException;
 import com.opdev.exception.ApiEntityNotFoundException;
+import com.opdev.mail.NullHireMailSender;
 import com.opdev.message.AvailableChatService;
 import com.opdev.model.company.Company;
 import com.opdev.model.request.Request;
@@ -50,6 +51,7 @@ public class RequestServiceImpl implements RequestService {
     private final TalentService talentService;
     private final TalentIdEncoder talentIdEncoder;
     private final NotificationService notificationService;
+    private final NullHireMailSender mailSender;
 
     @Override
     @Transactional
@@ -127,6 +129,7 @@ public class RequestServiceImpl implements RequestService {
             notificationService.create(acceptedNotification);
             Notification acceptedNotificationForTalent = NotificationFactory.createAcceptedNotificationForTalent(found.getId(), foundTalent.getUser(), found.getCompany().getName());
             notificationService.create(acceptedNotificationForTalent);
+            mailSender.sendRequestAcceptedEmail(found.getCompany().getUser().getUsername(), foundTalent.getFullName(), found.getNote());
         } else if (newStatus == RequestStatus.REJECTED) {
             Notification rejectedNotification = NotificationFactory.createRejectedNotificationForCompany(found.getId(), found.getCompany().getUser(), found.getNote());
             notificationService.create(rejectedNotification);

@@ -4,7 +4,6 @@ import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.opdev.config.security.SpELAuthorizationExpressions;
 import com.opdev.exception.ApiBadRequestException;
 import com.opdev.follower.FollowerService;
 import com.opdev.model.post.Post;

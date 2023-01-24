@@ -38,16 +38,18 @@ public class ContactServiceImpl implements ContactService {
     @Override
     @Transactional
     public List<Contact> add(final List<Contact> newContacts, final String username) {
-        return newContacts.stream().map(newContact -> add(newContact, username)).collect(Collectors.toList());
+        List<Contact> created = new ArrayList<>();
+        newContacts.forEach(newContact -> created.add(add(newContact, username)));
+        return created;
     }
 
     @Override
     @Transactional
     public List<Contact> edit(final List<Contact> modified, final String username) {
+        List<Contact> foundForUsername = findAll(username);
+        repository.deleteAll(foundForUsername);
         modified.forEach(contact -> {
-            if (contact.getId() != null) {
-                remove(contact.getId(), username);
-            }
+            setTalentOrCompany(username, contact);
         });
         return repository.saveAll(modified);
     }
