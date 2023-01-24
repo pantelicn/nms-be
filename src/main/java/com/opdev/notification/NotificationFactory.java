@@ -1,12 +1,14 @@
 package com.opdev.notification;
 
 import com.opdev.model.company.Company;
-import com.opdev.model.subscription.Subscription;
 import com.opdev.model.user.Notification;
 import com.opdev.model.user.NotificationInfoType;
 import com.opdev.model.user.NotificationType;
 import com.opdev.model.user.User;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class NotificationFactory {
 
     public static Notification createRequestNotification(Long referenceId, User notificationFor, String company) {
@@ -86,7 +88,7 @@ public class NotificationFactory {
         return Notification.builder()
                 .referenceId(company.getUser().getId())
                 .seen(false)
-                .description("Thank you for registering on Nullhire. You have been subscribed to trial period until 1. July 2023. Use Nullhire to find best fitting developers for your company. Enjoy!")
+                .description("Thank you for joining Nullhire. You have been subscribed to a trial period until 1. July 2023. Use Nullhire to find best fitting developers for your company. Enjoy!")
                 .type(NotificationType.INFO)
                 .infoType(NotificationInfoType.ACTIVATION)
                 .user(company.getUser())
