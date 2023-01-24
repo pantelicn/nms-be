@@ -11,12 +11,12 @@ import com.opdev.model.post.Post;
 import com.opdev.model.user.Follower;
 import com.opdev.post.dto.PostViewDto;
 import com.opdev.post.dto.PostsType;
-import com.opdev.post.service.noimpl.PostReactionService;
 import com.opdev.post.service.noimpl.PostViewService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,7 +34,6 @@ public class PostViewController {
     private static final int MAX_POSTS_PER_PAGE = 30;
 
     private final PostViewService postViewService;
-    private final PostReactionService postReactionService;
     private final FollowerService followerService;
 
     @GetMapping
@@ -44,7 +43,7 @@ public class PostViewController {
             @RequestParam(required = false) final Long companyId,
             @RequestParam(required = false) final Long countryId,
             @RequestParam(defaultValue = "0") Integer page, Principal user) {
-        Pageable pageable = PageRequest.of(page, MAX_POSTS_PER_PAGE);
+        Pageable pageable = PageRequest.of(page, MAX_POSTS_PER_PAGE, Sort.by("createdOn").descending());
         Page<Post> foundPosts;
 
         if (postsType == PostsType.GLOBAL) {
