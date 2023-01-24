@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Past;
 
 import com.opdev.dto.paging.RegistrationDto;
 import com.opdev.model.location.Location;
@@ -46,6 +47,7 @@ public class TalentRegistrationDto implements RegistrationDto {
 
   private String middleName;
 
+  @Past
   private LocalDate dateOfBirth;
 
   @NonNull
