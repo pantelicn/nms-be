@@ -51,8 +51,9 @@ public class TalentTerm extends Audit {
     private String value;
 
     @Setter
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private  TermType termType;
+    private TermType termType;
 
     @NonNull
     @Column(nullable = false)
