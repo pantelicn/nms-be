@@ -50,6 +50,10 @@ public class TalentTerm extends Audit {
     @Column(nullable = false)
     private String value;
 
+    @Setter
+    @Column(nullable = false)
+    private  TermType termType;
+
     @NonNull
     @Column(nullable = false)
     private Boolean negotiable;

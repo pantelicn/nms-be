@@ -6,6 +6,7 @@ import com.opdev.model.search.LocationFilter;
 import com.opdev.model.search.Facet;
 import com.opdev.model.search.TableName;
 import com.opdev.model.talent.Talent;
+import com.opdev.model.term.TermType;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -27,6 +28,7 @@ public class TalentSpecification implements Specification<Talent> {
 
     private static final String VALUE_ATTRIBUTE = "value";
     private static final String CODE_ATTRIBUTE = "code";
+    private static final String TERM_TYPE_ATTRIBUTE = "termType";
     private static final Map<TableName, String> joinTableNames = Map.of(
             TableName.SKILL, "talentSkills",
             TableName.TERM, "talentTerms",
@@ -61,6 +63,7 @@ public class TalentSpecification implements Specification<Talent> {
 
             predicates.add(criteriaBuilder.equal(entity.get(CODE_ATTRIBUTE), facet.getCode()));
             if (facet.getTableName() == TableName.TERM) {
+                predicates.add(getTermTypePredicate(joinEntity, criteriaBuilder, facet));
                 predicates.add(getTermPredicate(joinEntity, criteriaBuilder, facet));
             }
         }
@@ -128,6 +131,24 @@ public class TalentSpecification implements Specification<Talent> {
             default:
                 throw ApiBadRequestException.message(facet.getOperatorType() + " not implemented");
         }
+    }
+
+    private Predicate getTermTypePredicate(Join<Talent, ?> joinEntity, CriteriaBuilder criteriaBuilder, Facet facet) {
+        switch (facet.getOperatorType()) {
+            case EQ:
+                return criteriaBuilder.or(
+                        criteriaBuilder.equal(joinEntity.get(TERM_TYPE_ATTRIBUTE), TermType.STRING),
+                        criteriaBuilder.equal(joinEntity.get(TERM_TYPE_ATTRIBUTE), TermType.BOOLEAN)
+                );
+            case GT:
+            case LT:
+            case GTE:
+            case LTE:
+                return criteriaBuilder.equal(joinEntity.get(TERM_TYPE_ATTRIBUTE), TermType.INT);
+            default:
+                throw ApiBadRequestException.message(facet.getOperatorType() + " not implemented");
+        }
+
     }
 
 }
