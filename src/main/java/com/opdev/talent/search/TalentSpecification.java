@@ -107,22 +107,22 @@ public class TalentSpecification implements Specification<Talent> {
                 return criteriaBuilder.equal(joinEntity.get(VALUE_ATTRIBUTE), facet.getValue());
             case GT:
                 return criteriaBuilder.gt(
-                        criteriaBuilder.toLong(joinEntity.get(VALUE_ATTRIBUTE)),
+                        joinEntity.get(VALUE_ATTRIBUTE).as(Long.class),
                         Long.valueOf(facet.getValue())
                 );
             case LT:
                 return criteriaBuilder.lt(
-                        criteriaBuilder.toLong(joinEntity.get(VALUE_ATTRIBUTE)),
+                        joinEntity.get(VALUE_ATTRIBUTE).as(Long.class),
                         Long.valueOf(facet.getValue())
                 );
             case GTE:
                 return criteriaBuilder.ge(
-                        criteriaBuilder.toLong(joinEntity.get(VALUE_ATTRIBUTE)),
+                        joinEntity.get(VALUE_ATTRIBUTE).as(Long.class),
                         Long.valueOf(facet.getValue())
                 );
             case LTE:
                 return criteriaBuilder.le(
-                        criteriaBuilder.toLong(joinEntity.get(VALUE_ATTRIBUTE)),
+                        joinEntity.get(VALUE_ATTRIBUTE).as(Long.class),
                         Long.valueOf(facet.getValue())
                 );
             default:
