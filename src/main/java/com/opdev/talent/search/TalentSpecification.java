@@ -137,14 +137,14 @@ public class TalentSpecification implements Specification<Talent> {
         switch (facet.getOperatorType()) {
             case EQ:
                 return criteriaBuilder.or(
-                        criteriaBuilder.equal(joinEntity.get(TERM_TYPE_ATTRIBUTE), TermType.STRING.name()),
-                        criteriaBuilder.equal(joinEntity.get(TERM_TYPE_ATTRIBUTE), TermType.BOOLEAN.name())
+                        criteriaBuilder.equal(joinEntity.get(TERM_TYPE_ATTRIBUTE), TermType.STRING),
+                        criteriaBuilder.equal(joinEntity.get(TERM_TYPE_ATTRIBUTE), TermType.BOOLEAN)
                 );
             case GT:
             case LT:
             case GTE:
             case LTE:
-                return criteriaBuilder.equal(joinEntity.get(TERM_TYPE_ATTRIBUTE), TermType.INT.name());
+                return criteriaBuilder.equal(joinEntity.get(TERM_TYPE_ATTRIBUTE), TermType.INT);
             default:
                 throw ApiBadRequestException.message(facet.getOperatorType() + " not implemented");
         }
