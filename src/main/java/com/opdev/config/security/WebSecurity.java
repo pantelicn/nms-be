@@ -1,6 +1,5 @@
 package com.opdev.config.security;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -27,9 +26,6 @@ class WebSecurity extends WebSecurityConfigurerAdapter {
     private final PasswordEncoder passwordEncoder;
     private final ProfileService profileService;
 
-    @Value("${nullhire.monitor-ip}")
-    private String monitorIp;
-
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         final HttpSecurity builder = http.cors().and();
@@ -42,9 +38,7 @@ class WebSecurity extends WebSecurityConfigurerAdapter {
         }
         builder.csrf().disable().addFilter(new JWTAuthenticationFilter(authenticationManager())) //
                 .addFilter(new JWTAuthorizationFilter(authenticationManager())) //
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and();
-
-        builder.authorizeRequests().antMatchers("/actuator/**").hasIpAddress(monitorIp);
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         if (!profileService.isProduction()) {
             // required for the h2 DB
