@@ -5,11 +5,13 @@ import com.opdev.model.request.RequestStatus;
 import com.opdev.position.dto.PositionViewDto;
 import com.opdev.request.dto.TalentTermRequestViewDto;
 import com.opdev.skill.dto.SkillViewDto;
+import com.opdev.talent.dto.ProjectViewDto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +33,8 @@ public class RequestDetailViewDto {
 
     private List<PositionViewDto> positions;
 
+    private List<ProjectViewDto> projects = new ArrayList<>();
+
     public RequestDetailViewDto(Request request) {
         id = request.getId();
         status = request.getStatus();
@@ -42,6 +46,7 @@ public class RequestDetailViewDto {
         skills = request.getTalent().getTalentSkills().stream().map(talentSkill -> new SkillViewDto(talentSkill.getSkill())).collect(Collectors.toList());
         positions = request.getTalent().getTalentPositions().stream().map(talentPosition -> new PositionViewDto(talentPosition.getPosition())).collect(
                 Collectors.toList());
+        request.getTalent().getProjects().forEach(project -> projects.add(new ProjectViewDto(project)));
     }
 
 }

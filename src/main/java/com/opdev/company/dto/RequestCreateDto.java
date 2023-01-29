@@ -19,6 +19,8 @@ public class RequestCreateDto {
     private String talentId;
     @NonNull
     private String note;
+    
+    private String jobDescription;
 
     private List<TermCreateDto> terms;
 

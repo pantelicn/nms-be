@@ -77,6 +77,9 @@ public class Request extends Audit {
     @Setter
     private boolean seenByTalent;
 
+    @Column(length = 3000)
+    private String jobDescription;
+
     public boolean isFinal() {
         return status == RequestStatus.ACCEPTED || status == RequestStatus.REJECTED;
     }

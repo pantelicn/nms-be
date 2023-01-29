@@ -71,6 +71,7 @@ public class RequestServiceImpl implements RequestService {
                 .company(foundCompany)
                 .note(newRequestDto.getNote())
                 .seenByCompany(true)
+                .jobDescription(newRequestDto.getJobDescription())
                 .build();
 
         Map<Long, TalentTerm> talentTermsMap = talentTerms.stream()

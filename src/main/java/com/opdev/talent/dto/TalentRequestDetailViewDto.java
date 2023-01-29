@@ -28,6 +28,8 @@ public class TalentRequestDetailViewDto {
 
     private List<BenefitViewDto> benefits;
 
+    private String jobDescription;
+
     public TalentRequestDetailViewDto(Request request) {
         id = request.getId();
         status = request.getStatus();
@@ -37,6 +39,7 @@ public class TalentRequestDetailViewDto {
                 .collect(Collectors.toList());
         modifiedOn = request.getModifiedOn();
         benefits = request.getCompany().getBenefits().stream().map(BenefitViewDto::new).collect(Collectors.toList());
+        jobDescription = request.getJobDescription();
     }
 
 }
