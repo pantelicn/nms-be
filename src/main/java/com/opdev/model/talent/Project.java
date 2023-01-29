@@ -38,12 +38,12 @@ public class Project {
     private String description;
 
     @NonNull
-    @Column
+    @Column(name = "technologies_used")
     @Setter
     private String technologiesUsed;
 
     @NonNull
-    @Column
+    @Column(name = "my_role")
     @Setter
     private String myRole;
 
