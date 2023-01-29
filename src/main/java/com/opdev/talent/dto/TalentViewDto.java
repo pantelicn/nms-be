@@ -39,6 +39,8 @@ public class TalentViewDto {
 
     private Boolean available;
 
+    private List<ProjectViewDto> projects = new ArrayList<>();
+
     public TalentViewDto(Talent talent) {
         asView(talent);
     }
@@ -58,6 +60,7 @@ public class TalentViewDto {
             }
         });
         this.available = talent.getAvailable();
+        talent.getProjects().forEach(project -> projects.add(new ProjectViewDto(project)));
     }
 
 }

@@ -62,7 +62,7 @@ class BenefitCrudIntegrationTest extends AbstractIntegrationTest {
         assertThat(findAllResponse.getBody(), is(notNullValue()));
         assertThat(findAllResponse.getBody().size(), is(1));
 
-        final BenefitEditDto modifiedBenefitDto = new BenefitEditDto(benefitId, "Health insurance", "Insurance", true);
+        final BenefitEditDto modifiedBenefitDto = new BenefitEditDto("Health insurance", "Insurance", true);
         final HttpEntity<List<BenefitEditDto>> httpEntityPUT = new HttpEntity<>(List.of(modifiedBenefitDto), headers);
         final ResponseEntity<List<BenefitViewDto>> updateResponse = restTemplate.exchange("/v1/companies/" + COMPANY_GOOGLE + "/benefits", HttpMethod.PUT,
                 httpEntityPUT, new ParameterizedTypeReference<List<BenefitViewDto>>() {});

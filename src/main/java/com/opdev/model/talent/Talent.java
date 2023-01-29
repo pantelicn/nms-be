@@ -128,6 +128,10 @@ public class Talent extends Audit {
     @Builder.Default
     private Integer experienceYears = 0;
 
+    @OneToMany(mappedBy = "talent")
+    @Builder.Default
+    private List<Project> projects = new ArrayList<>();
+
     public boolean alreadyReacted(Long postId) {
         return postReactions.containsKey(postId);
     }

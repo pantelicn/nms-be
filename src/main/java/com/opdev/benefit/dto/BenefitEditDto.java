@@ -16,10 +16,6 @@ import javax.validation.constraints.NotNull;
 public class BenefitEditDto {
 
     @NonNull
-    @NotNull
-    private Long id;
-
-    @NonNull
     @NotEmpty
     private String name;
 
@@ -33,7 +29,6 @@ public class BenefitEditDto {
 
     public Benefit asBenefit() {
         return Benefit.builder()
-                .id(id)
                 .name(name)
                 .description(description)
                 .isDefault(isDefault).build();

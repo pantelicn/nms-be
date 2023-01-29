@@ -28,6 +28,8 @@ public class TalentViewSearchDto {
 
     private List<PositionViewDto> positions = new ArrayList<>();
 
+    private List<ProjectViewDto> projects = new ArrayList<>();
+
     @Setter
     private RequestViewDto previousRequest;
 
@@ -37,6 +39,7 @@ public class TalentViewSearchDto {
         talent.getTalentTerms().forEach(term -> terms.add(new TalentTermViewDto(term)));
         talent.getTalentSkills().forEach(talentSkill -> skills.add(new SkillViewDto(talentSkill.getSkill())));
         talent.getTalentPositions().forEach(talentPosition -> positions.add(new PositionViewDto(talentPosition.getPosition())));
+        talent.getProjects().forEach(project -> projects.add(new ProjectViewDto(project)));
     }
 
 }
