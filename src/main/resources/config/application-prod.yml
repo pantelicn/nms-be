@@ -58,6 +58,7 @@ nullhire:
   base-url: https://api.nullhire.com
   domain: https://nullhire.com
   allowed-origins: https://nullhire.com,https://admin.nullhire.com
+  monitor-ip: 139.162.156.212 # Nikola linode
 
 import:
   local:

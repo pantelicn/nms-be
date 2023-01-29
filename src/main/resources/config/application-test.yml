@@ -57,6 +57,22 @@ security:
   aes:
     secret: "3WTR3Ep7MItSFduTZvgyQQ=="
 
+nullhire:
+  profile-images-dir: https://api.nullhire.com/images
+  base-url: localhost
+  domain: localhost
+  allowed-origins: http://localhost:4200
+  monitor-ip: 0:0:0:0:0:0:0:1
+
 import:
   local:
-    data: true
+    data: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+          - prometheus
