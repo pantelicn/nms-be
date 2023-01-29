@@ -48,8 +48,6 @@ logging:
       opdev: INFO
     org:
       hibernate: INFO
-      springframework:
-        security: DEBUG
 
 security:
   aes:
