@@ -26,7 +26,6 @@
         <jsoup.version>1.14.3</jsoup.version>
         <commons-validator.version>1.7</commons-validator.version>
         <commons-io>2.11.0</commons-io>
-        <flyway.version>8.5.13</flyway.version>
     </properties>
 
     <groupId>com.opdev</groupId>
@@ -189,11 +188,6 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <version>${flyway.version}</version>
         </dependency>
     </dependencies>
 
