@@ -33,12 +33,6 @@ public class PostViewServiceImpl implements PostViewService {
         return repository.findByCompanyId(companyId, pageable);
     }
 
-    @Transactional(readOnly = true)
-    public List<Post> findUserFeedPosts(final Long userId) {
-        // TODO @nikolagudelj Fetch companies which user follows from the db
-        return List.of();
-    }
-
     @Override
     @Transactional(readOnly = true)
     public Page<Post> findByCompanyIds(final List<Long> companyIds, Pageable pageable) {
@@ -48,7 +42,7 @@ public class PostViewServiceImpl implements PostViewService {
     @Override
     @Transactional(readOnly = true)
     public Page<Post> findByCountryId(Long countryId, Pageable pageable) {
-        return repository.findByCountryIdOrderByCreatedOn(countryId, pageable);
+        return repository.findByCountryId(countryId, pageable);
     }
 
     @Override

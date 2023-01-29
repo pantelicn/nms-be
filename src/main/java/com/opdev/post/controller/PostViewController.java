@@ -48,7 +48,7 @@ public class PostViewController {
         if (postsType == PostsType.GLOBAL) {
             foundPosts = postViewService.findAll(pageable);
         } else if (postsType == PostsType.FOLLOWING) {
-            List<Follower> following =  followerService.findByFollower(user.getName());
+            List<Follower> following = followerService.findByFollower(user.getName());
             foundPosts = postViewService.findByCompanyIds(following.stream().map(follower -> follower.getCompany().getId()).collect(Collectors.toList()), pageable);
         } else if (postsType == PostsType.COUNTRY && countryId != null) {
             foundPosts = postViewService.findByCountryId(countryId, pageable);
