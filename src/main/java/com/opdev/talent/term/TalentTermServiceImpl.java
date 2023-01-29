@@ -61,6 +61,7 @@ public class TalentTermServiceImpl implements TalentTermService {
             modified.setModifiedBy(userService.getLoggedInUser());
             modified.setTalent(existing.get(modified.getId()).getTalent());
             modified.setTerm(existing.get(modified.getId()).getTerm());
+            modified.setTermType(existing.get(modified.getId()).getTerm().getType());
         }
         List<TalentTerm> updatedList = repository.saveAll(modifiedList);
         LOGGER.info("TalentTerms modified: ", existing.keySet());
@@ -100,6 +101,7 @@ public class TalentTermServiceImpl implements TalentTermService {
                 .value(talentTerm.getValue())
                 .negotiable(talentTerm.getNegotiable())
                 .unitOfMeasure(talentTerm.getUnitOfMeasure())
+                .termType(foundTerm.getType())
                 .talent(talent)
                 .term(foundTerm).build();
         validate(newTalentTerm);

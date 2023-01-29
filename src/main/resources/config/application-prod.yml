@@ -48,8 +48,6 @@ logging:
       opdev: INFO
     org:
       hibernate: INFO
-      springframework:
-        security: DEBUG
 
 security:
   aes:
@@ -64,3 +62,12 @@ nullhire:
 import:
   local:
     data: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+          - prometheus

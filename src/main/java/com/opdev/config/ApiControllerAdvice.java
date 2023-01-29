@@ -17,6 +17,7 @@ import com.opdev.exception.UserAlreadyExistsException;
 import com.opdev.exception.dto.ApiErrorDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -42,6 +43,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 class ApiControllerAdvice {
 
+    private static final String REQUEST_ID = "requestId";
     private final MessageSource messageSource;
     @Value("${nullhire.domain}")
     private String domain;
@@ -49,7 +51,7 @@ class ApiControllerAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<?> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
         final String message = resolveMessage(e.getMessage());
-        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).build();
+        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).requestId(MDC.get(REQUEST_ID)).build();
 
         return logAndSendResponse(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError), e);
     }
@@ -58,7 +60,7 @@ class ApiControllerAdvice {
     ResponseEntity<?> handleApiContactEditValidationException(final ApiContactEditValidationException e) {
         final String message = resolveMessage(e.getMessage());
         final HttpStatus responseStatus = HttpStatus.BAD_REQUEST;
-        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).build();
+        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).requestId(MDC.get(REQUEST_ID)).build();
 
         return logAndSendResponse(new ResponseEntity<>(apiError, responseStatus), e);
     }
@@ -67,7 +69,7 @@ class ApiControllerAdvice {
     ResponseEntity<?> handleApiBadRequestException(final ApiBadRequestException e) {
         final String message = resolveMessage(e.getMessage());
         final HttpStatus responseStatus = HttpStatus.BAD_REQUEST;
-        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).build();
+        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).requestId(MDC.get(REQUEST_ID)).build();
 
         return logAndSendResponse(new ResponseEntity<>(apiError, responseStatus), e);
     }
@@ -76,7 +78,7 @@ class ApiControllerAdvice {
     ResponseEntity<?> handleApiCompanyAlreadySubscribedException(final ApiCompanyAlreadySubscribedException e) {
         final String message = resolveMessage(e.getMessage());
         final HttpStatus responseStatus = HttpStatus.BAD_REQUEST;
-        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).build();
+        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).requestId(MDC.get(REQUEST_ID)).build();
 
         return logAndSendResponse(new ResponseEntity<>(apiError, responseStatus), e);
     }
@@ -85,7 +87,7 @@ class ApiControllerAdvice {
     ResponseEntity<?> handleApiConflictException(final ApiConflictException e) {
         final String message = resolveMessage(e.getMessage());
         final HttpStatus responseStatus = HttpStatus.CONFLICT;
-        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).build();
+        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).requestId(MDC.get(REQUEST_ID)).build();
 
         return logAndSendResponse(new ResponseEntity<>(apiError, responseStatus), e);
     }
@@ -101,7 +103,7 @@ class ApiControllerAdvice {
     ResponseEntity<?> handleApiEntityDisabledException(final ApiEntityDisabledException e) {
         final String message = resolveMessage(e.getMessage(), e.getId(), e.getEntity());
         final HttpStatus responseStatus = HttpStatus.BAD_REQUEST;
-        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).build();
+        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).requestId(MDC.get(REQUEST_ID)).build();
 
         return logAndSendResponse(new ResponseEntity<>(apiError, responseStatus), e);
     }
@@ -110,7 +112,7 @@ class ApiControllerAdvice {
     ResponseEntity<?> handleApiEntityNotFountException(final ApiEntityNotFoundException e) {
         final String message = resolveMessage(e.getMessage(), e.getId(), e.getEntity());
         final HttpStatus responseStatus = HttpStatus.NOT_FOUND;
-        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).build();
+        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).requestId(MDC.get(REQUEST_ID)).build();
 
         return logAndSendResponse(new ResponseEntity<>(apiError, responseStatus), e);
     }
@@ -119,7 +121,7 @@ class ApiControllerAdvice {
     ResponseEntity<?> handleApiUserNotLoggedException(final ApiUnauthorizedException e) {
         final String message = resolveMessage(e.getMessage());
         final HttpStatus responseStatus = HttpStatus.UNAUTHORIZED;
-        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).build();
+        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).requestId(MDC.get(REQUEST_ID)).build();
 
         return logAndSendResponse(new ResponseEntity<>(apiError, responseStatus), e);
     }
@@ -140,28 +142,28 @@ class ApiControllerAdvice {
 
     @ExceptionHandler(AccessDeniedException.class)
     ResponseEntity<?> handleAccessDeniedException(final AccessDeniedException e) {
-        final ApiErrorDto apiError = ApiErrorDto.builder().message(e.getMessage()).build();
+        final ApiErrorDto apiError = ApiErrorDto.builder().message(e.getMessage()).requestId(MDC.get(REQUEST_ID)).build();
         return logAndSendResponse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError), e);
     }
 
     @ExceptionHandler(ApiSkillBadStatusException.class)
     ResponseEntity<?> handleBadSkillStatusException(final ApiSkillBadStatusException e) {
         final String message = resolveMessage(e.getMessage());
-        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).build();
+        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).requestId(MDC.get(REQUEST_ID)).build();
 
         return logAndSendResponse(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError), e);
     }
 
     @ExceptionHandler(ResetPasswordTokenExpired.class)
     ResponseEntity<ApiErrorDto> handleResetPasswordTokenExpired(ResetPasswordTokenExpired e) {
-        return new ResponseEntity<>(ApiErrorDto.builder().message(e.getMessage()).build(), HttpStatus.CONFLICT);
+        return new ResponseEntity<>(ApiErrorDto.builder().message(e.getMessage()).requestId(MDC.get(REQUEST_ID)).build(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(Exception.class)
     ResponseEntity<?> handleException(final Exception e) {
         final String message = resolveMessage(ApiErrorCodes.INTERNAL_SERVER_ERROR);
         final HttpStatus responseStatus = getHttpStatus(e).orElse(HttpStatus.INTERNAL_SERVER_ERROR);
-        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).build();
+        final ApiErrorDto apiError = ApiErrorDto.builder().message(message).requestId(MDC.get(REQUEST_ID)).build();
 
         return logAndSendResponse(new ResponseEntity<>(apiError, responseStatus), e);
     }

@@ -24,11 +24,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("select p from Post p where p.company.id in :companyIds")
     Page<Post> findByCompanyIds(@Param("companyIds") List<Long> companyIds, Pageable pageable);
 
-    Page<Post> findByCountryIdOrderByCreatedOn(Long countryId, Pageable pageable);
+    Page<Post> findByCountryId(Long countryId, Pageable pageable);
 
-    @Query(value = "select * from post where country = :country order by created_on DESC limit 10", nativeQuery = true)
-    List<Post> findLatest10ByCountry(@Param("country") String country);
-
-    List<Post> findTop10ByCountryOrderByCreatedOn(Country country);
+    List<Post> findTop10ByCountryOrderByCreatedOnDesc(Country country);
 
 }

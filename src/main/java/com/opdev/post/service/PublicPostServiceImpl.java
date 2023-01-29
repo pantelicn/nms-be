@@ -25,6 +25,6 @@ public class PublicPostServiceImpl implements PublicPostService {
     @Transactional(readOnly = true)
     public List<Post> findLatest10ByCountry(@NonNull final String countryName) {
         Country foundCountry = locationService.findByCountryName(countryName);
-        return repository.findTop10ByCountryOrderByCreatedOn(foundCountry);
+        return repository.findTop10ByCountryOrderByCreatedOnDesc(foundCountry);
     }
 }
