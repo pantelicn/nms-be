@@ -35,4 +35,6 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     Optional<Request> findTop1ByTalentIdAndCompanyIdOrderByCreatedOn(Long talentId, Long companyId);
 
+    boolean existsByTalentAndCompanyAndStatusIn(Talent talent, Company company, List<RequestStatus> requestStatuses);
+
 }

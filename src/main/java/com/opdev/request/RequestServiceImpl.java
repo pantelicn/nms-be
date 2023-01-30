@@ -60,6 +60,7 @@ public class RequestServiceImpl implements RequestService {
         Company foundCompany = companyService.getByUsername(username);
         Long talentId = talentIdEncoder.decode(newRequestDto.getTalentId());
         Talent foundTalent = talentService.getById(talentId);
+        validateAcceptedOrPendingNotExists(foundTalent, foundCompany);
         List<TalentTerm> talentTerms = foundTalent.getTalentTerms();
 
         validateTerms(talentTerms.stream().map(TalentTerm::getId).collect(Collectors.toSet()),
@@ -234,6 +235,21 @@ public class RequestServiceImpl implements RequestService {
     private Request getByIdAndCompany(Long id, Company company) {
         return repository.findByIdAndCompany(id, company).orElseThrow(() -> ApiEntityNotFoundException.builder()
                 .entity(Request.class.getSimpleName()).id(id.toString()).build());
+    }
+
+    private void validateAcceptedOrPendingNotExists(Talent talent, Company company) {
+        if (repository.existsByTalentAndCompanyAndStatusIn(
+                talent,
+                company,
+                List.of(
+                        RequestStatus.PENDING,
+                        RequestStatus.ACCEPTED,
+                        RequestStatus.COUNTER_OFFER_COMPANY,
+                        RequestStatus.COUNTER_OFFER_TALENT
+                )
+        )) {
+            throw ApiBadRequestException.message("Active request already exists");
+        }
     }
 
 }
