@@ -37,7 +37,7 @@ public class Post extends Audit {
     private Long id;
 
     @NonNull
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String content;
 
     @NonNull

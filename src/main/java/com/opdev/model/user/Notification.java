@@ -39,7 +39,7 @@ public class Notification extends Audit {
     private Long id;
 
     @NonNull
-    @Column(nullable = false)
+    @Column(nullable = false, length = 500)
     private String description;
 
     @NonNull

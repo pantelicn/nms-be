@@ -39,7 +39,7 @@ public class Product extends Audit {
     private String name;
 
     @NonNull
-    @Column(nullable = false)
+    @Column(nullable = false, length = 500)
     private String description;
 
     public void update(Product modified, User loggedUser) {
