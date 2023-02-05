@@ -58,7 +58,7 @@ public class Company extends Audit {
     private String name;
 
     @NonNull
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String description;
 
     @Setter

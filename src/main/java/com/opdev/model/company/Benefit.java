@@ -40,7 +40,7 @@ public class Benefit extends Audit {
     private String name;
 
     @NonNull
-    @Column(nullable = false)
+    @Column(nullable = false, length = 500)
     private String description;
 
     @NonNull

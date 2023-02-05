@@ -57,7 +57,7 @@ public class Plan extends Audit {
     private PlanType type;
 
     @NonNull
-    @Column(nullable = false)
+    @Column(nullable = false, length = 500)
     private String description;
 
     @NonNull

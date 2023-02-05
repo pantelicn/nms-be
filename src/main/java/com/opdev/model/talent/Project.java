@@ -33,7 +33,7 @@ public class Project {
     private Long id;
 
     @NonNull
-    @Column
+    @Column(length = 1000)
     @Setter
     private String description;
 

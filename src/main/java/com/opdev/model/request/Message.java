@@ -45,7 +45,7 @@ public class Message extends Audit {
     private User to;
 
     @NonNull
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String content;
 
     @NonNull
