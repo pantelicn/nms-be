@@ -39,7 +39,7 @@ public class PlanProduct extends Audit {
     @Column
     private Long id;
 
-    @Column(nullable = true)
+    @Column
     private Integer quantity;
 
     @NonNull

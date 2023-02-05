@@ -47,7 +47,7 @@ public class SubscriptionController {
 
     @GetMapping("/{username}")
     @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.COMPANY + "'))")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     public SubscriptionViewDto get(@PathVariable final String username) {
         Subscription found = subscriptionService.get(username);
         return new SubscriptionViewDto(found);
