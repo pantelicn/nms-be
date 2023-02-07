@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
+
 public interface SkillService {
 
     Skill add(final Skill newSkill);
@@ -19,5 +21,7 @@ public interface SkillService {
     void remove(final String code);
 
     Skill updateStatus(final String code, final SkillStatus status);
+
+    List<Skill> findAllApproved();
 
 }

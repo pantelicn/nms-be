@@ -18,6 +18,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,10 +36,16 @@ public class SkillController {
     }
 
     @GetMapping
-    @PreAuthorize("permitAll()")
+    @PreAuthorize(SpELAuthorizationExpressions.IS_ADMIN)
     public Page<SkillViewDto> find(
             @Spec(path = "status", spec = Equal.class) Specification<Skill> skillSpec, final Pageable pageable) {
         return service.find(skillSpec, pageable).map(SkillViewDto::new);
+    }
+
+    @GetMapping("/approved")
+    @PreAuthorize("permitAll()")
+    public List<SkillViewDto> findAllApproved() {
+        return service.findAllApproved().stream().map(SkillViewDto::new).collect(Collectors.toList());
     }
 
     @PutMapping

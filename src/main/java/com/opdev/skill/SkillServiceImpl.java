@@ -15,6 +15,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -84,6 +85,12 @@ public class SkillServiceImpl implements SkillService {
         final Skill modified = repository.save(found);
         LOGGER.info("Skill with code {} has been approved", code);
         return modified;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Skill> findAllApproved() {
+        return repository.findAllByStatus(SkillStatus.APPROVED);
     }
 
     private Skill get(final Long id) {
