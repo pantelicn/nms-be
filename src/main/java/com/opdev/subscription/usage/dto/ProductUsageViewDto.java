@@ -17,6 +17,8 @@ public class ProductUsageViewDto {
 
     private Integer remaining;
 
+    private Integer total;
+
     private Boolean limited;
 
     private LocalDate startDate;
@@ -34,6 +36,7 @@ public class ProductUsageViewDto {
         startDate = productUsage.getStartDate();
         endDate = productUsage.getEndDate();
         period = productUsage.getPeriod();
+        total = productUsage.getProduct().getPlanProduct().getQuantity();
         product = new ProductViewDto(productUsage.getProduct());
     }
 }
