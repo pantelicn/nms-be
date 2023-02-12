@@ -115,11 +115,7 @@ public class Company extends Audit {
     private Map<Long, Set<ReactionType>> postReactions = new HashMap<>();
 
     public boolean alreadyReacted(Long postId, ReactionType reactionType) {
-        Set<ReactionType> reactions = postReactions.get(postId);
-        if (reactions != null) {
-            return reactions.contains(reactionType);
-        }
-        return false;
+        return postReactions.containsKey(postId) && postReactions.get(postId).contains(reactionType);
     }
 
     public void addPostReaction(Long postId, ReactionType reaction) {
