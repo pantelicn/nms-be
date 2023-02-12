@@ -35,6 +35,7 @@ import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -138,12 +139,7 @@ public class Talent extends Audit {
     }
 
     public void addPostReaction(Long postId, ReactionType reaction) {
-        Set<ReactionType> reactions = postReactions.get(postId);
-        if (reactions != null) {
-            reactions.add(reaction);
-        } else {
-            postReactions.put(postId, Set.of(reaction));
-        }
+        postReactions.computeIfAbsent(postId, k -> new HashSet<>()).add(reaction);
     }
 
     public void removePostReaction(Long postId, ReactionType reaction) {
