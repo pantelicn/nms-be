@@ -670,7 +670,6 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .firstName("Nikola")
                 .middleName("Jozef")
                 .lastName("Pantelic")
-                .dateOfBirth(LocalDate.of(1995, 1, 8))
                 .user(user)
                 .available(true)
                 .availabilityChangeDate(Instant.now())
@@ -757,6 +756,7 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                                 .talent(talent)
                                 .term(termRepository.getByCode("MONTHLY-SALARY-EUROS"))
                                 .unitOfMeasure(UnitOfMeasure.EURO)
+                                .termType(TermType.INT)
                                 .build(),
                         TalentTerm.builder()
                                 .value("20")
@@ -764,6 +764,7 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                                 .talent(talent)
                                 .term(termRepository.getByCode("VACATION-DAYS"))
                                 .unitOfMeasure(UnitOfMeasure.DAYS)
+                                .termType(TermType.INT)
                                 .build()
                 ));
     }
@@ -802,7 +803,6 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
         Talent goran = Talent.builder()
                 .firstName("Goran")
                 .lastName("Sasic")
-                .dateOfBirth(LocalDate.of(1995, 1, 8))
                 .user(user)
                 .available(true)
                 .availabilityChangeDate(Instant.now())
