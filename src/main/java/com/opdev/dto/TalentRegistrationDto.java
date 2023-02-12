@@ -47,9 +47,6 @@ public class TalentRegistrationDto implements RegistrationDto {
 
   private String middleName;
 
-  @Past
-  private LocalDate dateOfBirth;
-
   @NonNull
   @NotBlank
   @Email
@@ -81,7 +78,6 @@ public class TalentRegistrationDto implements RegistrationDto {
             .firstName(firstName)
             .lastName(lastName)
             .middleName(middleName)
-            .dateOfBirth(dateOfBirth)
             .availabilityChangeDate(Instant.now());
 
     final Talent talent = builder.build();

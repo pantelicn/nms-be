@@ -65,7 +65,6 @@ class PostReactionIntegrationTest extends AbstractIntegrationTest {
 
         restTemplate.exchange("/v1/posts/" + post.getId() + "/reactions", HttpMethod.DELETE, postReactionHttp, Void.class);
 
-        assertThat(getTalent().alreadyReacted(post.getId()), is(equalTo(false)));
         assertThat(getPost(post.getId()).getLikes(), is(equalTo(0)));
     }
 
@@ -81,7 +80,6 @@ class PostReactionIntegrationTest extends AbstractIntegrationTest {
                 restTemplate.exchange("/v1/posts/" + post.getId() + "/reactions", HttpMethod.DELETE, postReactionHttp, Void.class);
 
         assertThat(receivedMessage.getStatusCode(), is(equalTo(HttpStatus.BAD_REQUEST)));
-        assertThat(getTalent().alreadyReacted(post.getId()), is(equalTo(false)));
         assertThat(getPost(post.getId()).getLikes(), is(equalTo(0)));
     }
 

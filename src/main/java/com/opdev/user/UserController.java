@@ -16,10 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.opdev.company.service.CompanyService;
-import com.opdev.model.user.Notification;
 import com.opdev.model.user.User;
-import com.opdev.notification.NotificationFactory;
-import com.opdev.notification.NotificationService;
 import com.opdev.user.dto.SetNewPasswordRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -33,7 +30,6 @@ public class UserController {
     private String domain;
 
     private final UserService userService;
-    private final NotificationService notificationService;
     private final CompanyService companyService;
 
     @GetMapping("/activate")

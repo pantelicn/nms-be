@@ -37,6 +37,8 @@ public class TalentViewDto {
 
     private List<Long> likedPosts = new ArrayList<>();
 
+    private List<Long> awardsGiven = new ArrayList<>();
+
     private Boolean available;
 
     private List<ProjectViewDto> projects = new ArrayList<>();
@@ -55,8 +57,11 @@ public class TalentViewDto {
                 .map(AvailableLocationViewDto::new)
                 .collect(Collectors.toList());
         talent.getPostReactions().forEach( (k,v) -> {
-            if (v == ReactionType.LIKE) {
+            if (v.contains(ReactionType.LIKE)) {
                 likedPosts.add(k);
+            }
+            if (v.contains(ReactionType.AWARD)) {
+                awardsGiven.add(k);
             }
         });
         this.available = talent.getAvailable();

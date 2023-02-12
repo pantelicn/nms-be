@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.annotations.Type;
 
@@ -110,26 +111,28 @@ public class Company extends Audit {
     @ToString.Exclude
     @Type(type = "json")
     @Builder.Default
-    private Map<Long, ReactionType> postReactions = new HashMap<>();
+    private Map<Long, Set<ReactionType>> postReactions = new HashMap<>();
 
-    public boolean alreadyReacted(Long postId) {
-        return postReactions.containsKey(postId);
+    public boolean alreadyReacted(Long postId, ReactionType reactionType) {
+        Set<ReactionType> reactions = postReactions.get(postId);
+        if (reactions != null) {
+            return reactions.contains(reactionType);
+        }
+        return false;
     }
 
     public void addPostReaction(Long postId, ReactionType reaction) {
-        postReactions.put(postId, reaction);
+        Set<ReactionType> reactions = postReactions.get(postId);
+        if (reactions != null) {
+            reactions.add(reaction);
+        } else {
+            postReactions.put(postId, Set.of(reaction));
+        }
     }
 
     public void removePostReaction(Long postId, ReactionType reaction) {
-        postReactions.remove(postId, reaction);
-    }
-
-    public void replacePostReaction(Long postId, ReactionType reaction) {
-        postReactions.replace(postId, reaction);
-    }
-
-    public ReactionType getReactionForPost(Long postId) {
-        return postReactions.get(postId);
+        Set<ReactionType> reactions = postReactions.get(postId);
+        reactions.remove(reaction);
     }
 
 }

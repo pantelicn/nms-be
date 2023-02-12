@@ -67,4 +67,8 @@ public class ProductUsage extends Audit {
     @JoinColumn(name = "product", referencedColumnName = "id", nullable = false)
     private Product product;
 
+    public void increaseRemaining() {
+        this.remaining = this.remaining + 1;
+    }
+
 }

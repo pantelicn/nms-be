@@ -34,6 +34,8 @@ public class CompanyViewDto {
 
     private String profileImage;
 
+    private List<Long> awardsGiven = new ArrayList();
+
     public CompanyViewDto(@NonNull final Company company) {
         asView(company);
     }
@@ -45,8 +47,11 @@ public class CompanyViewDto {
         user = new UserViewDto(company.getUser());
         location = new CompanyLocationViewDto(company.getLocation());
         company.getPostReactions().forEach( (k,v) -> {
-            if (v == ReactionType.LIKE) {
+            if (v.contains(ReactionType.LIKE)) {
                 likedPosts.add(k);
+            }
+            if (v.contains(ReactionType.AWARD)) {
+                awardsGiven.add(k);
             }
         });
         profileImage = company.getProfileImage();

@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.Column;
@@ -49,6 +50,11 @@ public class Post extends Audit {
     @Builder.Default
     private Integer likes = 0;
 
+    @NonNull
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer awards = 0;
+
     private String url;
 
     @NonNull
@@ -61,15 +67,25 @@ public class Post extends Audit {
     @JoinColumn(name = "company_id", referencedColumnName = "id", nullable = false)
     private Company company;
 
+    @Setter
+    private boolean awardEarned;
+
     public void addReaction(ReactionType reaction) {
         if (reaction == ReactionType.LIKE) {
             addLike();
+        }
+        if (reaction == ReactionType.AWARD) {
+            addAward();
         }
     }
 
     public void removeReaction(ReactionType reaction) {
         if (reaction == ReactionType.LIKE) {
             removeLike();
+        }
+
+        if (reaction == ReactionType.AWARD) {
+            removeAward();
         }
     }
 
@@ -81,5 +97,12 @@ public class Post extends Audit {
         this.likes--;
     }
 
+    private void addAward() {
+        this.awards++;
+    }
+
+    private void removeAward() {
+        this.awards--;
+    }
 
 }

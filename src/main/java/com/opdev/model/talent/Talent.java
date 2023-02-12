@@ -33,11 +33,11 @@ import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -65,9 +65,6 @@ public class Talent extends Audit {
 
     @Column(name = "middle_name")
     private String middleName;
-
-    @Column(name = "date_of_birth")
-    private LocalDate dateOfBirth;
 
     @Setter
     @NonNull
@@ -120,7 +117,7 @@ public class Talent extends Audit {
     @ToString.Exclude
     @Type(type = "json")
     @Builder.Default
-    private Map<Long, ReactionType> postReactions = new HashMap<>();
+    private Map<Long, Set<ReactionType>> postReactions = new HashMap<>();
 
     @NonNull
     @NotNull
@@ -132,24 +129,26 @@ public class Talent extends Audit {
     @Builder.Default
     private List<Project> projects = new ArrayList<>();
 
-    public boolean alreadyReacted(Long postId) {
-        return postReactions.containsKey(postId);
+    public boolean alreadyReacted(Long postId, ReactionType reactionType) {
+        Set<ReactionType> reactions = postReactions.get(postId);
+        if (reactions != null) {
+            return postReactions.get(postId).contains(reactionType);
+        }
+        return false;
     }
 
     public void addPostReaction(Long postId, ReactionType reaction) {
-        postReactions.put(postId, reaction);
+        Set<ReactionType> reactions = postReactions.get(postId);
+        if (reactions != null) {
+            reactions.add(reaction);
+        } else {
+            postReactions.put(postId, Set.of(reaction));
+        }
     }
 
     public void removePostReaction(Long postId, ReactionType reaction) {
-        postReactions.remove(postId, reaction);
-    }
-
-    public void replacePostReaction(Long postId, ReactionType reaction) {
-        postReactions.replace(postId, reaction);
-    }
-
-    public ReactionType getReactionForPost(Long postId) {
-        return postReactions.get(postId);
+        Set<ReactionType> reactions = postReactions.get(postId);
+        reactions.remove(reaction);
     }
 
     public String getFullName() {

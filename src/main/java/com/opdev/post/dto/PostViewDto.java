@@ -16,6 +16,7 @@ public class PostViewDto {
     private String title;
     private String url;
     private Integer likes;
+    private Integer awards;
     private CompanyPublicViewDto company;
     private Instant createdOn;
 
@@ -27,6 +28,7 @@ public class PostViewDto {
         this.likes = post.getLikes();
         this.company = new CompanyPublicViewDto(post.getCompany());
         this.createdOn = post.getCreatedOn();
+        this.awards = post.getAwards();
     }
 
 }
