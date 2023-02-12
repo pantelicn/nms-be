@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.Objects;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -141,22 +141,19 @@ class TalentServiceImpl implements TalentService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Talent> find(Specification<Talent> specification, Pageable pageable) {
-        Objects.requireNonNull(pageable);
+    public Page<Talent> find(@NonNull Specification<Talent> specification, @NonNull Pageable pageable) {
         return talentRepository.findAll(specification, pageable);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
-    public Talent removeAvailableLocation(@NonNull Talent oldTalent, @NonNull Long id) {
-        boolean removed = oldTalent.getAvailableLocations()
-                .removeIf(availableLocation -> availableLocation.getId().equals(id));
-        ApiEntityNotFoundException.builder().entity("AvailableCountry").id(id.toString()).build()
-                .throwIf(() -> !removed);
-
-        Talent updated = talentRepository.save(oldTalent);
-        LOGGER.info("Removed available location with id {} on talent {}", id,  updated.getUser().getUsername());
-        return updated;
+    public Page<Talent> findWithoutExistingActiveRequest(List<Long> pendingOrAcceptedTalentIds,
+                                                         Specification<Talent> searchSpecification,
+                                                         Pageable pageable) {
+        return find(
+                searchSpecification.and(talentIdsNotPresent(pendingOrAcceptedTalentIds)),
+                pageable
+        );
     }
 
     @Transactional
@@ -165,6 +162,10 @@ class TalentServiceImpl implements TalentService {
         talent.setAvailable(available);
         talent.setAvailabilityChangeDate(Instant.now());
         LOGGER.info("Updated talent {} availability  to {}", talent.getUser().getUsername(), available);
+    }
+
+    private Specification<Talent> talentIdsNotPresent(List<Long> talentIds) {
+        return (root, criteriaQuery, criteriaBuilder) -> root.get("id").in(talentIds).not();
     }
 
 }

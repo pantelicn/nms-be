@@ -209,6 +209,20 @@ public class RequestServiceImpl implements RequestService {
         return repository.save(request);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<Long> findAcceptedOrPendingTalentIdsForCompany(String companyUserName) {
+        return findByStatusForCompany(
+                companyUserName,
+                List.of(
+                        RequestStatus.PENDING,
+                        RequestStatus.ACCEPTED,
+                        RequestStatus.COUNTER_OFFER_COMPANY,
+                        RequestStatus.COUNTER_OFFER_TALENT
+                )
+        ).stream().map(request -> request.getTalent().getId()).collect(Collectors.toList());
+    }
+
     private void validateStatus(RequestStatus status) {
         if (!(status.equals(RequestStatus.ACCEPTED) || status.equals(RequestStatus.REJECTED))) {
             throw new ApiBadRequestStatusException("Invalid request status forwarded");

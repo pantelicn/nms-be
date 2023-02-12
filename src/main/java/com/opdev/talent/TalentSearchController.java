@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -56,7 +57,12 @@ public class TalentSearchController {
                 talentSearch.getExperienceYears()
         );
         Company foundCompany = companyService.getByUsername(user.getName());
-        return talentService.find(talentSpecification, pageable).map(talent -> mapTalentSearch(foundCompany, talent));
+        List<Long> pendingOrAcceptedTalentIds = requestService.findAcceptedOrPendingTalentIdsForCompany(user.getName());
+        return talentService.findWithoutExistingActiveRequest(
+                pendingOrAcceptedTalentIds,
+                talentSpecification,
+                pageable
+        ).map(talent -> mapTalentSearch(foundCompany, talent));
     }
 
     private TalentViewSearchDto mapTalentSearch(Company foundCompany, Talent talent) {

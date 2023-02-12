@@ -34,6 +34,8 @@ public interface RequestService {
 
     Request edit(Request request, User user);
 
+    List<Long> findAcceptedOrPendingTalentIdsForCompany(String companyUserName);
+
     Request editRequestNote(Long id, String username, String note);
 
     Optional<Request> findPreviousByTalentAndCompany(Long talentId, Long companyId);

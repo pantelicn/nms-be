@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -32,7 +33,9 @@ public interface TalentService {
 
     Page<Talent> find(final Specification<Talent> specification, final Pageable pageable);
 
-    Talent removeAvailableLocation(Talent oldTalent, Long id);
+    Page<Talent> findWithoutExistingActiveRequest(List<Long> pendingOrAcceptedTalentIds,
+                                                  Specification<Talent> searchSpecification,
+                                                  Pageable pageable);
 
     void updateAvailability(Talent talent, boolean available);
 
