@@ -2,6 +2,7 @@ package com.opdev.post.service;
 
 import com.opdev.company.service.CompanyService;
 import com.opdev.exception.ApiEntityNotFoundException;
+import com.opdev.mail.NullHireMailSender;
 import com.opdev.model.company.Company;
 import com.opdev.model.post.Post;
 import com.opdev.model.post.ReactionType;
