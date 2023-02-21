@@ -14,4 +14,6 @@ public interface NullHireMailSender {
 
     void sendRequestAcceptedEmail(String emailTo, String talentFullName, String requestNote);
 
+    void sendPostAward100Email(String emailTo, Long postId, String postTitle);
+
 }

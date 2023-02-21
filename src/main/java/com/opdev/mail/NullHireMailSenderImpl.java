@@ -35,6 +35,7 @@ public class NullHireMailSenderImpl implements NullHireMailSender {
     private static final String RESET_PASSWORD_TEMPLATE = "reset-password-email.flth";
     private static final String REQUEST_RECEIVED_TEMPLATE = "request-received.flth";
     private static final String REQUEST_ACCEPTED_TEMPLATE = "request-accepted.flth";
+    private static final String POST_AWARD_100 = "post-award-100.flth";
 
     @Override
     public void sendRegistrationEmail(final String emailTo, final VerificationToken verificationToken) {
@@ -137,6 +138,33 @@ public class NullHireMailSenderImpl implements NullHireMailSender {
             LOGGER.info("Sent request accepted email to {}", emailTo);
         } catch (MessagingException e) {
             LOGGER.error("Error during sending request accepted email {}", e.getMessage(), e);
+        }
+    }
+
+    @Override
+    @Async
+    public void sendPostAward100Email(final String emailTo, final Long postId, final String postTitle) {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+            LOGGER.info("Sending post award email to {}", emailTo);
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+
+            mimeMessageHelper.setSubject("You have been awarded");
+            mimeMessageHelper.setFrom("noreply@nullhire.com");
+            mimeMessageHelper.setTo(emailTo);
+            Map<String, Object> model = new HashMap<>();
+            model.put("domain", domain);
+            model.put("postId", postId);
+            model.put("postTitle", postTitle);
+
+            String content = geContentFromTemplate(model, POST_AWARD_100);
+
+            mimeMessageHelper.setText(content, true);
+
+            javaMailSender.send(mimeMessageHelper.getMimeMessage());
+            LOGGER.info("Sent post award email to {}", emailTo);
+        } catch (MessagingException e) {
+            LOGGER.error("Error during sending post award email {}", e.getMessage(), e);
         }
     }
 

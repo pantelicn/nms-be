@@ -88,19 +88,19 @@
     <div id="tablediv">
         <table border="0" cellpadding="0" cellspacing="0" width="90%" style="margin-left:auto;margin-right:auto;">
             <tr valign="top">
-                <td style="vertical-align: bottom;font-family: system-ui;"><h3>Request received</h3></td>
+                <td style="vertical-align: bottom;font-family: system-ui;"><h3>Congratulations!</h3></td>
                 <td style="float: right"><img class="logo" src="https://api.nullhire.com/images/logo.png" /></td>
             </tr>
             <tr>
-                <td colspan="2" style="padding-top: 10px;font-family: system-ui;color: #6c757d !important;">
-                    You have received request from ${company}. You can find it under requests section.
+                <td colspan="2" >
+                    <div style="padding-top: 10px;margin-top: 10px;font-family: system-ui;color: #6c757d !important;"><b>Your post titled "${postTitle}" has gathered 100+ awards. <br/>Post quota has been increased by one.</b></div>
                 </td>
             </tr>
             <tr>
                 <td>
                     <div class="btn-div">
-                        <a class="nh-button" href="${domain}/talent/requests?id=${id}" target="_blank" role="button">
-                            <span style="padding-left: 20px;padding-right: 20px;">VIEW REQUEST</span>
+                        <a class="nh-button" href="${domain}/company/?postId=${postId}" target="_blank" role="button">
+                            <span style="padding-left: 20px;padding-right: 20px;">VIEW POST</span>
                         </a>
                     </div>
                 </td>
