@@ -1,8 +1,7 @@
 package com.opdev.post.service;
 
 import com.opdev.company.service.CompanyService;
-import com.opdev.exception.ApiBadRequestException;
-import com.opdev.mail.NullHireMailSender;
+import com.opdev.exception.ApiEntityNotFoundException;
 import com.opdev.model.company.Company;
 import com.opdev.model.post.Post;
 import com.opdev.model.post.ReactionType;
@@ -30,6 +29,8 @@ public class PostReactionServiceImpl implements PostReactionService {
     private final ProductUsageService productUsageService;
     private final NullHireMailSender mailSender;
     private final NotificationService notificationService;
+
+    private static final int AWARD_THRESHOLD = 100;
 
     @Transactional
     @Override
@@ -96,9 +97,14 @@ public class PostReactionServiceImpl implements PostReactionService {
     }
 
     private void checkAndGiveAward(Post post) {
-        if (post.getAwards() >= 1 && !post.isAwardEarned()) {
+        if (post.getAwards() >= AWARD_THRESHOLD && !post.isAwardEarned()) {
             post.setAwardEarned(true);
-            ProductUsage postProductUsage = post.getCompany().getProductUsages().stream().filter(productUsage -> productUsage.getProduct().getName().equals("Post")).findFirst().orElseThrow(() -> new RuntimeException("Product does not exists!"));
+            ProductUsage postProductUsage = post.getCompany().getProductUsages().stream()
+                    .filter(productUsage -> productUsage.getProduct().getName().equals("Post"))
+                    .findFirst()
+                    .orElseThrow(() -> ApiEntityNotFoundException.builder()
+                            .message("Product does not exist!")
+                            .entity("ProductUsage").build());
             postProductUsage.increaseRemaining();
             productUsageService.save(postProductUsage);
             mailSender.sendPostAward100Email(post.getCompany().getUser().getUsername(), post.getId(), post.getTitle());
