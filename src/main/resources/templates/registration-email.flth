@@ -72,6 +72,9 @@
                     <span style="padding-left: 20px;padding-right: 20px;">ACTIVATE ACCOUNT</span>
                 </a>
             </div>
+            <div style="font-family: system-ui;color: #6c757d !important;">
+                If the above button doesn't work, paste this link into your browser : <span style="color: #17a2b8">${baseUrl}/api/v1/users/activate?activationCode=${activationCode}</span>.
+            </div>
         </td>
     </tr>
 </table>
