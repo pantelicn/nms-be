@@ -13,6 +13,7 @@ import com.opdev.talent.dto.TalentViewSearchDto;
 import com.opdev.talent.search.TalentSpecification;
 import com.opdev.util.encoding.TalentIdEncoder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +29,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1/talents/find")
@@ -58,6 +60,7 @@ public class TalentSearchController {
         );
         Company foundCompany = companyService.getByUsername(user.getName());
         List<Long> pendingOrAcceptedTalentIds = requestService.findAcceptedOrPendingTalentIdsForCompany(user.getName());
+        LOGGER.info("Found pending or accepted requests with {} talents", pendingOrAcceptedTalentIds.size());
         return talentService.findWithoutExistingActiveRequest(
                 pendingOrAcceptedTalentIds,
                 talentSpecification,

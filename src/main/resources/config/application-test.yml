@@ -57,6 +57,12 @@ security:
   aes:
     secret: "3WTR3Ep7MItSFduTZvgyQQ=="
 
+nullhire:
+  profile-images-dir: /Users/nikolapantelic/Documents/images
+  base-url: https://api.nullhire.com
+  domain: https://nullhire.com
+  allowed-origins: http://localhost:4200
+
 import:
   local:
     data: true
