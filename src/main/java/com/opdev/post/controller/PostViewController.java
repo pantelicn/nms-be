@@ -62,6 +62,7 @@ public class PostViewController {
     }
 
     @GetMapping("{postId}")
+    @PreAuthorize("permitAll()")
     public PostViewDto getById(@PathVariable @NotNull final Long postId) {
         return new PostViewDto(postViewService.getById(postId));
     }

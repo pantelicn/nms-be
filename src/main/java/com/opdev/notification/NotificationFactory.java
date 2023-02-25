@@ -99,4 +99,15 @@ public class NotificationFactory {
         return null;
     }
 
+    public static Notification createAwardPost100Notification(Company company, String postTitle) {
+        return Notification.builder()
+                .referenceId(company.getUser().getId())
+                .seen(false)
+                .description(String.format("Your post titled %s has gathered 100+ awards. Post quota has been increased by one.", postTitle))
+                .type(NotificationType.INFO)
+                .infoType(NotificationInfoType.AWARD)
+                .user(company.getUser())
+                .build();
+    }
+
 }

@@ -91,7 +91,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional
     public void setSeenForNotificationType(final Long requestId, final String username, final NotificationType type) {
         User user = userService.getByUsername(username);
-        Notification foundNotification = repository.findByUserAndReferenceIdAndType(user, requestId, type).orElseThrow(() -> new RuntimeException(""));
+        Notification foundNotification = repository.findFirstByUserAndReferenceIdAndTypeOrderByCreatedOnDesc(user, requestId, type).orElseThrow(() -> new RuntimeException(""));
         List<Notification> found = repository.findAllByUserAndTypeAndSeenIsFalseAndCreatedOnLessThanEqual(user, type, foundNotification.getCreatedOn());
         found.forEach(notification -> {
             notification.setSeen(Boolean.TRUE);

@@ -2,11 +2,15 @@ package com.opdev.post.service;
 
 import com.opdev.company.service.CompanyService;
 import com.opdev.exception.ApiEntityNotFoundException;
+import com.opdev.mail.NullHireMailSender;
 import com.opdev.model.company.Company;
 import com.opdev.model.post.Post;
 import com.opdev.model.post.ReactionType;
 import com.opdev.model.subscription.ProductUsage;
 import com.opdev.model.talent.Talent;
+import com.opdev.model.user.Notification;
+import com.opdev.notification.NotificationFactory;
+import com.opdev.notification.NotificationService;
 import com.opdev.post.service.noimpl.PostReactionService;
 import com.opdev.post.service.noimpl.PostService;
 import com.opdev.subscription.usage.ProductUsageService;
@@ -24,6 +28,8 @@ public class PostReactionServiceImpl implements PostReactionService {
     private final PostService postService;
     private final CompanyService companyService;
     private final ProductUsageService productUsageService;
+    private final NullHireMailSender mailSender;
+    private final NotificationService notificationService;
 
     private static final int AWARD_THRESHOLD = 100;
 
@@ -102,6 +108,9 @@ public class PostReactionServiceImpl implements PostReactionService {
                             .entity("ProductUsage").build());
             postProductUsage.increaseRemaining();
             productUsageService.save(postProductUsage);
+            mailSender.sendPostAward100Email(post.getCompany().getUser().getUsername(), post.getId(), post.getTitle());
+            Notification postAward100Notification = NotificationFactory.createAwardPost100Notification(post.getCompany(), post.getTitle());
+            notificationService.create(postAward100Notification);
         }
     }
 
