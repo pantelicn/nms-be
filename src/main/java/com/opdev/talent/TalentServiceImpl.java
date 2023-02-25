@@ -150,12 +150,17 @@ class TalentServiceImpl implements TalentService {
     public Page<Talent> findWithoutExistingActiveRequest(List<Long> pendingOrAcceptedTalentIds,
                                                          Specification<Talent> searchSpecification,
                                                          Pageable pageable) {
-        Page<Talent> found = find(
-                searchSpecification.and(talentIdsNotPresent(pendingOrAcceptedTalentIds)),
-                pageable
-        );
-        found.forEach(talent -> LOGGER.info("Found talent without existing active request: {}", talent.getId()));
-        return found;
+        if (pendingOrAcceptedTalentIds.isEmpty()) {
+            return find(
+                    searchSpecification.and(talentIdsNotPresent(pendingOrAcceptedTalentIds)),
+                    pageable
+            );
+        } else {
+            return find(
+                    searchSpecification,
+                    pageable
+            );
+        }
     }
 
     @Transactional
