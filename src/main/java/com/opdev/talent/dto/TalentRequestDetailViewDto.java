@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.opdev.benefit.dto.BenefitViewDto;
+import com.opdev.dto.CompanyViewDto;
 import com.opdev.model.request.Request;
 import com.opdev.model.request.RequestStatus;
 import com.opdev.request.dto.TalentTermRequestViewDto;
@@ -20,7 +21,7 @@ public class TalentRequestDetailViewDto {
 
     private RequestStatus status;
 
-    private String company;
+    private CompanyViewDto company;
 
     private List<TalentTermRequestViewDto> talentTermRequests;
 
@@ -33,7 +34,7 @@ public class TalentRequestDetailViewDto {
     public TalentRequestDetailViewDto(Request request) {
         id = request.getId();
         status = request.getStatus();
-        company = request.getCompany().getName();
+        company = new CompanyViewDto(request.getCompany());
         talentTermRequests = request.getTalentTermRequests().stream()
                 .map(TalentTermRequestViewDto::new)
                 .collect(Collectors.toList());

@@ -1,5 +1,6 @@
 package com.opdev.company.dto;
 
+import com.opdev.dto.CompanyViewDto;
 import com.opdev.model.request.Request;
 import com.opdev.model.request.RequestStatus;
 import com.opdev.position.dto.PositionViewDto;
@@ -29,6 +30,8 @@ public class RequestDetailViewDto {
 
     private Instant modifiedOn;
 
+    private CompanyViewDto company;
+
     private List<SkillViewDto> skills;
 
     private List<PositionViewDto> positions;
@@ -43,6 +46,7 @@ public class RequestDetailViewDto {
                 .map(TalentTermRequestViewDto::new)
                 .collect(Collectors.toList());
         modifiedOn = request.getModifiedOn();
+        company = new CompanyViewDto(request.getCompany());
         skills = request.getTalent().getTalentSkills().stream().map(talentSkill -> new SkillViewDto(talentSkill.getSkill())).collect(Collectors.toList());
         positions = request.getTalent().getTalentPositions().stream().map(talentPosition -> new PositionViewDto(talentPosition.getPosition())).collect(
                 Collectors.toList());
