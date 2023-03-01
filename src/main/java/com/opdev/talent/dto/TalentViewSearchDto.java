@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.opdev.company.dto.RequestViewDto;
+import com.opdev.company.dto.RestrictedProjectViewDto;
 import com.opdev.model.talent.Talent;
 import com.opdev.position.dto.PositionViewDto;
 import com.opdev.skill.dto.SkillViewDto;
@@ -28,7 +29,7 @@ public class TalentViewSearchDto {
 
     private List<PositionViewDto> positions = new ArrayList<>();
 
-    private List<ProjectViewDto> projects = new ArrayList<>();
+    private List<RestrictedProjectViewDto> projects = new ArrayList<>();
 
     @Setter
     private RequestViewDto previousRequest;
@@ -39,7 +40,7 @@ public class TalentViewSearchDto {
         talent.getTalentTerms().forEach(term -> terms.add(new TalentTermViewDto(term)));
         talent.getTalentSkills().forEach(talentSkill -> skills.add(new SkillViewDto(talentSkill.getSkill())));
         talent.getTalentPositions().forEach(talentPosition -> positions.add(new PositionViewDto(talentPosition.getPosition())));
-        talent.getProjects().forEach(project -> projects.add(new ProjectViewDto(project)));
+        talent.getProjects().forEach(project -> projects.add(new RestrictedProjectViewDto(project)));
     }
 
 }

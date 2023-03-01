@@ -1,5 +1,7 @@
 package com.opdev.talent.project;
 
+import java.time.Instant;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,13 +27,17 @@ public class ProjectServiceImpl implements ProjectService {
     public Project create(@NonNull final String description,
                           @NonNull final String technologiesUsed,
                           @NonNull final String myRole,
-                          @NonNull final String talentUsername) {
+                          @NonNull final String talentUsername,
+                          @NonNull final Instant startDate,
+                          final Instant endDate) {
         Talent foundTalent = talentService.getByUsername(talentUsername);
         return repository.save(Project.builder()
                                        .description(description)
                                        .technologiesUsed(technologiesUsed)
                                        .myRole(myRole)
                                        .talent(foundTalent)
+                                       .startDate(startDate)
+                                       .endDate(endDate)
                                        .build());
     }
 
@@ -41,7 +47,9 @@ public class ProjectServiceImpl implements ProjectService {
                         @NonNull final String description,
                         @NonNull final String technologiesUsed,
                         @NonNull final String myRole,
-                        @NonNull final String username) {
+                        @NonNull final String username,
+                        @NonNull final Instant startDate,
+                        final Instant endDate) {
         validateOwnership(id, username);
         Project found = repository.findById(id).orElseThrow(() -> ApiEntityNotFoundException.builder()
                 .message("Entity.not.found")
@@ -51,6 +59,8 @@ public class ProjectServiceImpl implements ProjectService {
         found.setDescription(description);
         found.setMyRole(myRole);
         found.setTechnologiesUsed(technologiesUsed);
+        found.setStartDate(startDate);
+        found.setEndDate(endDate);
 
         return repository.save(found);
     }

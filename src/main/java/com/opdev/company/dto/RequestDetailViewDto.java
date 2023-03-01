@@ -33,7 +33,7 @@ public class RequestDetailViewDto {
 
     private List<PositionViewDto> positions;
 
-    private List<ProjectViewDto> projects = new ArrayList<>();
+    private List<RestrictedProjectViewDto> projects = new ArrayList<>();
 
     public RequestDetailViewDto(Request request) {
         id = request.getId();
@@ -46,7 +46,7 @@ public class RequestDetailViewDto {
         skills = request.getTalent().getTalentSkills().stream().map(talentSkill -> new SkillViewDto(talentSkill.getSkill())).collect(Collectors.toList());
         positions = request.getTalent().getTalentPositions().stream().map(talentPosition -> new PositionViewDto(talentPosition.getPosition())).collect(
                 Collectors.toList());
-        request.getTalent().getProjects().forEach(project -> projects.add(new ProjectViewDto(project)));
+        request.getTalent().getProjects().forEach(project -> projects.add(new RestrictedProjectViewDto(project)));
     }
 
 }

@@ -1,5 +1,7 @@
 package com.opdev.talent.dto;
 
+import java.time.Instant;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,5 +23,10 @@ public class ProjectCreateDto {
 
     @NonNull
     private String myRole;
+
+    @NonNull
+    private Instant startDate;
+
+    private Instant endDate;
 
 }

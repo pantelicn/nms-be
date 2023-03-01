@@ -1,5 +1,7 @@
 package com.opdev.model.talent;
 
+import java.time.Instant;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -46,6 +48,14 @@ public class Project {
     @Column(name = "my_role")
     @Setter
     private String myRole;
+
+    @NonNull
+    @Column(name = "start_date")
+    @Setter
+    private Instant startDate;
+
+    @Setter
+    private Instant endDate;
 
     @NonNull
     @ManyToOne
