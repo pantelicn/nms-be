@@ -37,6 +37,8 @@ public interface TalentService {
                                                   Specification<Talent> searchSpecification,
                                                   Pageable pageable);
 
+    Page<Talent> findAvailableTalentsWithSkills(Pageable pageable);
+
     void updateAvailability(Talent talent, boolean available);
 
 }

@@ -162,6 +162,11 @@ class TalentServiceImpl implements TalentService {
         );
     }
 
+    @Override
+    public Page<Talent> findAvailableTalentsWithSkills(Pageable pageable) {
+        return talentRepository.findAvailableWithSkills(pageable);
+    }
+
     @Transactional
     @Override
     public void updateAvailability(Talent talent, boolean available) {
