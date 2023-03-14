@@ -19,4 +19,6 @@ public interface AvailableChatService {
 
     AvailableChat get(String talentUsername, String companyUsername);
 
+    void removeByTalentAndCompany(Talent talent, Company company);
+
 }

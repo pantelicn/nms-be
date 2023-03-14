@@ -32,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -152,7 +151,14 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     public void removeRequestForCompany(@NonNull final Long id, @NonNull final String username) {
         Request found = getByIdAndCompany(id, username);
-        repository.delete(found);
+        removeRequest(found);
+    }
+
+    @Override
+    @Transactional
+    public void removeRequestForTalent(@NonNull final Long id, @NonNull final String username) {
+        Request found = getByIdAndTalent(id, username);
+        removeRequest(found);
     }
 
     @Override
@@ -249,6 +255,16 @@ public class RequestServiceImpl implements RequestService {
     private Request getByIdAndCompany(Long id, Company company) {
         return repository.findByIdAndCompany(id, company).orElseThrow(() -> ApiEntityNotFoundException.builder()
                 .entity(Request.class.getSimpleName()).id(id.toString()).build());
+    }
+
+    private void removeRequest(Request request) {
+        availableChatService.removeByTalentAndCompany(request.getTalent(), request.getCompany());
+        repository.delete(request);
+        LOGGER.info(
+                "Removed request between talent {} and company {}",
+                request.getTalent().getUser().getUsername(),
+                request.getCompany().getUser().getUsername()
+        );
     }
 
     private void validateAcceptedOrPendingNotExists(Talent talent, Company company) {

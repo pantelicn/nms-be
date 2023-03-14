@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -20,6 +21,7 @@ public class AvailableChatServiceImpl implements AvailableChatService {
 
     private final AvailableChatRepository repository;
 
+    @Transactional(readOnly = true)
     public Page<AvailableChat> searchAvailableChats(@NonNull String username,
                                                     @NonNull String searchQuery,
                                                     @NonNull UserType userType,
@@ -31,6 +33,7 @@ public class AvailableChatServiceImpl implements AvailableChatService {
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Page<AvailableChat> getAvailableChats(String username, UserType userType, Pageable pageable) {
         if (userType == UserType.COMPANY) {
@@ -40,11 +43,13 @@ public class AvailableChatServiceImpl implements AvailableChatService {
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public boolean canChat(String talentUsername, String companyUsername) {
         return repository.existsByTalentUsernameAndCompanyUsername(talentUsername, companyUsername);
     }
 
+    @Transactional
     @Override
     public AvailableChat create(@NonNull Company company, @NonNull Talent talent) {
         AvailableChat newAvailableChat = AvailableChat.builder()
@@ -64,6 +69,7 @@ public class AvailableChatServiceImpl implements AvailableChatService {
         return created;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public AvailableChat get(String talentUsername, String companyUsername) {
         return repository.findByTalentUsernameAndCompanyUsername(talentUsername, companyUsername)
@@ -71,6 +77,13 @@ public class AvailableChatServiceImpl implements AvailableChatService {
                         .entity("AvailableChat")
                         .message("Entity.not.found").build()
                 );
+    }
+
+    @Transactional
+    @Override
+    public void removeByTalentAndCompany(Talent talent, Company company) {
+        repository.removeByTalentUsernameAndCompanyUsername(talent.getUser().getUsername(), company.getUser().getUsername());
+        LOGGER.info("Removed available chat between talent {} and company {}", talent.getUser().getUsername(), company.getUser().getUsername());
     }
 
 }

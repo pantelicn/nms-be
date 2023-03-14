@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -71,6 +72,12 @@ public class TalentRequestController {
     @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.TALENT + "'))")
     public void editStatus(@PathVariable String username, @PathVariable Long id, @RequestParam RequestStatus status) {
         service.editStatusForTalent(username, id, status);
+    }
+
+    @DeleteMapping("{id}")
+    @PreAuthorize("(#username == authentication.name && hasRole('" + Roles.TALENT + "'))")
+    public void remove(@PathVariable Long id, @PathVariable String username) {
+        service.removeRequestForTalent(id, username);
     }
 
 }

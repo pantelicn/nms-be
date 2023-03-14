@@ -35,4 +35,6 @@ public interface AvailableChatRepository extends JpaRepository<AvailableChat, Lo
 
     Optional<AvailableChat> findByTalentUsernameAndCompanyUsername(String talentUsername, String companyUsername);
 
+    void removeByTalentUsernameAndCompanyUsername(String talentUsername, String companyUsername);
+
 }
