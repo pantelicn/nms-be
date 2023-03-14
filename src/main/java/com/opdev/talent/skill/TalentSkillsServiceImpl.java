@@ -75,7 +75,9 @@ public class TalentSkillsServiceImpl implements TalentSkillsService {
         Objects.requireNonNull(skillCode);
         final Talent foundTalent = talentService.getByUsername(username);
         final Skill foundSkill = skillService.get(skillCode);
-        removePositionsFromTalent(username, foundSkill.getSkillPositions());
+        if (!foundSkill.getSkillPositions().isEmpty()) {
+            removePositionsFromTalent(username, foundSkill.getSkillPositions());
+        }
         repository.deleteByTalentAndSkill(foundTalent, foundSkill);
     }
 
