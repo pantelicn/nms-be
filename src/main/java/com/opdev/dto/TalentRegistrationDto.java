@@ -14,6 +14,7 @@ import com.opdev.dto.paging.RegistrationDto;
 import com.opdev.model.location.Location;
 import com.opdev.model.talent.Talent;
 import com.opdev.model.talent.Talent.TalentBuilder;
+import com.opdev.model.user.AuthType;
 import com.opdev.model.user.User;
 import com.opdev.model.user.UserType;
 import com.opdev.model.user.VerificationToken;
@@ -71,6 +72,7 @@ public class TalentRegistrationDto implements RegistrationDto {
             .password(passwordEncoder.encode(password))
             .verificationToken(verificationToken)
             .type(UserType.TALENT)
+            .authType(AuthType.NULLHIRE)
             .build();
 
     final TalentBuilder builder = Talent.builder()

@@ -60,10 +60,7 @@ class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         final String authorities = auth.getAuthorities().stream().map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        final String token = JWT.create().withClaim("roles", authorities)
-                .withSubject(((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername())
-                .withExpiresAt(Date.from(Instant.now().plusMillis(SecurityConfig.EXPIRATION_TIME)))
-                .sign(HMAC512(SecurityConfig.SECRET.getBytes()));
+        final String token = JWTUtil.generateToken(authorities, ((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername());
 
         res.setContentType(MediaType.APPLICATION_JSON_VALUE);
         res.setCharacterEncoding(StandardCharsets.UTF_8.toString());

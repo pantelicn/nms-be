@@ -67,9 +67,13 @@ public class User extends Audit {
     private List<UserRole> userRoles = new ArrayList<>();
 
     @OneToOne
-    @NonNull
     @JoinColumn(name = "verification_token_id", referencedColumnName = "id")
     private VerificationToken verificationToken;
+
+    @NonNull
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AuthType authType;
 
     public boolean isCompany() {
         return userRoles.stream().filter(userRole -> userRole.getRole().getName().equals("ROLE_COMPANY")).collect(Collectors.toList()).size() == 1;

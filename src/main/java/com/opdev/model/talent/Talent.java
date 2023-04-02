@@ -56,11 +56,9 @@ public class Talent extends Audit {
     @Column
     private Long id;
 
-    @NonNull
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @NonNull
     @Column(name = "last_name", nullable = false)
     private String lastName;
 

@@ -5,11 +5,11 @@ import com.opdev.model.company.Benefit;
 import com.opdev.model.company.Company;
 import com.opdev.model.contact.Contact;
 import com.opdev.model.contact.ContactType;
+import com.opdev.model.location.TalentAvailableLocation;
 import com.opdev.model.location.City;
 import com.opdev.model.location.CompanyLocation;
 import com.opdev.model.location.Country;
 import com.opdev.model.location.Location;
-import com.opdev.model.location.TalentAvailableLocation;
 import com.opdev.model.post.Post;
 import com.opdev.model.request.Request;
 import com.opdev.model.request.RequestStatus;
@@ -19,6 +19,7 @@ import com.opdev.model.subscription.Plan;
 import com.opdev.model.subscription.PlanProduct;
 import com.opdev.model.subscription.PlanType;
 import com.opdev.model.subscription.Product;
+import com.opdev.model.subscription.ProductUsage;
 import com.opdev.model.subscription.Subscription;
 import com.opdev.model.subscription.SubscriptionStatus;
 import com.opdev.model.talent.Position;
@@ -70,6 +71,8 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     private Country croatia;
     private City noviSad;
     private City zagreb;
+    private City belgrade;
+    private City zrenjanin;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -103,7 +106,23 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .name("Novi Sad")
                 .build();
 
+        belgrade = City.builder()
+                .country(serbia)
+                .latitude(2f)
+                .longitude(2f)
+                .name("Belgrade")
+                .build();
+
+        zrenjanin = City.builder()
+                .country(serbia)
+                .latitude(3f)
+                .longitude(3f)
+                .name("Zrenjanin")
+                .build();
+
         noviSad = cityRepository.save(noviSad);
+        belgrade = cityRepository.save(belgrade);
+        zrenjanin = cityRepository.save(zrenjanin);
 
         zagreb = City.builder()
                 .country(croatia)
@@ -184,6 +203,32 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .quantity(120)
                 .build();
 
+        ProductUsage productUsage = ProductUsage.builder()
+                .company(companyGoogle)
+                .period(Period.ofMonths(12))
+                .limited(true)
+                .remaining(120)
+                .endDate(LocalDate.of(2023, 6, 6))
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.of(2023, 6, 6))
+                .product(post)
+                .build();
+
+        productUsageRepository.save(productUsage);
+
+        productUsage = ProductUsage.builder()
+                .company(companyFacebook)
+                .period(Period.ofMonths(12))
+                .limited(true)
+                .remaining(120)
+                .endDate(LocalDate.of(2023, 6, 6))
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.of(2023, 6, 6))
+                .product(post)
+                .build();
+
+        productUsageRepository.save(productUsage);
+
         planProductRepository.save(postPlanProduct);
     }
 
@@ -203,6 +248,7 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .password(passwordEncoder.encode("Admin12345!"))
                 .verificationToken(initializeVerificationToken())
                 .enabled(true)
+                                                .authType(AuthType.NULLHIRE)
                 .build());
 
         UserRole userRole = UserRole.builder()
@@ -389,6 +435,7 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .password(passwordEncoder.encode("Google12345!"))
                 .verificationToken(initializeVerificationToken())
                 .enabled(true)
+                                                .authType(AuthType.NULLHIRE)
                 .build());
 
         UserRole userRole = UserRole.builder()
@@ -421,41 +468,27 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                         .url("http://dummyimage.com/136x100.png/ff4444/ffffff")
                         .country(serbia)
                         .company(company)
-                        .build(),
-                Post.builder()
-                        .content("Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl.")
-                        .title("Duis title")
-                        .url("http://dummyimage.com/163x100.png/ff4444/ffffff")
-                        .country(serbia)
-                        .company(company)
-                        .build(),
-                Post.builder()
-                        .content("Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis.")
-                        .title("Duis title")
-                        .url("http://dummyimage.com/207x100.png/cc0000/ffffff")
-                        .country(croatia)
-                        .company(company)
                         .build()));
     }
 
     private void initializeGoogleContacts(Company company) {
-        contactRepository.saveAll(Arrays.asList(
-                Contact.builder()
-                        .type(ContactType.TELEPHONE)
-                        .value("+7 (496) 649-2300")
-                        .company(company)
-                        .build(),
-                Contact.builder()
-                        .type(ContactType.EMAIL)
-                        .value("ppavia2@oaic.gov.au")
-                        .company(company)
-                        .build(),
-                Contact.builder()
-                        .type(ContactType.URL)
-                        .value("http://www.google.com")
-                        .company(company)
-                        .build()
-        ));
+//        contactRepository.saveAll(Arrays.asList(
+//                Contact.builder()
+//                        .type(ContactType.TELEPHONE)
+//                        .value("+7 (496) 649-2300")
+//                        .company(company)
+//                        .build(),
+//                Contact.builder()
+//                        .type(ContactType.EMAIL)
+//                        .value("ppavia2@oaic.gov.au")
+//                        .company(company)
+//                        .build(),
+//                Contact.builder()
+//                        .type(ContactType.URL)
+//                        .value("http://www.google.com")
+//                        .company(company)
+//                        .build()
+//        ));
     }
 
     private void initializeGoogleBenefits(Company company) {
@@ -541,6 +574,7 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                 .password("Facebook12345!")
                 .verificationToken(initializeVerificationToken())
                 .enabled(true)
+                                                .authType(AuthType.NULLHIRE)
                 .build());
 
         CompanyLocation location = CompanyLocation.builder()
@@ -565,43 +599,29 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
                         .url("http://dummyimage.com/190x100.png/dddddd/000000")
                         .country(serbia)
                         .company(company)
-                        .build(),
-                Post.builder()
-                        .content("Proin interdum mauris non ligula pellentesque ultrices.")
-                        .title("Proin title")
-                        .url("http://dummyimage.com/236x100.png/cc0000/ffffff")
-                        .country(croatia)
-                        .company(company)
-                        .build(),
-                Post.builder()
-                        .content("Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc.")
-                        .title("Maecenas title")
-                        .url("http://dummyimage.com/146x100.png/5fa2dd/ffffff")
-                        .country(serbia)
-                        .company(company)
                         .build()
         ));
     }
 
     private void initializeFacebookContacts(Company company) {
-        contactRepository.saveAll(Arrays.asList(
-                Contact.builder()
-                        .type(ContactType.MOBILE_PHONE)
-                        .value("+86 (944) 125-1126")
-                        .company(company)
-                        .build(),
-                Contact.builder()
-                        .type(ContactType.EMAIL)
-                        .value("groizni@google.nl")
-                        .company(company)
-                        .build(),
-                Contact.builder()
-                        .type(ContactType.URL)
-                        .value("https://drupal.org/nec.xml?lorem=donec&ipsum=odio")
-                        .company(company)
-                        .build()
-
-        ));
+//        contactRepository.saveAll(Arrays.asList(
+//                Contact.builder()
+//                        .type(ContactType.MOBILE_PHONE)
+//                        .value("+86 (944) 125-1126")
+//                        .company(company)
+//                        .build(),
+//                Contact.builder()
+//                        .type(ContactType.EMAIL)
+//                        .value("groizni@google.nl")
+//                        .company(company)
+//                        .build(),
+//                Contact.builder()
+//                        .type(ContactType.URL)
+//                        .value("https://drupal.org/nec.xml?lorem=donec&ipsum=odio")
+//                        .company(company)
+//                        .build()
+//
+//        ));
     }
 
     private void initializeFacebookBenefits(Company company) {
@@ -646,10 +666,11 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
         User user = userRepository.save(User.builder()
                 .enabled(true)
                 .type(UserType.TALENT)
-                .username("nikola@gmail.com")
+                .username("goransasic@gmail.com")
                 .password(passwordEncoder.encode("Nikola12345!"))
                 .verificationToken(initializeVerificationToken())
                 .enabled(true)
+                                                .authType(AuthType.NULLHIRE)
                 .build());
 
         UserRole userRole = UserRole.builder()
@@ -687,25 +708,25 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     }
 
     private void initializeNikolaContacts(Talent talent) {
-        contactRepository.saveAll(
-                Arrays.asList(
-                        Contact.builder()
-                                .type(ContactType.MOBILE_PHONE)
-                                .value("+62 (810) 132-9688")
-                                .talent(talent)
-                                .build(),
-                        Contact.builder()
-                                .type(ContactType.EMAIL)
-                                .value("alugtonf@taobao.com")
-                                .talent(talent)
-                                .build(),
-                        Contact.builder()
-                                .type(ContactType.URL)
-                                .value("http://about.me/ultrices/posuere/cubilia/curae.json?volutpat=id")
-                                .talent(talent)
-                                .build()
-
-                ));
+//        contactRepository.saveAll(
+//                Arrays.asList(
+//                        Contact.builder()
+//                                .type(ContactType.MOBILE_PHONE)
+//                                .value("+62 (810) 132-9688")
+//                                .talent(talent)
+//                                .build(),
+//                        Contact.builder()
+//                                .type(ContactType.EMAIL)
+//                                .value("alugtonf@taobao.com")
+//                                .talent(talent)
+//                                .build(),
+//                        Contact.builder()
+//                                .type(ContactType.URL)
+//                                .value("http://about.me/ultrices/posuere/cubilia/curae.json?volutpat=id")
+//                                .talent(talent)
+//                                .build()
+//
+//                ));
     }
 
     private void initializeNikolaAvailableLocations(Talent talent) {
@@ -813,25 +834,25 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
     }
 
     private void initializeGoranContacts(Talent talent) {
-        contactRepository.saveAll(
-                Arrays.asList(
-                        Contact.builder()
-                                .type(ContactType.MOBILE_PHONE)
-                                .value("+86 (894) 637-0532")
-                                .talent(talent)
-                                .build(),
-                        Contact.builder()
-                                .type(ContactType.EMAIL)
-                                .value("bjolliffz@cornell.edu")
-                                .talent(talent)
-                                .build(),
-                        Contact.builder()
-                                .type(ContactType.URL)
-                                .value("https://goo.ne.jp/sodales/scelerisque/mauris/sit.jsp?a=congue&pede=vivamus")
-                                .talent(talent)
-                                .build()
-
-                ));
+//        contactRepository.saveAll(
+//                Arrays.asList(
+//                        Contact.builder()
+//                                .type(ContactType.MOBILE_PHONE)
+//                                .value("+86 (894) 637-0532")
+//                                .talent(talent)
+//                                .build(),
+//                        Contact.builder()
+//                                .type(ContactType.EMAIL)
+//                                .value("bjolliffz@cornell.edu")
+//                                .talent(talent)
+//                                .build(),
+//                        Contact.builder()
+//                                .type(ContactType.URL)
+//                                .value("https://goo.ne.jp/sodales/scelerisque/mauris/sit.jsp?a=congue&pede=vivamus")
+//                                .talent(talent)
+//                                .build()
+//
+//                ));
     }
 
     private void initializeGoranAvailableLocations(Talent talent) {

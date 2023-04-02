@@ -7,6 +7,7 @@ import javax.validation.constraints.NotBlank;
 
 import com.opdev.model.location.City;
 import com.opdev.model.location.Country;
+import com.opdev.model.user.AuthType;
 import com.opdev.model.user.VerificationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -66,6 +67,7 @@ public class CompanyRegistrationDto implements RegistrationDto {
                 .password(passwordEncoder.encode(password))
                 .type(UserType.COMPANY)
                 .verificationToken(verificationToken)
+                .authType(AuthType.NULLHIRE)
                 .build();
 
         final Company company = Company.builder()
