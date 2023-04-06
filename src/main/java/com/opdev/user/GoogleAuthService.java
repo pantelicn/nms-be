@@ -1,15 +1,18 @@
 package com.opdev.user;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import com.opdev.config.security.JWTUtil;
 import com.opdev.config.security.Roles;
 import com.opdev.dto.LoginSuccessDto;
@@ -32,6 +35,9 @@ public class GoogleAuthService {
     private final RoleService roleService;
     private final UserRoleService userRoleService;
     private final TalentService talentService;
+
+    @Value("${nullhire.google.client-id}")
+    private String clientId;
 
     @Transactional
     public LoginSuccessDto singInOrUp(String credential) {
@@ -66,10 +72,11 @@ public class GoogleAuthService {
 
 
     private String verifyIdTokenAndGetEmail(String idToken) {
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
+                .setAudience(List.of(clientId)).build();
         try {
-            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-            return decodedToken.getEmail();
-        } catch (FirebaseAuthException e) {
+            return verifier.verify(idToken).getPayload().getEmail();
+        } catch (IOException | GeneralSecurityException e) {
             throw new ApiUnauthorizedException("Authentication failed");
         }
     }

@@ -59,10 +59,26 @@ security:
 
 nullhire:
   profile-images-dir: /Users/nikolapantelic/Documents/images
-  base-url: https://api.nullhire.com
-  domain: https://nullhire.com
-  allowed-origins: http://localhost:4200
+  base-url: http://localhost:8080
+  domain: http://localhost:4200
+  allowed-origins: http://localhost:4200,null
+  google:
+    client-id: "533125345294-queakbtfu0dbros8hlhirk1o1ct427m4.apps.googleusercontent.com"
+    cookie:
+      secure: false
+      domain: "localhost"
+      validity-in-seconds: 30
 
 import:
   local:
     data: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+          - prometheus
+          - heapdump
