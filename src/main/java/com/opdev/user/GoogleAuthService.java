@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +16,6 @@ import com.opdev.dto.LoginSuccessDto;
 import com.opdev.exception.ApiUnauthorizedException;
 import com.opdev.model.talent.Talent;
 import com.opdev.model.user.AuthType;
-import com.opdev.model.user.Role;
 import com.opdev.model.user.User;
 import com.opdev.model.user.UserRole;
 import com.opdev.talent.TalentService;
@@ -36,8 +34,8 @@ public class GoogleAuthService {
     private final TalentService talentService;
 
     @Transactional
-    public LoginSuccessDto singInOrUp(String idToken) {
-        String username = verifyIdTokenAndGetEmail(idToken);
+    public LoginSuccessDto singInOrUp(String credential) {
+        String username = verifyIdTokenAndGetEmail(credential);
         Optional<User> found = userService.findByUsername(username);
         if (found.isEmpty()) {
             User newUser = User.builder()

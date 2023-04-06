@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 public class GoogleAuthRequest {
 
     @NotEmpty
-    private String idToken;
+    private String credential;
 
 }
