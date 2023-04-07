@@ -26,7 +26,7 @@ public class GoogleAuthController {
     private static final String TOKEN_COOKIE_NAME = "token";
     private final GoogleAuthService service;
 
-    @Value("${nullhire.domain}/" + GOOGLE_AUTH_PATH)
+    @Value("${nullhire.domain}" + GOOGLE_AUTH_PATH)
     private String authRedirectUrl;
 
     @Value("${nullhire.google.cookie.secure}")
