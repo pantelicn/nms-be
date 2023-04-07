@@ -51,7 +51,6 @@ public class GoogleAuthController {
         return ResponseCookie.from(TOKEN_COOKIE_NAME, value)
                 .maxAge(validityInSeconds)
                 .secure(cookieSecure)
-                .httpOnly(true)
                 .sameSite("Lax")
                 .domain(cookieDomain)
                 .path("/") // global cookie accessible everywhere
