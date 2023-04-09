@@ -38,8 +38,7 @@ public class User extends Audit {
     @Column(nullable = false, unique = true)
     private String username;
 
-    @NonNull
-    @Column(nullable = false)
+    @Column
     @Setter
     private String password;
 

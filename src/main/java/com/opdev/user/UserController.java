@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.opdev.company.service.CompanyService;
 import com.opdev.model.user.User;
+import com.opdev.model.user.UserType;
 import com.opdev.user.dto.SetNewPasswordRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class UserController {
         if (activatedUser.isCompany()) {
             companyService.createWelcomeNotification(activatedUser.getUsername());
         }
-        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(domain + "/activation")).build();
+        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(domain + "/activation?userType=" + (activatedUser.getType().equals(UserType.COMPANY) ? "COMPANY" : "TALENT"))).build();
     }
 
     @GetMapping("/reset-password/begin")
