@@ -21,6 +21,7 @@ import com.opdev.model.talent.Talent;
 import com.opdev.model.user.AuthType;
 import com.opdev.model.user.User;
 import com.opdev.model.user.UserRole;
+import com.opdev.model.user.UserType;
 import com.opdev.talent.TalentService;
 import com.opdev.user.role.RoleService;
 import com.opdev.user.userole.UserRoleService;
@@ -48,6 +49,7 @@ public class GoogleAuthService {
                     .enabled(true)
                     .username(username)
                     .authType(AuthType.GOOGLE)
+                    .type(UserType.TALENT)
                     .build();
             userService.save(newUser);
             UserRole talentUserRole = UserRole.builder()
