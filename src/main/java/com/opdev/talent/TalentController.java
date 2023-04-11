@@ -77,7 +77,7 @@ public class TalentController {
 
     @GetMapping
     @PreAuthorize(IS_ADMIN)
-    public Page<TalentViewDto> viewMultiple(@PageableDefault Pageable pageable) {
+    public Page<TalentViewDto> viewMultiple(@PageableDefault(sort = {"id"}) Pageable pageable) {
         LOGGER.info("Viewing all talents");
         return talentService.findAll(pageable).map(TalentViewDto::new);
     }
