@@ -71,7 +71,7 @@ public class User extends Audit {
 
     @NonNull
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "auth_type", nullable = false)
     private AuthType authType;
 
     public boolean isCompany() {
