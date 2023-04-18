@@ -1,6 +1,7 @@
 package com.opdev.model.request;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -12,9 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.opdev.model.Audit;
-import com.opdev.model.term.TalentTerm;
 
-import com.opdev.model.user.UserType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,10 +39,8 @@ public class TalentTermRequest extends Audit {
     @Column
     private Long id;
 
-    @NonNull
-    @ManyToOne
-    @JoinColumn(name = "talent_term_id", referencedColumnName = "id", nullable = false)
-    private TalentTerm talentTerm;
+    @Embedded
+    private TalentTermSnapshot talentTermSnapshot;
 
     @ToString.Exclude
     @NonNull

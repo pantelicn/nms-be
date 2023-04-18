@@ -13,6 +13,7 @@ import com.opdev.model.request.Request;
 import com.opdev.model.request.RequestStatus;
 import com.opdev.model.request.TalentTermRequest;
 import com.opdev.model.request.TalentTermRequestStatus;
+import com.opdev.model.request.TalentTermSnapshot;
 import com.opdev.model.talent.Talent;
 import com.opdev.model.term.TalentTerm;
 import com.opdev.model.user.Notification;
@@ -87,7 +88,7 @@ public class RequestServiceImpl implements RequestService {
                 newRequest.setStatus(RequestStatus.COUNTER_OFFER_COMPANY);
             }
             TalentTermRequest newTalentTermRequest = TalentTermRequest.builder()
-                    .talentTerm(talentTerm)
+                    .talentTermSnapshot(TalentTermSnapshot.fromTalentTerm(talentTerm))
                     .request(newRequest)
                     .counterOffer(term.getCounterOffer())
                     .status(status)

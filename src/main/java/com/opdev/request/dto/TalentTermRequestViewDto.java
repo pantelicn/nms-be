@@ -23,12 +23,12 @@ public class TalentTermRequestViewDto {
 
     public TalentTermRequestViewDto(TalentTermRequest talentTermRequest) {
         id = talentTermRequest.getId();
-        name = talentTermRequest.getTalentTerm().getTerm().getName();
-        unitOfMeasure = talentTermRequest.getTalentTerm().getUnitOfMeasure();
-        value = talentTermRequest.getTalentTerm().getValue();
+        name = talentTermRequest.getTalentTermSnapshot().getTermName();
+        unitOfMeasure = talentTermRequest.getTalentTermSnapshot().getUnitOfMeasure();
+        value = talentTermRequest.getTalentTermSnapshot().getValue();
         counterOffer = talentTermRequest.getCounterOffer();
         status = talentTermRequest.getStatus();
-        termType = talentTermRequest.getTalentTerm().getTerm().getType();
+        termType = talentTermRequest.getTalentTermSnapshot().getTermType();
     }
 
 }

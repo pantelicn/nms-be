@@ -3,8 +3,6 @@ package com.opdev.util;
 import com.opdev.model.chat.AvailableChat;
 import com.opdev.model.company.Benefit;
 import com.opdev.model.company.Company;
-import com.opdev.model.contact.Contact;
-import com.opdev.model.contact.ContactType;
 import com.opdev.model.location.TalentAvailableLocation;
 import com.opdev.model.location.City;
 import com.opdev.model.location.CompanyLocation;
@@ -15,6 +13,7 @@ import com.opdev.model.request.Request;
 import com.opdev.model.request.RequestStatus;
 import com.opdev.model.request.TalentTermRequest;
 import com.opdev.model.request.TalentTermRequestStatus;
+import com.opdev.model.request.TalentTermSnapshot;
 import com.opdev.model.subscription.Plan;
 import com.opdev.model.subscription.PlanProduct;
 import com.opdev.model.subscription.PlanType;
@@ -527,28 +526,28 @@ public class DataLoader extends RepositoryBundler implements ApplicationRunner {
             if (!goranTalentTerm.getNegotiable()) {
                 talentTermRequest = TalentTermRequest.builder()
                         .request(request)
-                        .talentTerm(goranTalentTerm)
+                        .talentTermSnapshot(TalentTermSnapshot.fromTalentTerm(goranTalentTerm))
                         .status(TalentTermRequestStatus.ACCEPTED)
                         .build();
             } else {
                 if (goranTalentTerm.getUnitOfMeasure() == UnitOfMeasure.DAYS) {
                     talentTermRequest = TalentTermRequest.builder()
                             .request(request)
-                            .talentTerm(goranTalentTerm)
+                            .talentTermSnapshot(TalentTermSnapshot.fromTalentTerm(goranTalentTerm))
                             .counterOffer("15")
                             .status(TalentTermRequestStatus.COUNTER_OFFER_COMPANY)
                             .build();
                 } else if(goranTalentTerm.getTerm().getCode().equals("EDUCATION-BUDGET")) {
                     talentTermRequest = TalentTermRequest.builder()
                             .request(request)
-                            .talentTerm(goranTalentTerm)
+                            .talentTermSnapshot(TalentTermSnapshot.fromTalentTerm(goranTalentTerm))
                             .counterOffer("2000")
                             .status(TalentTermRequestStatus.COUNTER_OFFER_TALENT)
                             .build();
                 } else {
                     talentTermRequest = TalentTermRequest.builder()
                             .request(request)
-                            .talentTerm(goranTalentTerm)
+                            .talentTermSnapshot(TalentTermSnapshot.fromTalentTerm(goranTalentTerm))
                             .status(TalentTermRequestStatus.ACCEPTED)
                             .build();
                 }
