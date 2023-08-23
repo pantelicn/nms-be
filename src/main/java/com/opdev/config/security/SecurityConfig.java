@@ -23,7 +23,6 @@ public class SecurityConfig {
 
     public static final String SECRET = "SecretKeyToGenJWTs";
     static final long EXPIRATION_TIME = 864_000_000; // 10 days
-    // static final long EXPIRATION_TIME = 100; // very quick 😏
     public static final String TOKEN_PREFIX = "Bearer ";
 
     @Bean
@@ -41,7 +40,7 @@ public class SecurityConfig {
                 HttpMethod.POST, //
                 HttpMethod.DELETE, //
                 HttpMethod.PATCH //
-        ).map(httpMethod -> httpMethod.name()).collect(Collectors.toList());
+        ).map(Enum::name).collect(Collectors.toList());
         config.setAllowedMethods(allowedHttpMethods);
 
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
